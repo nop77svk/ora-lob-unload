@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ora_lob_unload": {
+      "commandName": "Project",
+      "commandLineArgs": "-f test_clob.txt -d nop-full -u pierre -p qwe -t"
+    }
+  }
+}
