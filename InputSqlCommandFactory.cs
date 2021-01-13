@@ -10,12 +10,12 @@
     {
         private readonly OracleConnection dbConnection;
 
-        public InputSqlCommandFactory(OracleConnection dbConnection)
+        internal InputSqlCommandFactory(OracleConnection dbConnection)
         {
             this.dbConnection = dbConnection;
         }
 
-        public IEnumerable<DbDataReader> GetResultReaders(InputSqlReturnTypeEnum returnType, string command, IEnumerable<string> inputArguments)
+        internal IEnumerable<DbDataReader> GetResultReaders(InputSqlReturnTypeEnum returnType, string command, IEnumerable<string> inputArguments)
         {
             var result = returnType switch
             {
@@ -26,7 +26,7 @@
             return result;
         }
 
-        private IEnumerable<DbDataReader> CreateCommandTable(string command)
+        internal IEnumerable<DbDataReader> CreateCommandTable(string command)
         {
             string cleanedUpTableName = command.Trim().ToUpper();
             Console.WriteLine($"Reading data from table \"{cleanedUpTableName}\"");
@@ -37,7 +37,7 @@
                 FetchSize = 100,
                 InitialLOBFetchSize = 262144
             };
-            return new List<DbDataReader>() {
+            return new DbDataReader[] {
                 result.ExecuteReader(System.Data.CommandBehavior.Default)
             };
         }
