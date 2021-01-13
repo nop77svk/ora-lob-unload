@@ -7,18 +7,23 @@
     using Oracle.ManagedDataAccess.Client;
     using Oracle.ManagedDataAccess.Types;
 
-    static class Program
+    internal static class Program
     {
-        static int Main(string[] args)
+        #pragma warning disable SA1500 // Braces for multi-line statements should not share line
+        internal static int Main(string[] args)
         {
             return Parser.Default.ParseArguments<CommandLineOptions>(args)
                 .MapResult<CommandLineOptions, int>(
                     options => MainWithOptions(options),
-                    _ => { Console.WriteLine("Something bad happened on the command line (2do!)"); return 255; }
+                    _ => {
+                        Console.WriteLine("Something bad happened on the command line (2do!)");
+                        return 255;
+                    }
                 );
         }
+        #pragma warning restore SA1500 // Braces for multi-line statements should not share line
 
-        static int MainWithOptions(CommandLineOptions options)
+        internal static int MainWithOptions(CommandLineOptions options)
         {
             var scriptType = InputSqlReturnTypeEnumHelpers.GetUltimateScriptType(options);
 
@@ -31,12 +36,11 @@
             var dbCommandFactory = new InputSqlCommandFactory(dbConnection);
             var dbReaderList = dbCommandFactory.GetResultReaders(scriptType, inputSqlText, options.InputSqlArguments);
 
-            string fileName;
             foreach (OracleDataReader dbReader in dbReaderList)
             {
                 while (dbReader.Read())
                 {
-                    fileName = dbReader.GetString(0);
+                    var fileName = dbReader.GetString(0);
                     Console.WriteLine($"File name = \"{fileName}\"");
                     Console.WriteLine(dbReader.GetProviderSpecificFieldType(1).Name);
                     using var lobContents = dbReader.GetOracleClob(1);
@@ -45,14 +49,14 @@
                     outFile.Close();
                     lobContents.Close();
                 }
+
                 dbReader.Close();
             }
 
             return 0;
         }
 
-
-        static StreamReader OpenInputSqlScript(string inputSqlScriptFile)
+        internal static StreamReader OpenInputSqlScript(string inputSqlScriptFile)
         {
             return inputSqlScriptFile switch
             {

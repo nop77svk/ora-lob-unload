@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using CommandLine;
 
-    class CommandLineOptions
+    internal class CommandLineOptions
     {
         [Option('f', "file", Required = false, HelpText = "Input SQL script file")]
         public string InputSqlScriptFile { get; set; }

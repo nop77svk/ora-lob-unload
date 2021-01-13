@@ -1,12 +1,11 @@
 ﻿namespace OraLobUnload
 {
-    using Oracle.ManagedDataAccess.Client;
-    using System.Collections.Generic;
     using System;
-    using System.Threading.Tasks;
+    using System.Collections.Generic;
     using System.Data.Common;
+    using Oracle.ManagedDataAccess.Client;
 
-    class InputSqlCommandFactory
+    internal class InputSqlCommandFactory
     {
         private readonly OracleConnection dbConnection;
 
@@ -37,7 +36,8 @@
                 FetchSize = 100,
                 InitialLOBFetchSize = 262144
             };
-            return new DbDataReader[] {
+            return new DbDataReader[]
+            {
                 result.ExecuteReader(System.Data.CommandBehavior.Default)
             };
         }

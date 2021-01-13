@@ -1,21 +1,16 @@
-﻿using System;
-
-namespace OraLobUnload
+﻿namespace OraLobUnload
 {
-    static class InputSqlReturnTypeEnumHelpers
+    using System;
+
+    internal static class InputSqlReturnTypeEnumHelpers
     {
-        static internal InputSqlReturnTypeEnum GetUltimateScriptType(CommandLineOptions options)
+        internal static InputSqlReturnTypeEnum GetUltimateScriptType(CommandLineOptions options)
         {
-            InputSqlReturnTypeEnum result = options.InputSqlReturnTypeSelect ?
-                InputSqlReturnTypeEnum.Select :
-                options.InputSqlReturnTypeScalars ?
-                    InputSqlReturnTypeEnum.Scalars :
-                    options.InputSqlReturnTypeCursor ?
-                        InputSqlReturnTypeEnum.RefCursor :
-                        options.InputSqlReturnTypeMultiImplicit ?
-                            InputSqlReturnTypeEnum.MultiImplicitCursors :
-                            options.InputSqlReturnTypeTable ?
-                                InputSqlReturnTypeEnum.Table :
+            InputSqlReturnTypeEnum result = options.InputSqlReturnTypeSelect ? InputSqlReturnTypeEnum.Select :
+                options.InputSqlReturnTypeScalars ? InputSqlReturnTypeEnum.Scalars :
+                    options.InputSqlReturnTypeCursor ? InputSqlReturnTypeEnum.RefCursor :
+                        options.InputSqlReturnTypeMultiImplicit ? InputSqlReturnTypeEnum.MultiImplicitCursors :
+                            options.InputSqlReturnTypeTable ? InputSqlReturnTypeEnum.Table :
                                 options.InputSqlReturnTypeStr.ToLower() switch
                                 {
                                     "select" or "query" or "" => InputSqlReturnTypeEnum.Select,
