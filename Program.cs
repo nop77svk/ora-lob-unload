@@ -38,6 +38,7 @@
                 {
                     fileName = dbReader.GetString(0);
                     Console.WriteLine($"File name = \"{fileName}\"");
+                    Console.WriteLine(dbReader.GetProviderSpecificFieldType(1).Name);
                     using var lobContents = dbReader.GetOracleClob(1);
                     using var outFile = File.Create(fileName);
                     lobContents.CopyTo(outFile);
