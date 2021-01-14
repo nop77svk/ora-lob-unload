@@ -79,7 +79,7 @@
                         }
                         else
                         {
-                            throw new InvalidDataException($"Field #2 is of type \"{fieldTwoTypeName}\", but LOB expected");
+                            throw new InvalidDataException($"Field #2 is of type \"{fieldTwoTypeName}\", but LOB or BFILE expected");
                         }
                     }
                 }
