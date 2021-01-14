@@ -8,7 +8,7 @@
     {
         private readonly Encoding utf16decoder;
 
-        public CharsetEncoderForClob(Encoding encoder, bool sourceBigEndian = false, bool sourceHasBOM = false, int inputBufferSizeInChars = 32768)
+        public CharsetEncoderForClob(Encoding encoder, bool sourceBigEndian = false, bool sourceHasBOM = false, int inputBufferSizeInChars = 262144)
         {
             if (inputBufferSizeInChars <= 0)
                 throw new ArgumentOutOfRangeException($"Illegal input buffer size of \"{inputBufferSizeInChars}\" characters");
