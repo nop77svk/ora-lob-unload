@@ -11,25 +11,22 @@
         [Option('o', "output", Required = false, HelpText = "Output folder")]
         public string OutputFolder { get; set; }
 
-        [Option("output-charset", Required = false, Default = "utf8")]
+        [Option("clob-output-charset", Required = false, Default = "utf8")]
         public string OutputEncoding { get; set; }
 
-        [Option("return-type", Required = true, Default = "query", HelpText = "Input SQL script file content type; \"query\" or \"cursor\" or \"scalars\" or \"multi-implicit\"", SetName = "return-type")]
-        public string InputSqlReturnTypeStr { get; set; }
-
-        [Option('t', "return-type-table", Required = true, Default = false, SetName = "return-type-table")]
+        [Option('t', "use-table", Required = true, Default = false, SetName = "in-type-table")]
         public bool InputSqlReturnTypeTable { get; set; }
 
-        [Option('q', "return-type-query", Required = true, Default = false, SetName = "return-type-query")]
+        [Option('q', "use-query", Required = true, Default = false, SetName = "in-type-query")]
         public bool InputSqlReturnTypeSelect { get; set; }
 
-        [Option('c', "return-type-cursor", Required = true, Default = false, SetName = "return-type-cursor")]
+        [Option('c', "use-cursor", Required = true, Default = false, SetName = "in-type-cursor")]
         public bool InputSqlReturnTypeCursor { get; set; }
 
-        [Option('s', "return-type-scalars", Required = true, Default = false, SetName = "return-type-scalars")]
+        [Option('s', "use-scalars", Required = true, Default = false, SetName = "in-type-scalars")]
         public bool InputSqlReturnTypeScalars { get; set; }
 
-        [Option('m', "return-type-multi-implicit", Required = true, Default = false, SetName = "return-type-implicit")]
+        [Option('m', "use-implicit-cursor", Required = true, Default = false, SetName = "in-type-implicit")]
         public bool InputSqlReturnTypeMultiImplicit { get; set; }
 
         [Option('u', "db-user", Required = true)]

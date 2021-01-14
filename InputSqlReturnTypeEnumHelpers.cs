@@ -9,20 +9,20 @@
             if (options is null)
                 throw new ArgumentNullException(nameof(options), "NULL supplied; this smells of fatal error!");
 
-            InputSqlReturnTypeEnum result = options.InputSqlReturnTypeSelect ? InputSqlReturnTypeEnum.Select :
-                options.InputSqlReturnTypeScalars ? InputSqlReturnTypeEnum.Scalars :
-                    options.InputSqlReturnTypeCursor ? InputSqlReturnTypeEnum.RefCursor :
-                        options.InputSqlReturnTypeMultiImplicit ? InputSqlReturnTypeEnum.MultiImplicitCursors :
-                            options.InputSqlReturnTypeTable ? InputSqlReturnTypeEnum.Table :
-                                options.InputSqlReturnTypeStr.ToLower() switch
-                                {
-                                    "select" or "query" or "" => InputSqlReturnTypeEnum.Select,
-                                    "cursor" or "refcursor" or "ref-cursor" => InputSqlReturnTypeEnum.RefCursor,
-                                    "multi-implicit" or "implicit" or "implicit-cursor" or "implicit-cursors" => InputSqlReturnTypeEnum.MultiImplicitCursors,
-                                    "scalar" or "scalars" => InputSqlReturnTypeEnum.Scalars,
-                                    "table" => InputSqlReturnTypeEnum.Table,
-                                    _ => throw new ArgumentOutOfRangeException($"Don't know how to handle input script type \"{options.InputSqlReturnTypeStr}\"")
-                                };
+            InputSqlReturnTypeEnum result;
+            if (options.InputSqlReturnTypeTable)
+                result = InputSqlReturnTypeEnum.Table;
+            else if (options.InputSqlReturnTypeSelect)
+                result = InputSqlReturnTypeEnum.Select;
+            else if (options.InputSqlReturnTypeScalars)
+                result = InputSqlReturnTypeEnum.Scalars;
+            else if (options.InputSqlReturnTypeCursor)
+                result = InputSqlReturnTypeEnum.RefCursor;
+            else if (options.InputSqlReturnTypeMultiImplicit)
+                result = InputSqlReturnTypeEnum.MultiImplicitCursors;
+            else
+                throw new ArgumentOutOfRangeException(nameof(options), "No input SQL return type specified");
+
             return result;
         }
     }
