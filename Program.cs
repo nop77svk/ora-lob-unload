@@ -1,6 +1,7 @@
 ﻿namespace OraLobUnload
 {
     using System;
+    using System.Data.Common;
     using System.IO;
     using System.Security.Cryptography;
     using System.Text;
@@ -34,27 +35,45 @@
             dbConnection.Open();
 
             var dbCommandFactory = new InputSqlCommandFactory(dbConnection);
-            var dbReaderList = dbCommandFactory.GetResultReaders(scriptType, inputSqlText, options.InputSqlArguments);
+            var dbReaderList = dbCommandFactory.CreateDatasetReaders(scriptType, inputSqlText, options.InputSqlArguments);
 
             var outputEncoder = new UTF8Encoding(false); // 2do! encoding as cmdln argument
 
             foreach (OracleDataReader dbReader in dbReaderList)
             {
-                while (dbReader.Read())
+                using (dbReader)
                 {
-                    var fileName = dbReader.GetString(0);
-                    using var outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-
-                    if (dbReader.GetProviderSpecificFieldType(1).Name == "OracleClob")
+                    while (dbReader.Read())
                     {
-                        using var lobContents = dbReader.GetOracleClob(1);
-                        Console.WriteLine($"Saving {lobContents.Length / 2} characters to {fileName}");
-                        using var outFileRecoded = new CryptoStream(outFile, new CharsetEncoderForClob(outputEncoder), CryptoStreamMode.Write, true);
-                        lobContents.CorrectlyCopyTo(outFileRecoded);
+                        if (dbReader.FieldCount != 2)
+                            throw new InvalidDataException($"Dataset field count is {dbReader.FieldCount}, should be exactly 2");
+
+                        var fieldOneTypeName = dbReader.GetFieldType(0).Name;
+                        if (fieldOneTypeName != "string")
+                            throw new InvalidDataException($"Field #1 is of type \"{fieldOneTypeName}\", but \"string\" expected");
+
+                        var fieldTwoTypeName = dbReader.GetProviderSpecificFieldType(1).Name;
+                        if (fieldTwoTypeName != "OracleClob" && fieldTwoTypeName != "OracleBlob")
+                            throw new InvalidDataException($"Field #2 is of type \"{fieldTwoTypeName}\", but LOB expected");
+
+                        var fileName = dbReader.GetString(0);
+                        using var outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+
+                        if (fieldTwoTypeName == "OracleClob")
+                        {
+                            using var lobContents = dbReader.GetOracleClob(1);
+                            Console.WriteLine($"Saving {lobContents.Length / 2} characters to {fileName}");
+                            using var outFileRecoded = new CryptoStream(outFile, new CharsetEncoderForClob(outputEncoder), CryptoStreamMode.Write, true);
+                            lobContents.CorrectlyCopyTo(outFileRecoded);
+                        }
+                        else if (fieldTwoTypeName == "OracleBlob")
+                        {
+                            using var lobContents = dbReader.GetOracleBlob(1);
+                            Console.WriteLine($"Saving {lobContents.Length} bytes to {fileName}");
+                            lobContents.CopyTo(outFile);
+                        }
                     }
                 }
-
-                dbReader.Close();
             }
 
             return 0;

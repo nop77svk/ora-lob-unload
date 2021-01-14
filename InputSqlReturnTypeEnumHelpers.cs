@@ -6,6 +6,9 @@
     {
         internal static InputSqlReturnTypeEnum GetUltimateScriptType(CommandLineOptions options)
         {
+            if (options is null)
+                throw new ArgumentNullException(nameof(options), "NULL supplied; this smells of fatal error!");
+
             InputSqlReturnTypeEnum result = options.InputSqlReturnTypeSelect ? InputSqlReturnTypeEnum.Select :
                 options.InputSqlReturnTypeScalars ? InputSqlReturnTypeEnum.Scalars :
                     options.InputSqlReturnTypeCursor ? InputSqlReturnTypeEnum.RefCursor :

@@ -14,7 +14,7 @@
             this.dbConnection = dbConnection;
         }
 
-        internal IEnumerable<DbDataReader> GetResultReaders(InputSqlReturnTypeEnum returnType, string command, IEnumerable<string> inputArguments)
+        internal IEnumerable<OracleDataReader> CreateDatasetReaders(InputSqlReturnTypeEnum returnType, string command, IEnumerable<string> inputArguments)
         {
             var result = returnType switch
             {
@@ -25,7 +25,7 @@
             return result;
         }
 
-        internal IEnumerable<DbDataReader> CreateCommandTable(string command)
+        internal IEnumerable<OracleDataReader> CreateCommandTable(string command)
         {
             string cleanedUpTableName = command.Trim().ToUpper();
             Console.WriteLine($"Reading data from table \"{cleanedUpTableName}\"");
@@ -36,7 +36,7 @@
                 FetchSize = 100,
                 InitialLOBFetchSize = 262144
             };
-            return new DbDataReader[]
+            return new OracleDataReader[]
             {
                 result.ExecuteReader(System.Data.CommandBehavior.Default)
             };
