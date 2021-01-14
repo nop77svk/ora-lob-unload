@@ -37,7 +37,8 @@
             var dbCommandFactory = new InputSqlCommandFactory(dbConnection);
             var dbReaderList = dbCommandFactory.CreateDatasetReaders(scriptType, inputSqlText, options.InputSqlArguments);
 
-            var outputEncoder = new UTF8Encoding(false); // 2do! encoding as cmdln argument
+            var clobInputDecoder = new UnicodeEncoding(false, false);
+            var clobOutputEncoder = new UTF8Encoding(false); // 2do! encoding as cmdln argument
 
             foreach (OracleDataReader dbReader in dbReaderList)
             {
@@ -63,7 +64,7 @@
                         {
                             using var lobContents = dbReader.GetOracleClob(1);
                             Console.WriteLine($"Saving {lobContents.Length / 2} characters to {fileName}");
-                            using var outFileRecoded = new CryptoStream(outFile, new CharsetEncoderForClob(outputEncoder), CryptoStreamMode.Write, true);
+                            using var outFileRecoded = new CryptoStream(outFile, new CharsetEncoderForClob(clobInputDecoder, clobOutputEncoder), CryptoStreamMode.Write, true);
                             lobContents.CorrectlyCopyTo(outFileRecoded);
                         }
                         else if (fieldTwoTypeName == "OracleBlob")
