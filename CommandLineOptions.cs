@@ -1,5 +1,6 @@
 ﻿namespace OraLobUnload
 {
+    using System;
     using System.Collections.Generic;
     using CommandLine;
 
@@ -40,5 +41,24 @@
 
         [Option('v', "argument", Required = false, Separator = ',')]
         public IEnumerable<string> InputSqlArguments { get; set; }
+
+        internal InputSqlReturnTypeEnum GetUltimateScriptType()
+        {
+            InputSqlReturnTypeEnum result;
+            if (InputSqlReturnTypeTable)
+                result = InputSqlReturnTypeEnum.Table;
+            else if (InputSqlReturnTypeSelect)
+                result = InputSqlReturnTypeEnum.Select;
+            else if (InputSqlReturnTypeScalars)
+                result = InputSqlReturnTypeEnum.Scalars;
+            else if (InputSqlReturnTypeCursor)
+                result = InputSqlReturnTypeEnum.RefCursor;
+            else if (InputSqlReturnTypeMultiImplicit)
+                result = InputSqlReturnTypeEnum.MultiImplicitCursors;
+            else
+                throw new ArgumentOutOfRangeException("No input SQL return type specified");
+
+            return result;
+        }
     }
 }

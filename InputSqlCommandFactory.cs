@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Data.Common;
     using Oracle.ManagedDataAccess.Client;
 
     internal class InputSqlCommandFactory
@@ -14,7 +13,7 @@
             this.dbConnection = dbConnection;
         }
 
-        internal IEnumerable<OracleDataReader> CreateDatasetReaders(InputSqlReturnTypeEnum returnType, string command, IEnumerable<string> inputArguments)
+        internal IEnumerable<OracleCommand> CreateDbCommands(InputSqlReturnTypeEnum returnType, string command, IEnumerable<string> inputArguments)
         {
             var result = returnType switch
             {
@@ -25,8 +24,9 @@
             return result;
         }
 
-        internal IEnumerable<OracleDataReader> CreateCommandTable(string command)
+        internal IEnumerable<OracleCommand> CreateCommandTable(string command)
         {
+            // 2do! iterate through tables on input
             string cleanedUpTableName = command.Trim().ToUpper();
             Console.WriteLine($"Reading data from table \"{cleanedUpTableName}\"");
 
@@ -36,10 +36,8 @@
                 FetchSize = 100,
                 InitialLOBFetchSize = 262144
             };
-            return new OracleDataReader[]
-            {
-                result.ExecuteReader(System.Data.CommandBehavior.Default)
-            };
+
+            yield return result;
         }
     }
 }
