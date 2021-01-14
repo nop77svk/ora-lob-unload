@@ -2,10 +2,10 @@
 {
     using System;
     using System.IO;
-    using System.Threading.Tasks;
+    using System.Security.Cryptography;
+    using System.Text;
     using CommandLine;
     using Oracle.ManagedDataAccess.Client;
-    using Oracle.ManagedDataAccess.Types;
 
     internal static class Program
     {
@@ -36,18 +36,22 @@
             var dbCommandFactory = new InputSqlCommandFactory(dbConnection);
             var dbReaderList = dbCommandFactory.GetResultReaders(scriptType, inputSqlText, options.InputSqlArguments);
 
+            var outputEncoder = new UTF8Encoding(false); // 2do! encoding as cmdln argument
+
             foreach (OracleDataReader dbReader in dbReaderList)
             {
                 while (dbReader.Read())
                 {
                     var fileName = dbReader.GetString(0);
-                    Console.WriteLine($"File name = \"{fileName}\"");
-                    Console.WriteLine(dbReader.GetProviderSpecificFieldType(1).Name);
-                    using var lobContents = dbReader.GetOracleClob(1);
-                    using var outFile = File.Create(fileName);
-                    lobContents.CopyTo(outFile);
-                    outFile.Close();
-                    lobContents.Close();
+                    using var outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+
+                    if (dbReader.GetProviderSpecificFieldType(1).Name == "OracleClob")
+                    {
+                        using var lobContents = dbReader.GetOracleClob(1);
+                        Console.WriteLine($"Saving {lobContents.Length / 2} characters to {fileName}");
+                        using var outFileRecoded = new CryptoStream(outFile, new CharsetEncoderForClob(outputEncoder), CryptoStreamMode.Write, true);
+                        lobContents.CorrectlyCopyTo(outFileRecoded);
+                    }
                 }
 
                 dbReader.Close();

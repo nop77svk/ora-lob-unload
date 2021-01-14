@@ -11,6 +11,9 @@
         [Option('o', "output", Required = false, HelpText = "Output folder")]
         public string OutputFolder { get; set; }
 
+        [Option("output-charset", Required = false, Default = "utf8")]
+        public string OutputEncoding { get; set; }
+
         [Option("return-type", Required = true, Default = "query", HelpText = "Input SQL script file content type; \"query\" or \"cursor\" or \"scalars\" or \"multi-implicit\"", SetName = "return-type")]
         public string InputSqlReturnTypeStr { get; set; }
 
