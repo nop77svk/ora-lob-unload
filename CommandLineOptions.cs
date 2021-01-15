@@ -42,19 +42,19 @@
         [Option('v', "argument", Required = false, Separator = ',')]
         public IEnumerable<string> InputSqlArguments { get; set; }
 
-        internal InputSqlReturnTypeEnum GetUltimateScriptType()
+        internal InputSqlReturnType GetUltimateScriptType()
         {
-            InputSqlReturnTypeEnum result;
+            InputSqlReturnType result;
             if (InputSqlReturnTypeTable)
-                result = InputSqlReturnTypeEnum.Table;
+                result = InputSqlReturnType.Table;
             else if (InputSqlReturnTypeSelect)
-                result = InputSqlReturnTypeEnum.Select;
+                result = InputSqlReturnType.Select;
             else if (InputSqlReturnTypeScalars)
-                result = InputSqlReturnTypeEnum.Scalars;
+                result = InputSqlReturnType.Scalars;
             else if (InputSqlReturnTypeCursor)
-                result = InputSqlReturnTypeEnum.RefCursor;
+                result = InputSqlReturnType.RefCursor;
             else if (InputSqlReturnTypeMultiImplicit)
-                result = InputSqlReturnTypeEnum.MultiImplicitCursors;
+                result = InputSqlReturnType.MultiImplicitCursors;
             else
                 throw new ArgumentOutOfRangeException("No input SQL return type specified");
 

@@ -13,11 +13,11 @@
             this.dbConnection = dbConnection;
         }
 
-        internal IEnumerable<OracleCommand> CreateDbCommands(InputSqlReturnTypeEnum returnType, string command, IEnumerable<string> inputArguments)
+        internal IEnumerable<OracleCommand> CreateDbCommands(InputSqlReturnType returnType, string command, IEnumerable<string> inputArguments)
         {
             var result = returnType switch
             {
-                InputSqlReturnTypeEnum.Table => CreateCommandTable(command),
+                InputSqlReturnType.Table => CreateCommandTable(command),
                 _ => throw new NotImplementedException($"Using input script type \"{returnType}\" not (yet) implemented!")
             };
 
