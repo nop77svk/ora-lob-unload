@@ -9,7 +9,7 @@
         public CharsetEncoderForClob(UnicodeEncoding inputDecoder, Encoding outputEncoder, int inputBufferSizeInChars = 262144)
         {
             if (inputBufferSizeInChars <= 0)
-                throw new ArgumentOutOfRangeException($"Illegal input buffer size of \"{inputBufferSizeInChars}\" characters");
+                throw new ArgumentOutOfRangeException(nameof(inputBufferSizeInChars), $"Illegal input buffer size of \"{inputBufferSizeInChars}\" characters");
 
             InputBlockSize = inputBufferSizeInChars * 2;
 
