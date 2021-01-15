@@ -19,7 +19,7 @@
 
         public bool CanReuseTransform => false;
 
-        public bool CanTransformMultipleBlocks => false;
+        public bool CanTransformMultipleBlocks => true;
 
         public int InputBlockSize { get; }
 
@@ -35,17 +35,17 @@
 
         public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
         {
-            var inputString = InputDecoder.GetString(inputBuffer, inputOffset, inputCount);
-            var outputBytes = OutputEncoder.GetBytes(inputString);
-            outputBytes.CopyTo(outputBuffer, outputOffset);
-            return outputBytes.Length;
+            var decodedInput = InputDecoder.GetString(inputBuffer, inputOffset, inputCount);
+            var output = OutputEncoder.GetBytes(decodedInput);
+            output.CopyTo(outputBuffer, outputOffset);
+            return output.Length;
         }
 
         public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
         {
-            var inputString = InputDecoder.GetString(inputBuffer, inputOffset, inputCount);
-            var outputBytes = OutputEncoder.GetBytes(inputString);
-            return outputBytes;
+            var decodedInput = InputDecoder.GetString(inputBuffer, inputOffset, inputCount);
+            var output = OutputEncoder.GetBytes(decodedInput);
+            return output;
         }
     }
 }
