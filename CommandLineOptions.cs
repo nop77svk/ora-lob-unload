@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using CommandLine;
 
-    #nullable enable
     internal class CommandLineOptions
     {
         [Option('f', "file", Required = false, HelpText = "Input SQL script file")]
@@ -62,5 +61,4 @@
             return result;
         }
     }
-    #nullable disable
 }

@@ -19,7 +19,7 @@ dotnet_diagnostic.SA1633.severity = silent
 dotnet_diagnostic.SA1101.severity = silent
 
 # SA1600: Elements should be documented
-dotnet_diagnostic.SA1600.severity = none
+dotnet_diagnostic.SA1600.severity = silent
 
 # SA0001: XML comment analysis is disabled due to project configuration
 dotnet_diagnostic.SA0001.severity = silent
@@ -32,3 +32,6 @@ dotnet_diagnostic.SA1602.severity = silent
 
 # SA1309: Field names should not begin with underscore
 dotnet_diagnostic.SA1309.severity = silent
+
+# IDE0011: Add braces
+dotnet_diagnostic.IDE0011.severity = silent

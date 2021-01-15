@@ -4,7 +4,6 @@
     using System.Security.Cryptography;
     using System.Text;
 
-    #nullable enable
     internal class CharsetEncoderForClob : ICryptoTransform
     {
         public CharsetEncoderForClob(UnicodeEncoding inputDecoder, Encoding outputEncoder, int inputBufferSizeInChars = 262144)
@@ -49,5 +48,4 @@
             return output;
         }
     }
-    #nullable disable
 }

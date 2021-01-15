@@ -5,7 +5,6 @@
     using System.IO;
     using Oracle.ManagedDataAccess.Client;
 
-    #nullable enable
     internal class InputSqlCommandFactory
     {
         private readonly OracleConnection _dbConnection;
@@ -48,5 +47,4 @@
             }
         }
     }
-    #nullable disable
 }
