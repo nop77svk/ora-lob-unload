@@ -6,16 +6,16 @@
 
     internal class InputSqlCommandFactory
     {
-        private readonly OracleConnection dbConnection;
+        private readonly OracleConnection _dbConnection;
 
         internal InputSqlCommandFactory(OracleConnection dbConnection)
         {
-            this.dbConnection = dbConnection;
+            _dbConnection = dbConnection;
         }
 
         internal IEnumerable<OracleCommand> CreateDbCommands(InputSqlReturnType returnType, string command, IEnumerable<string> inputArguments)
         {
-            var result = returnType switch
+            IEnumerable<OracleCommand> result = returnType switch
             {
                 InputSqlReturnType.Table => CreateCommandTable(command),
                 _ => throw new NotImplementedException($"Using input script type \"{returnType}\" not (yet) implemented!")
@@ -30,7 +30,7 @@
             string cleanedUpTableName = command.Trim().ToUpper();
             Console.WriteLine($"Reading data from table \"{cleanedUpTableName}\"");
 
-            OracleCommand result = new OracleCommand(cleanedUpTableName, this.dbConnection)
+            OracleCommand result = new OracleCommand(cleanedUpTableName, _dbConnection)
             {
                 CommandType = System.Data.CommandType.TableDirect,
                 FetchSize = 100,

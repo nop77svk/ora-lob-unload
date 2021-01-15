@@ -35,16 +35,16 @@
 
         public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
         {
-            var decodedInput = InputDecoder.GetString(inputBuffer, inputOffset, inputCount);
-            var output = OutputEncoder.GetBytes(decodedInput);
+            string decodedInput = InputDecoder.GetString(inputBuffer, inputOffset, inputCount);
+            byte[] output = OutputEncoder.GetBytes(decodedInput);
             output.CopyTo(outputBuffer, outputOffset);
             return output.Length;
         }
 
         public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
         {
-            var decodedInput = InputDecoder.GetString(inputBuffer, inputOffset, inputCount);
-            var output = OutputEncoder.GetBytes(decodedInput);
+            string decodedInput = InputDecoder.GetString(inputBuffer, inputOffset, inputCount);
+            byte[] output = OutputEncoder.GetBytes(decodedInput);
             return output;
         }
     }
