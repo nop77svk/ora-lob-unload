@@ -5,6 +5,7 @@
     using System.Text;
     using Oracle.ManagedDataAccess.Types;
 
+#nullable enable
     public static class OracleManagedAccessFixes
     {
         /// <summary>
@@ -32,4 +33,5 @@
             while (bytesRead >= bufferSize);
         }
     }
+    #nullable disable
 }

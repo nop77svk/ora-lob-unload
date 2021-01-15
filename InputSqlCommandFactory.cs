@@ -5,6 +5,7 @@
     using System.IO;
     using Oracle.ManagedDataAccess.Client;
 
+    #nullable enable
     internal class InputSqlCommandFactory
     {
         private readonly OracleConnection _dbConnection;
@@ -14,31 +15,38 @@
             _dbConnection = dbConnection;
         }
 
-        internal IEnumerable<OracleCommand> CreateDbCommands(InputSqlReturnType returnType, TextReader inputReader, IEnumerable<string> inputArguments)
+        internal IEnumerable<OracleCommand> CreateDbCommands(InputSqlReturnType returnType, TextReader inputReader, IEnumerable<string>? inputArguments)
         {
             IEnumerable<OracleCommand> result = returnType switch
             {
-                InputSqlReturnType.Table => CreateCommandTable(inputReader.ReadToEnd()),
+                InputSqlReturnType.Table => CreateCommandTable(inputReader),
                 _ => throw new NotImplementedException($"Using input script type \"{returnType}\" not (yet) implemented!")
             };
 
             return result;
         }
 
-        internal IEnumerable<OracleCommand> CreateCommandTable(string command)
+        internal IEnumerable<OracleCommand> CreateCommandTable(TextReader streamOfTableNames)
         {
-            // 2do! iterate through tables on input
-            string cleanedUpTableName = command.Trim().ToUpper();
-            Console.WriteLine($"Reading data from table \"{cleanedUpTableName}\"");
-
-            OracleCommand result = new OracleCommand(cleanedUpTableName, _dbConnection)
+            string? tableName;
+            while ((tableName = streamOfTableNames.ReadLine()) != null)
             {
-                CommandType = System.Data.CommandType.TableDirect,
-                FetchSize = 100,
-                InitialLOBFetchSize = 262144
-            };
+                string cleanedUpTableName = tableName.Trim().ToUpper();
+                if (cleanedUpTableName == "")
+                    continue;
 
-            yield return result;
+                Console.WriteLine($"Reading data from table \"{cleanedUpTableName}\"");
+
+                OracleCommand result = new OracleCommand(cleanedUpTableName, _dbConnection)
+                {
+                    CommandType = System.Data.CommandType.TableDirect,
+                    FetchSize = 100,
+                    InitialLOBFetchSize = 262144
+                };
+
+                yield return result;
+            }
         }
     }
+    #nullable disable
 }

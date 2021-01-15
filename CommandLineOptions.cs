@@ -4,16 +4,17 @@
     using System.Collections.Generic;
     using CommandLine;
 
+    #nullable enable
     internal class CommandLineOptions
     {
         [Option('f', "file", Required = false, HelpText = "Input SQL script file")]
-        public string InputSqlScriptFile { get; set; }
+        public string? InputSqlScriptFile { get; set; }
 
         [Option('o', "output", Required = false, HelpText = "Output folder")]
-        public string OutputFolder { get; set; }
+        public string? OutputFolder { get; set; }
 
         [Option("clob-output-charset", Required = false, Default = "utf8")]
-        public string OutputEncoding { get; set; }
+        public string? OutputEncoding { get; set; }
 
         [Option('t', "use-table", Required = true, Default = false, SetName = "in-type-table")]
         public bool InputSqlReturnTypeTable { get; set; }
@@ -31,16 +32,16 @@
         public bool InputSqlReturnTypeMultiImplicit { get; set; }
 
         [Option('u', "db-user", Required = true)]
-        public string DbUser { get; set; }
+        public string? DbUser { get; set; }
 
         [Option('p', "db-pasword", Required = true)]
-        public string DbPassword { get; set; }
+        public string? DbPassword { get; set; }
 
         [Option('d', "db", Required = true)]
-        public string DbService { get; set; }
+        public string? DbService { get; set; }
 
         [Option('v', "argument", Required = false, Separator = ',')]
-        public IEnumerable<string> InputSqlArguments { get; set; }
+        public IEnumerable<string>? InputSqlArguments { get; set; }
 
         internal InputSqlReturnType GetUltimateScriptType()
         {
@@ -61,4 +62,5 @@
             return result;
         }
     }
+    #nullable disable
 }

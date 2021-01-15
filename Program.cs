@@ -9,6 +9,7 @@
     using Oracle.ManagedDataAccess.Client;
     using Oracle.ManagedDataAccess.Types;
 
+    #nullable enable
     internal static class Program
     {
         #pragma warning disable SA1500 // Braces for multi-line statements should not share line
@@ -20,8 +21,7 @@
                     _ => {
                         Console.WriteLine("Something bad happened on the command line (2do!)");
                         return 255;
-                    }
-                );
+                    });
         }
         #pragma warning restore SA1500 // Braces for multi-line statements should not share line
 
@@ -30,6 +30,13 @@
             InputSqlReturnType scriptType = options.GetUltimateScriptType();
 
             using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputSqlScriptFile);
+
+            if (options.DbService is null or "")
+                throw new ArgumentNullException(nameof(options.DbService));
+            if (options.DbUser is null or "")
+                throw new ArgumentNullException(nameof(options.DbUser));
+            if (options.DbPassword is null or "")
+                throw new ArgumentNullException(nameof(options.DbPassword));
 
             using var dbConnection = new OracleConnection($"Data Source = {options.DbService}; User Id = {options.DbUser}; Password = {options.DbPassword}");
             dbConnection.Open();
@@ -45,17 +52,17 @@
                 using (dbCommand)
                 {
                     using OracleDataReader dbReader = dbCommand.ExecuteReader(System.Data.CommandBehavior.Default);
+                    if (dbReader.FieldCount != 2)
+                        throw new InvalidDataException($"Dataset field count is {dbReader.FieldCount}, should be exactly 2");
+
+                    string fieldOneTypeName = dbReader.GetFieldType(0).Name;
+                    if (fieldOneTypeName != "String")
+                        throw new InvalidDataException($"Field #1 is of type \"{fieldOneTypeName}\", but \"string\" expected");
+
+                    string fieldTwoTypeName = dbReader.GetProviderSpecificFieldType(1).Name;
+
                     while (dbReader.Read())
                     {
-                        if (dbReader.FieldCount != 2)
-                            throw new InvalidDataException($"Dataset field count is {dbReader.FieldCount}, should be exactly 2");
-
-                        string fieldOneTypeName = dbReader.GetFieldType(0).Name;
-                        if (fieldOneTypeName != "string")
-                            throw new InvalidDataException($"Field #1 is of type \"{fieldOneTypeName}\", but \"string\" expected");
-
-                        string fieldTwoTypeName = dbReader.GetProviderSpecificFieldType(1).Name;
-
                         string fileName = dbReader.GetString(0);
                         using var outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
 
@@ -89,13 +96,14 @@
             return 0;
         }
 
-        internal static StreamReader OpenInputSqlScript(string inputSqlScriptFile)
+        internal static StreamReader OpenInputSqlScript(string? inputSqlScriptFile)
         {
             return inputSqlScriptFile switch
             {
-                "" => new StreamReader(Console.OpenStandardInput()),
+                "" or null => new StreamReader(Console.OpenStandardInput()),
                 _ => File.OpenText(inputSqlScriptFile)
             };
         }
     }
+    #nullable disable
 }
