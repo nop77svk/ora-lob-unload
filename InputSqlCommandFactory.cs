@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using Oracle.ManagedDataAccess.Client;
 
     internal class InputSqlCommandFactory
@@ -13,11 +14,11 @@
             _dbConnection = dbConnection;
         }
 
-        internal IEnumerable<OracleCommand> CreateDbCommands(InputSqlReturnType returnType, string command, IEnumerable<string> inputArguments)
+        internal IEnumerable<OracleCommand> CreateDbCommands(InputSqlReturnType returnType, TextReader inputReader, IEnumerable<string> inputArguments)
         {
             IEnumerable<OracleCommand> result = returnType switch
             {
-                InputSqlReturnType.Table => CreateCommandTable(command),
+                InputSqlReturnType.Table => CreateCommandTable(inputReader.ReadToEnd()),
                 _ => throw new NotImplementedException($"Using input script type \"{returnType}\" not (yet) implemented!")
             };
 

@@ -30,13 +30,12 @@
             InputSqlReturnType scriptType = options.GetUltimateScriptType();
 
             using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputSqlScriptFile);
-            string inputSqlText = inputSqlScriptReader.ReadToEnd();
 
             using var dbConnection = new OracleConnection($"Data Source = {options.DbService}; User Id = {options.DbUser}; Password = {options.DbPassword}");
             dbConnection.Open();
 
             var dbCommandFactory = new InputSqlCommandFactory(dbConnection);
-            IEnumerable<OracleCommand> dbCommandList = dbCommandFactory.CreateDbCommands(scriptType, inputSqlText, options.InputSqlArguments);
+            IEnumerable<OracleCommand> dbCommandList = dbCommandFactory.CreateDbCommands(scriptType, inputSqlScriptReader, options.InputSqlArguments);
 
             var clobInputDecoder = new UnicodeEncoding(false, false);
             var clobOutputEncoder = new UTF8Encoding(false); // 2do! encoding as cmdln argument
