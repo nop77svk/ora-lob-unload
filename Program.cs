@@ -9,7 +9,6 @@
     using Oracle.ManagedDataAccess.Client;
     using Oracle.ManagedDataAccess.Types;
 
-    #nullable enable
     internal static class Program
     {
         #pragma warning disable SA1500 // Braces for multi-line statements should not share line
@@ -61,34 +60,39 @@
 
                     string fieldTwoTypeName = dbReader.GetProviderSpecificFieldType(1).Name;
 
-                    while (dbReader.Read())
+                    if (fieldTwoTypeName == "OracleClob")
                     {
-                        string fileName = dbReader.GetString(0);
-                        using var outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-
-                        if (fieldTwoTypeName == "OracleClob")
-                        {
-                            using OracleClob lobContents = dbReader.GetOracleClob(1);
-                            Console.WriteLine($"Saving {lobContents.Length / 2} characters long CLOB to {fileName}");
-                            using var outFileRecoded = new CryptoStream(outFile, new CharsetEncoderForClob(clobInputDecoder, clobOutputEncoder), CryptoStreamMode.Write, true);
-                            lobContents.CorrectlyCopyTo(outFileRecoded);
-                        }
-                        else if (fieldTwoTypeName == "OracleBlob")
-                        {
-                            using OracleBlob lobContents = dbReader.GetOracleBlob(1);
-                            Console.WriteLine($"Saving {lobContents.Length} bytes long BLOB to {fileName}");
-                            lobContents.CopyTo(outFile);
-                        }
-                        else if (fieldTwoTypeName == "OracleBFile")
-                        {
-                            using OracleBFile lobContents = dbReader.GetOracleBFile(1);
-                            Console.WriteLine($"Saving {lobContents.Length} bytes long BFILE to {fileName}");
-                            lobContents.CopyTo(outFile);
-                        }
-                        else
-                        {
-                            throw new InvalidDataException($"Field #2 is of type \"{fieldTwoTypeName}\", but LOB or BFILE expected");
-                        }
+                        SaveDataFromReader<OracleClob>(
+                            dbReader,
+                            (inStream) => new CryptoStream(inStream, new CharsetEncoderForClob(clobInputDecoder, clobOutputEncoder), CryptoStreamMode.Write, true),
+                            (reader, fieldIndex) => reader.GetOracleClob(fieldIndex),
+                            (lobContents, outStream) => { lobContents.CorrectlyCopyTo(outStream); },
+                            (lobContents, fileName) => { Console.WriteLine($"Saving a {lobContents.Length / 2} characters long CLOB to \"{fileName}\""); }
+                        );
+                    }
+                    else if (fieldTwoTypeName == "OracleBlob")
+                    {
+                        SaveDataFromReader<OracleBlob>(
+                            dbReader,
+                            (inStream) => new BufferedStream(inStream), // 2do! not really neccessary here; might be a reason for switching from delegate-driven generic method to a set of 3 specialization classes
+                            (reader, fieldIndex) => reader.GetOracleBlob(fieldIndex),
+                            (lobContents, outStream) => { lobContents.CopyTo(outStream); },
+                            (lobContents, fileName) => { Console.WriteLine($"Saving a {lobContents.Length} bytes long BLOB to \"{fileName}\""); }
+                        );
+                    }
+                    else if (fieldTwoTypeName == "OracleBFile")
+                    {
+                        SaveDataFromReader<OracleBFile>(
+                            dbReader,
+                            (inStream) => new BufferedStream(inStream), // 2do! not really neccessary here; might be a reason for switching from delegate-driven generic method to a set of 3 specialization classes
+                            (reader, fieldIndex) => reader.GetOracleBFile(fieldIndex),
+                            (lobContents, outStream) => { lobContents.CopyTo(outStream); },
+                            (lobContents, fileName) => { Console.WriteLine($"Saving a {lobContents.Length} bytes long BFILE to \"{fileName}\""); }
+                        );
+                    }
+                    else
+                    {
+                        throw new InvalidDataException($"Field #2 is of type \"{fieldTwoTypeName}\", but LOB or BFILE expected");
                     }
                 }
             }
@@ -104,6 +108,33 @@
                 _ => File.OpenText(inputSqlScriptFile)
             };
         }
+
+        internal static void SaveDataFromReader<TOracleLob>(
+            OracleDataReader dbReader,
+            Func<Stream, Stream> createTransformStream,
+            Func<OracleDataReader, int, TOracleLob> getLobStream,
+            Action<TOracleLob, Stream> copyLobStream,
+            Action<TOracleLob, string> copyStartFeedback
+        )
+        {
+            while (dbReader.Read())
+            {
+                string fileName = dbReader.GetString(0);
+                using Stream outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                using Stream outTransformer = createTransformStream(outFile);
+
+                TOracleLob lobContents = getLobStream(dbReader, 1);
+                try
+                {
+                    copyStartFeedback(lobContents, fileName);
+                    copyLobStream(lobContents, outTransformer);
+                }
+                finally
+                {
+                    if (lobContents is IDisposable disposableLob) // 2do! can this be enforced during compilation somehow?
+                        disposableLob.Dispose();
+                }
+            }
+        }
     }
-    #nullable disable
 }
