@@ -25,16 +25,11 @@
 
         internal static int MainWithOptions(CommandLineOptions options)
         {
+            ValidateOptions(options);
+
             using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputSqlScriptFile);
 
-            if (options.DbService is null or "")
-                throw new ArgumentNullException(nameof(options.DbService));
-            if (options.DbUser is null or "")
-                throw new ArgumentNullException(nameof(options.DbUser));
-            if (options.DbPassword is null or "")
-                throw new ArgumentNullException(nameof(options.DbPassword));
-
-            using var dbConnection = new OracleConnection($"Data Source = {options.DbService}; User Id = {options.DbUser}; Password = {options.DbPassword}");
+            using var dbConnection = OracleConnectionFactory(options.DbService, options.DbUser, options.DbPassword);
             dbConnection.Open();
 
             var dbCommandFactory = new InputSqlCommandFactory(dbConnection);
@@ -50,12 +45,12 @@
                     if (dbReader.FieldCount < minimalDatasetColumnCount)
                         throw new InvalidDataException($"Dataset field count is {dbReader.FieldCount}, should be at least {minimalDatasetColumnCount}");
 
-                    string fieldOneTypeName = dbReader.GetFieldType(options.FileNameColumnIndex - 1).Name;
-                    if (fieldOneTypeName != "String")
-                        throw new InvalidDataException($"Supposed file name column #{options.FileNameColumnIndex} is of type \"{fieldOneTypeName}\", but \"string\" expected");
+                    string fileNameColumnTypeName = dbReader.GetFieldType(options.FileNameColumnIndex - 1).Name;
+                    if (fileNameColumnTypeName != "String")
+                        throw new InvalidDataException($"Supposed file name column #{options.FileNameColumnIndex} is of type \"{fileNameColumnTypeName}\", but \"string\" expected");
 
-                    string fieldTwoTypeName = dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1).Name;
-                    switch (fieldTwoTypeName)
+                    string lobColumnTypeName = dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1).Name;
+                    switch (lobColumnTypeName)
                     {
                         case "OracleClob":
                             SaveDataFromReader(
@@ -79,12 +74,25 @@
                             );
                             break;
                         default:
-                            throw new InvalidDataException($"Supposed LOB column #{options.LobColumnIndex} is of type \"{fieldTwoTypeName}\", but LOB or BFILE expected");
+                            throw new InvalidDataException($"Supposed LOB column #{options.LobColumnIndex} is of type \"{lobColumnTypeName}\", but LOB or BFILE expected");
                     }
                 }
             }
 
             return 0;
+        }
+
+        internal static void ValidateOptions(CommandLineOptions options)
+        {
+            if (options.FileNameColumnIndex is < 1 or > 1000)
+                throw new ArgumentOutOfRangeException(nameof(options.FileNameColumnIndex), "Must be between 1 and 1000 (inclusive)");
+            if (options.LobColumnIndex is < 1 or > 1000)
+                throw new ArgumentOutOfRangeException(nameof(options.LobColumnIndex), "Must be between 1 and 1000 (inclusive)");
+            if (options.LobColumnIndex == options.FileNameColumnIndex)
+                throw new ArgumentException($"LOB column index {options.LobColumnIndex} cannot be the same as file name column index {options.FileNameColumnIndex}");
+
+            if (options.DbService is null or "" || options.DbUser is null or "" || options.DbPassword is null or "")
+                throw new ArgumentNullException("options.Db*", "Empty or incomplete database credentials supplied");
         }
 
         internal static StreamReader OpenInputSqlScript(string? inputSqlScriptFile)
@@ -94,6 +102,18 @@
                 "" or null => new StreamReader(Console.OpenStandardInput()),
                 _ => File.OpenText(inputSqlScriptFile)
             };
+        }
+
+        internal static OracleConnection OracleConnectionFactory(string? dbService, string? dbUser, string? dbPassword)
+        {
+            if (dbService is null or "")
+                throw new ArgumentNullException(nameof(dbService));
+            if (dbUser is null or "")
+                throw new ArgumentNullException(nameof(dbUser));
+            if (dbPassword is null or "")
+                throw new ArgumentNullException(nameof(dbPassword));
+
+            return new OracleConnection($"Data Source = {dbService}; User Id = {dbUser}; Password = {dbPassword}");
         }
 
         internal static void SaveDataFromReader(OracleDataReader reader, IDataReaderToStream processor, Action<long, string>? copyStartFeedback)

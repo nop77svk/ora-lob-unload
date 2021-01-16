@@ -19,10 +19,10 @@
         [Option('t', "use-table", Required = true, Default = false, SetName = "in-type-table")]
         public bool InputSqlReturnTypeTable { get; set; }
 
-        [Option("file-name-column-ix", Required = false, Default = 1, Min = 1, Max = 1000, SetName = "in-type-table")]
+        [Option("file-name-column-ix", Required = false, Default = 1, SetName = "in-type-table")]
         public int FileNameColumnIndex { get; set; }
 
-        [Option("lob-column-ix", Required = false, Default = 2, Min = 1, Max = 1000, SetName = "in-type-table")]
+        [Option("lob-column-ix", Required = false, Default = 2, SetName = "in-type-table")]
         public int LobColumnIndex { get; set; }
 
         [Option('q', "use-query", Required = true, Default = false, SetName = "in-type-query")]
