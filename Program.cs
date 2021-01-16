@@ -55,34 +55,31 @@
                         throw new InvalidDataException($"Field #1 is of type \"{fieldOneTypeName}\", but \"string\" expected");
 
                     string fieldTwoTypeName = dbReader.GetProviderSpecificFieldType(1).Name;
-
-                    if (fieldTwoTypeName == "OracleClob")
+                    switch (fieldTwoTypeName)
                     {
-                        SaveDataFromReader(
-                            dbReader,
-                            new ClobProcessor(options.OutputEncoding),
-                            (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} characters long CLOB to \"{fileName}\" with encoding of "); }
-                        );
-                    }
-                    else if (fieldTwoTypeName == "OracleBlob")
-                    {
-                        SaveDataFromReader(
-                            dbReader,
-                            new BlobProcessor(),
-                            (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BLOB to \"{fileName}\""); }
-                        );
-                    }
-                    else if (fieldTwoTypeName == "OracleBFile")
-                    {
-                        SaveDataFromReader(
-                            dbReader,
-                            new BFileProcessor(),
-                            (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BFILE to \"{fileName}\""); }
-                        );
-                    }
-                    else
-                    {
-                        throw new InvalidDataException($"Field #2 is of type \"{fieldTwoTypeName}\", but LOB or BFILE expected");
+                        case "OracleClob":
+                            SaveDataFromReader(
+                                dbReader,
+                                new ClobProcessor(options.OutputEncoding),
+                                (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} characters long CLOB to \"{fileName}\" with encoding of "); }
+                            );
+                            break;
+                        case "OracleBlob":
+                            SaveDataFromReader(
+                                dbReader,
+                                new BlobProcessor(),
+                                (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BLOB to \"{fileName}\""); }
+                            );
+                            break;
+                        case "OracleBFile":
+                            SaveDataFromReader(
+                                dbReader,
+                                new BFileProcessor(),
+                                (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BFILE to \"{fileName}\""); }
+                            );
+                            break;
+                        default:
+                            throw new InvalidDataException($"Field #2 is of type \"{fieldTwoTypeName}\", but LOB or BFILE expected");
                     }
                 }
             }
