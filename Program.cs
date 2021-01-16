@@ -60,7 +60,7 @@
 
                     if (fieldTwoTypeName == "OracleClob")
                     {
-                        SaveDataFromReader2(
+                        SaveDataFromReader(
                             dbReader,
                             new ClobProcessor(new UTF8Encoding(false, false)),
                             (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength / 2} characters long CLOB to \"{fileName}\""); }
@@ -68,7 +68,7 @@
                     }
                     else if (fieldTwoTypeName == "OracleBlob")
                     {
-                        SaveDataFromReader2(
+                        SaveDataFromReader(
                             dbReader,
                             new BlobProcessor(),
                             (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BLOB to \"{fileName}\""); }
@@ -76,7 +76,7 @@
                     }
                     else if (fieldTwoTypeName == "OracleBFile")
                     {
-                        SaveDataFromReader2(
+                        SaveDataFromReader(
                             dbReader,
                             new BFileProcessor(),
                             (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BFILE to \"{fileName}\""); }
@@ -101,7 +101,7 @@
             };
         }
 
-        internal static void SaveDataFromReader2(OracleDataReader reader, IDataReaderToStream processor, Action<long, string> copyStartFeedback)
+        internal static void SaveDataFromReader(OracleDataReader reader, IDataReaderToStream processor, Action<long, string> copyStartFeedback)
         {
             while (reader.Read())
             {
@@ -111,34 +111,6 @@
                 using Stream lobContents = processor.ReadLob(reader, 1);
                 copyStartFeedback(processor.GetTrueLength(lobContents.Length), fileName);
                 processor.SaveLobToStream(lobContents, outFile);
-            }
-        }
-
-        internal static void SaveDataFromReader<TOracleLob>(
-            OracleDataReader dbReader,
-            Func<Stream, Stream> createTransformStream,
-            Func<OracleDataReader, int, TOracleLob> getLobStream,
-            Action<TOracleLob, Stream> copyLobStream,
-            Action<TOracleLob, string> copyStartFeedback
-        )
-            where TOracleLob : IDisposable
-        {
-            while (dbReader.Read())
-            {
-                string fileName = dbReader.GetString(0);
-                using Stream outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-                using Stream outTransformer = createTransformStream(outFile);
-
-                TOracleLob lobContents = getLobStream(dbReader, 1);
-                try
-                {
-                    copyStartFeedback(lobContents, fileName);
-                    copyLobStream(lobContents, outTransformer);
-                }
-                finally
-                {
-                    lobContents.Dispose();
-                }
             }
         }
     }
