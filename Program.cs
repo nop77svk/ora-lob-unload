@@ -125,12 +125,13 @@
             while (dataReader.Read())
             {
                 string fileName = dataReader.GetString(fileNameColumnIx);
-                if (cleanedFileNameExt != "" && !fileName.EndsWith(cleanedFileNameExt, StringComparison.OrdinalIgnoreCase))
-                    fileName += cleanedFileNameExt;
-                using Stream outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                string fileNameWithExt = cleanedFileNameExt != "" && !fileName.EndsWith(cleanedFileNameExt, StringComparison.OrdinalIgnoreCase)
+                    ? fileName + cleanedFileNameExt
+                    : fileName;
+                using Stream outFile = new FileStream(fileNameWithExt, FileMode.Create, FileAccess.Write);
 
                 using Stream lobContents = processor.ReadLob(dataReader, lobColumnIx);
-                copyStartFeedback?.Invoke(processor.GetTrueLobLength(lobContents.Length), fileName);
+                copyStartFeedback?.Invoke(processor.GetTrueLobLength(lobContents.Length), fileNameWithExt);
                 processor.SaveLobToStream(lobContents, outFile);
             }
         }
