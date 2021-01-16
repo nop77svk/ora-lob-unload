@@ -8,6 +8,7 @@
     using CommandLine;
     using Oracle.ManagedDataAccess.Client;
     using Oracle.ManagedDataAccess.Types;
+    using OraLobUnload.DatasetSavers;
 
     internal static class Program
     {
@@ -43,9 +44,6 @@
             var dbCommandFactory = new InputSqlCommandFactory(dbConnection);
             IEnumerable<OracleCommand> dbCommandList = dbCommandFactory.CreateDbCommands(scriptType, inputSqlScriptReader, options.InputSqlArguments);
 
-            var clobInputDecoder = new UnicodeEncoding(false, false);
-            var clobOutputEncoder = new UTF8Encoding(false); // 2do! encoding as cmdln argument
-
             foreach (OracleCommand dbCommand in dbCommandList)
             {
                 using (dbCommand)
@@ -62,32 +60,26 @@
 
                     if (fieldTwoTypeName == "OracleClob")
                     {
-                        SaveDataFromReader<OracleClob>(
+                        SaveDataFromReader2(
                             dbReader,
-                            (inStream) => new CryptoStream(inStream, new CharsetEncoderForClob(clobInputDecoder, clobOutputEncoder), CryptoStreamMode.Write, true),
-                            (reader, fieldIndex) => reader.GetOracleClob(fieldIndex),
-                            (lobContents, outStream) => { lobContents.CorrectlyCopyTo(outStream); },
-                            (lobContents, fileName) => { Console.WriteLine($"Saving a {lobContents.Length / 2} characters long CLOB to \"{fileName}\""); }
+                            new ClobProcessor(new UTF8Encoding(false, false)),
+                            (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength / 2} characters long CLOB to \"{fileName}\""); }
                         );
                     }
                     else if (fieldTwoTypeName == "OracleBlob")
                     {
-                        SaveDataFromReader<OracleBlob>(
+                        SaveDataFromReader2(
                             dbReader,
-                            (inStream) => new BufferedStream(inStream), // 2do! not really neccessary here; might be a reason for switching from delegate-driven generic method to a set of 3 specialization classes
-                            (reader, fieldIndex) => reader.GetOracleBlob(fieldIndex),
-                            (lobContents, outStream) => { lobContents.CopyTo(outStream); },
-                            (lobContents, fileName) => { Console.WriteLine($"Saving a {lobContents.Length} bytes long BLOB to \"{fileName}\""); }
+                            new BlobProcessor(),
+                            (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BLOB to \"{fileName}\""); }
                         );
                     }
                     else if (fieldTwoTypeName == "OracleBFile")
                     {
-                        SaveDataFromReader<OracleBFile>(
+                        SaveDataFromReader2(
                             dbReader,
-                            (inStream) => new BufferedStream(inStream), // 2do! not really neccessary here; might be a reason for switching from delegate-driven generic method to a set of 3 specialization classes
-                            (reader, fieldIndex) => reader.GetOracleBFile(fieldIndex),
-                            (lobContents, outStream) => { lobContents.CopyTo(outStream); },
-                            (lobContents, fileName) => { Console.WriteLine($"Saving a {lobContents.Length} bytes long BFILE to \"{fileName}\""); }
+                            new BFileProcessor(),
+                            (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BFILE to \"{fileName}\""); }
                         );
                     }
                     else
@@ -109,6 +101,19 @@
             };
         }
 
+        internal static void SaveDataFromReader2(OracleDataReader reader, IDataReaderToStream processor, Action<long, string> copyStartFeedback)
+        {
+            while (reader.Read())
+            {
+                string fileName = reader.GetString(0);
+                using Stream outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+
+                using Stream lobContents = processor.ReadLob(reader, 1);
+                copyStartFeedback(processor.GetTrueLength(lobContents.Length), fileName);
+                processor.SaveLobToStream(lobContents, outFile);
+            }
+        }
+
         internal static void SaveDataFromReader<TOracleLob>(
             OracleDataReader dbReader,
             Func<Stream, Stream> createTransformStream,
@@ -116,6 +121,7 @@
             Action<TOracleLob, Stream> copyLobStream,
             Action<TOracleLob, string> copyStartFeedback
         )
+            where TOracleLob : IDisposable
         {
             while (dbReader.Read())
             {
@@ -131,8 +137,7 @@
                 }
                 finally
                 {
-                    if (lobContents is IDisposable disposableLob) // 2do! can this be enforced during compilation somehow?
-                        disposableLob.Dispose();
+                    lobContents.Dispose();
                 }
             }
         }
