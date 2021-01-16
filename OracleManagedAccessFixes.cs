@@ -5,14 +5,14 @@
 
     public static class OracleManagedAccessFixes
     {
+        private static readonly int UnicodeCharacterSizeInBytes = 2;
+
         /// <summary>
-        /// OracleClob.CopyTo(some binary stream) simply messing up the output.
-        /// OracleClob.Read(byte[] buf,...) reads "count" bytes, but reports "count" characters, i.e. half the bytes.
-        /// OracleClob.Read(byte[] bug,...) reads "count" bytes, but shifts the stream origin only by half the bytes further.
+        /// A fix for OracleClob.CopyTo(Stream) badly messing up the copying.
         /// </summary>
-        /// <param name="source">source OracleClob stream.</param>
-        /// <param name="target">target Stream.</param>
-        /// <param name="bufferSize">internal buffer size for copying.</param>
+        /// <param name="source">Source OracleClob stream.</param>
+        /// <param name="target">Target Stream.</param>
+        /// <param name="bufferSize">Internal buffer size for copying.</param>
         public static void CorrectlyCopyTo(this OracleClob source, Stream target, int bufferSize = 1048576)
         {
             var buf = new byte[bufferSize];
@@ -21,13 +21,17 @@
             do
             {
                 charsRead = source.Read(buf, 0, bufferSize); // note: OracleClob reports chars read, not bytes read!
-                source.Seek(charsRead, SeekOrigin.Current); // note: OracleClob, even when reading bytes, moves the "current origin" by number of chars read only
 
-                bytesRead = charsRead * 2;
-                if (bytesRead > 0)
-                    target.Write(buf, 0, bytesRead);
+                if (charsRead > 0)
+                {
+                    bytesRead = charsRead * UnicodeCharacterSizeInBytes;
+                    if (bytesRead > 0)
+                        target.Write(buf, 0, bytesRead);
+
+                    source.Seek(bytesRead - charsRead, SeekOrigin.Current); // note: additional "shift" of stream origin due to OracleClob, even when reading bytes, moves the origin by number of chars read only
+                }
             }
-            while (bytesRead >= bufferSize);
+            while (charsRead > 0);
         }
     }
 }
