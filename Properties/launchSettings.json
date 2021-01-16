@@ -2,7 +2,7 @@
   "profiles": {
     "test load from tables": {
       "commandName": "Project",
-      "commandLineArgs": "-f \"test inputs\\tables.txt\" -d nop-full -u pierre -p qwe -t"
+      "commandLineArgs": "-f \"test inputs\\tables.txt\" -d nop-full -u pierre -p qwe -t -x .txt"
     }
   }
 }

@@ -13,6 +13,9 @@
         [Option('o', "output", Required = false, HelpText = "Output folder")]
         public string? OutputFolder { get; set; }
 
+        [Option('x', "output-file-extension", Required = false)]
+        public string? OutputFileExtension { get; set; }
+
         [Option("clob-output-charset", Required = false, Default = "utf-8")]
         public string? OutputEncodingId { get; set; }
 

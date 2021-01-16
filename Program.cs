@@ -76,6 +76,7 @@
                         options.FileNameColumnIndex - 1,
                         options.LobColumnIndex - 1,
                         dataProcessor,
+                        options.OutputFileExtension,
                         copyStartFeedback
                     );
                 }
@@ -118,11 +119,12 @@
             return new OracleConnection($"Data Source = {dbService}; User Id = {dbUser}; Password = {dbPassword}");
         }
 
-        internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IDataReaderToStream processor, Action<long, string>? copyStartFeedback)
+        internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IDataReaderToStream processor, string? fileNameExt, Action<long, string>? copyStartFeedback)
         {
+            string cleanedFileNameExt = fileNameExt is not null and not "" ? "." + fileNameExt.Trim('.') : "";
             while (dataReader.Read())
             {
-                string fileName = dataReader.GetString(fileNameColumnIx);
+                string fileName = dataReader.GetString(fileNameColumnIx) + cleanedFileNameExt;
                 using Stream outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
 
                 using Stream lobContents = processor.ReadLob(dataReader, lobColumnIx);
