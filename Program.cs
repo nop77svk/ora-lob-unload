@@ -50,38 +50,34 @@
                         throw new InvalidDataException($"Supposed file name column #{options.FileNameColumnIndex} is of type \"{fileNameColumnTypeName}\", but \"string\" expected");
 
                     string lobColumnTypeName = dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1).Name;
+
+                    IDataReaderToStream dataProcessor;
+                    Action<long, string>? copyStartFeedback; // note: two variables depending on the same switch case, yet the feedback is not good to be placed inside IDataReaderToStram [2do!] rework to Observer pattern (somehow)?
                     switch (lobColumnTypeName)
                     {
                         case "OracleClob":
-                            SaveDataFromReader(
-                                dbReader,
-                                options.FileNameColumnIndex - 1,
-                                options.LobColumnIndex - 1,
-                                new ClobProcessor(options.OutputEncoding),
-                                (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} characters long CLOB to \"{fileName}\" with encoding of "); }
-                            );
+                            dataProcessor = new ClobProcessor(options.OutputEncoding);
+                            copyStartFeedback = (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} characters long CLOB to \"{fileName}\" with encoding of {options.OutputEncoding.HeaderName}"); };
                             break;
                         case "OracleBlob":
-                            SaveDataFromReader(
-                                dbReader,
-                                options.FileNameColumnIndex - 1,
-                                options.LobColumnIndex - 1,
-                                new BlobProcessor(),
-                                (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BLOB to \"{fileName}\""); }
-                            );
+                            dataProcessor = new BlobProcessor();
+                            copyStartFeedback = (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BLOB to \"{fileName}\""); };
                             break;
                         case "OracleBFile":
-                            SaveDataFromReader(
-                                dbReader,
-                                options.FileNameColumnIndex - 1,
-                                options.LobColumnIndex - 1,
-                                new BFileProcessor(),
-                                (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BFILE to \"{fileName}\""); }
-                            );
+                            dataProcessor = new BFileProcessor();
+                            copyStartFeedback = (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BFILE to \"{fileName}\""); };
                             break;
                         default:
                             throw new InvalidDataException($"Supposed LOB column #{options.LobColumnIndex} is of type \"{lobColumnTypeName}\", but LOB or BFILE expected");
                     }
+
+                    SaveDataFromReader(
+                        dbReader,
+                        options.FileNameColumnIndex - 1,
+                        options.LobColumnIndex - 1,
+                        dataProcessor,
+                        copyStartFeedback
+                    );
                 }
             }
 
