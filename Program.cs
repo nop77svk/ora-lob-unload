@@ -55,6 +55,8 @@
                         case "OracleClob":
                             SaveDataFromReader(
                                 dbReader,
+                                options.FileNameColumnIndex - 1,
+                                options.LobColumnIndex - 1,
                                 new ClobProcessor(options.OutputEncoding),
                                 (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} characters long CLOB to \"{fileName}\" with encoding of "); }
                             );
@@ -62,6 +64,8 @@
                         case "OracleBlob":
                             SaveDataFromReader(
                                 dbReader,
+                                options.FileNameColumnIndex - 1,
+                                options.LobColumnIndex - 1,
                                 new BlobProcessor(),
                                 (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BLOB to \"{fileName}\""); }
                             );
@@ -69,6 +73,8 @@
                         case "OracleBFile":
                             SaveDataFromReader(
                                 dbReader,
+                                options.FileNameColumnIndex - 1,
+                                options.LobColumnIndex - 1,
                                 new BFileProcessor(),
                                 (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BFILE to \"{fileName}\""); }
                             );
@@ -116,14 +122,14 @@
             return new OracleConnection($"Data Source = {dbService}; User Id = {dbUser}; Password = {dbPassword}");
         }
 
-        internal static void SaveDataFromReader(OracleDataReader reader, IDataReaderToStream processor, Action<long, string>? copyStartFeedback)
+        internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IDataReaderToStream processor, Action<long, string>? copyStartFeedback)
         {
-            while (reader.Read())
+            while (dataReader.Read())
             {
-                string fileName = reader.GetString(0);
+                string fileName = dataReader.GetString(fileNameColumnIx);
                 using Stream outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
 
-                using Stream lobContents = processor.ReadLob(reader, 1);
+                using Stream lobContents = processor.ReadLob(dataReader, lobColumnIx);
                 copyStartFeedback?.Invoke(processor.GetTrueLobLength(lobContents.Length), fileName);
                 processor.SaveLobToStream(lobContents, outFile);
             }
