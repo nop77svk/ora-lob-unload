@@ -96,7 +96,7 @@
             };
         }
 
-        internal static void SaveDataFromReader(OracleDataReader reader, IDataReaderToStream processor, Action<long, string> copyStartFeedback)
+        internal static void SaveDataFromReader(OracleDataReader reader, IDataReaderToStream processor, Action<long, string>? copyStartFeedback)
         {
             while (reader.Read())
             {
@@ -104,7 +104,7 @@
                 using Stream outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
 
                 using Stream lobContents = processor.ReadLob(reader, 1);
-                copyStartFeedback(processor.GetTrueLobLength(lobContents.Length), fileName);
+                copyStartFeedback?.Invoke(processor.GetTrueLobLength(lobContents.Length), fileName);
                 processor.SaveLobToStream(lobContents, outFile);
             }
         }
