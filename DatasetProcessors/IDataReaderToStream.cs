@@ -1,4 +1,4 @@
-﻿namespace OraLobUnload.DatasetSavers
+﻿namespace OraLobUnload.DatasetProcessors
 {
     using System;
     using System.IO;

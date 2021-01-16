@@ -1,8 +1,6 @@
 ﻿namespace OraLobUnload
 {
-    using System;
     using System.IO;
-    using System.Text;
     using Oracle.ManagedDataAccess.Types;
 
     public static class OracleManagedAccessFixes
