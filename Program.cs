@@ -121,10 +121,12 @@
 
         internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IDataReaderToStream processor, string? fileNameExt, Action<long, string>? copyStartFeedback)
         {
-            string cleanedFileNameExt = fileNameExt is not null and not "" ? "." + fileNameExt.Trim('.') : "";
+            string cleanedFileNameExt = fileNameExt is not null and not "" ? "." + fileNameExt.Trim('.').ToLower() : "";
             while (dataReader.Read())
             {
-                string fileName = dataReader.GetString(fileNameColumnIx) + cleanedFileNameExt;
+                string fileName = dataReader.GetString(fileNameColumnIx);
+                if (cleanedFileNameExt != "" && !fileName.ToLower().EndsWith(cleanedFileNameExt))
+                    fileName += cleanedFileNameExt;
                 using Stream outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
 
                 using Stream lobContents = processor.ReadLob(dataReader, lobColumnIx);
