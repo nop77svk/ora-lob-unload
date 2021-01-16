@@ -25,8 +25,6 @@
 
         internal static int MainWithOptions(CommandLineOptions options)
         {
-            InputSqlReturnType scriptType = options.GetUltimateScriptType();
-
             using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputSqlScriptFile);
 
             if (options.DbService is null or "")
@@ -40,21 +38,23 @@
             dbConnection.Open();
 
             var dbCommandFactory = new InputSqlCommandFactory(dbConnection);
-            IEnumerable<OracleCommand> dbCommandList = dbCommandFactory.CreateDbCommands(scriptType, inputSqlScriptReader, options.InputSqlArguments);
+            IEnumerable<OracleCommand> dbCommandList = dbCommandFactory.CreateDbCommands(options.GetUltimateScriptType(), inputSqlScriptReader, options.InputSqlArguments);
 
             foreach (OracleCommand dbCommand in dbCommandList)
             {
                 using (dbCommand)
                 {
                     using OracleDataReader dbReader = dbCommand.ExecuteReader(System.Data.CommandBehavior.Default);
-                    if (dbReader.FieldCount != 2)
-                        throw new InvalidDataException($"Dataset field count is {dbReader.FieldCount}, should be exactly 2");
 
-                    string fieldOneTypeName = dbReader.GetFieldType(0).Name;
+                    int minimalDatasetColumnCount = Math.Max(options.FileNameColumnIndex, options.LobColumnIndex);
+                    if (dbReader.FieldCount < minimalDatasetColumnCount)
+                        throw new InvalidDataException($"Dataset field count is {dbReader.FieldCount}, should be at least {minimalDatasetColumnCount}");
+
+                    string fieldOneTypeName = dbReader.GetFieldType(options.FileNameColumnIndex - 1).Name;
                     if (fieldOneTypeName != "String")
-                        throw new InvalidDataException($"Field #1 is of type \"{fieldOneTypeName}\", but \"string\" expected");
+                        throw new InvalidDataException($"Supposed file name column #{options.FileNameColumnIndex} is of type \"{fieldOneTypeName}\", but \"string\" expected");
 
-                    string fieldTwoTypeName = dbReader.GetProviderSpecificFieldType(1).Name;
+                    string fieldTwoTypeName = dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1).Name;
                     switch (fieldTwoTypeName)
                     {
                         case "OracleClob":
@@ -79,7 +79,7 @@
                             );
                             break;
                         default:
-                            throw new InvalidDataException($"Field #2 is of type \"{fieldTwoTypeName}\", but LOB or BFILE expected");
+                            throw new InvalidDataException($"Supposed LOB column #{options.LobColumnIndex} is of type \"{fieldTwoTypeName}\", but LOB or BFILE expected");
                     }
                 }
             }
