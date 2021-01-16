@@ -8,7 +8,7 @@
     {
         internal Stream ReadLob(OracleDataReader dataReader, int fieldIndex);
 
-        internal long GetTrueLength(long reportedLength);
+        internal long GetTrueLobLength(long reportedLength);
 
         internal void SaveLobToStream(Stream inLob, Stream outFile);
     }

@@ -12,7 +12,7 @@
             return dataReader.GetOracleBFile(fieldIndex);
         }
 
-        long IDataReaderToStream.GetTrueLength(long reportedLength)
+        long IDataReaderToStream.GetTrueLobLength(long reportedLength)
         {
             return reportedLength;
         }

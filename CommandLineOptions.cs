@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
     using CommandLine;
 
     internal class CommandLineOptions
@@ -12,8 +13,8 @@
         [Option('o', "output", Required = false, HelpText = "Output folder")]
         public string? OutputFolder { get; set; }
 
-        [Option("clob-output-charset", Required = false, Default = "utf8")]
-        public string? OutputEncoding { get; set; }
+        [Option("clob-output-charset", Required = false, Default = "utf-8")]
+        public string? OutputEncodingId { get; set; }
 
         [Option('t', "use-table", Required = true, Default = false, SetName = "in-type-table")]
         public bool InputSqlReturnTypeTable { get; set; }
@@ -41,6 +42,12 @@
 
         [Option('v', "argument", Required = false, Separator = ',')]
         public IEnumerable<string>? InputSqlArguments { get; set; }
+
+        internal Encoding OutputEncoding => OutputEncodingId switch
+        {
+            null or "" => new UTF8Encoding(false, false),
+            _ => Encoding.GetEncoding(OutputEncodingId)
+        };
 
         internal InputSqlReturnType GetUltimateScriptType()
         {

@@ -21,7 +21,7 @@
             return dataReader.GetOracleClob(fieldIndex);
         }
 
-        long IDataReaderToStream.GetTrueLength(long reportedLength)
+        long IDataReaderToStream.GetTrueLobLength(long reportedLength)
         {
             return reportedLength / 2;
         }

@@ -60,8 +60,8 @@
                     {
                         SaveDataFromReader(
                             dbReader,
-                            new ClobProcessor(new UTF8Encoding(false, false)),
-                            (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength / 2} characters long CLOB to \"{fileName}\""); }
+                            new ClobProcessor(options.OutputEncoding),
+                            (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} characters long CLOB to \"{fileName}\" with encoding of "); }
                         );
                     }
                     else if (fieldTwoTypeName == "OracleBlob")
@@ -107,7 +107,7 @@
                 using Stream outFile = new FileStream(fileName, FileMode.Create, FileAccess.Write);
 
                 using Stream lobContents = processor.ReadLob(reader, 1);
-                copyStartFeedback(processor.GetTrueLength(lobContents.Length), fileName);
+                copyStartFeedback(processor.GetTrueLobLength(lobContents.Length), fileName);
                 processor.SaveLobToStream(lobContents, outFile);
             }
         }
