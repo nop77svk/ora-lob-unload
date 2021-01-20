@@ -9,17 +9,22 @@
 
     internal class BlobProcessor : IDataReaderToStream
     {
-        Stream IDataReaderToStream.ReadLob(OracleDataReader dataReader, int fieldIndex)
+        public Stream ReadLob(OracleDataReader dataReader, int fieldIndex)
         {
             return dataReader.GetOracleBlob(fieldIndex);
         }
 
-        long IDataReaderToStream.GetTrueLobLength(long reportedLength)
+        public long GetTrueLobLength(long reportedLength)
         {
             return reportedLength;
         }
 
-        void IDataReaderToStream.SaveLobToStream(Stream inLob, Stream outFile)
+        public string GetFormattedLobLength(long reportedLength)
+        {
+            return $"{GetTrueLobLength(reportedLength)} bytes long BLOB";
+        }
+
+        public void SaveLobToStream(Stream inLob, Stream outFile)
         {
             if (inLob is not OracleBlob)
                 throw new ArgumentException($"Must be OracleBlob, is {inLob.GetType().FullName}", nameof(inLob));

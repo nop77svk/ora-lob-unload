@@ -11,22 +11,27 @@
     {
         private readonly Encoding _outputEncoding;
 
-        internal ClobProcessor(Encoding outputEncoding)
+        public ClobProcessor(Encoding outputEncoding)
         {
             _outputEncoding = outputEncoding;
         }
 
-        Stream IDataReaderToStream.ReadLob(OracleDataReader dataReader, int fieldIndex)
+        public Stream ReadLob(OracleDataReader dataReader, int fieldIndex)
         {
             return dataReader.GetOracleClob(fieldIndex);
         }
 
-        long IDataReaderToStream.GetTrueLobLength(long reportedLength)
+        public long GetTrueLobLength(long reportedLength)
         {
             return reportedLength / 2;
         }
 
-        void IDataReaderToStream.SaveLobToStream(Stream inLob, Stream outFile)
+        public string GetFormattedLobLength(long reportedLength)
+        {
+            return $"{GetTrueLobLength(reportedLength)} characters long CLOB";
+        }
+
+        public void SaveLobToStream(Stream inLob, Stream outFile)
         {
             if (inLob is not OracleClob)
                 throw new ArgumentException($"Must be OracleClob, is {inLob.GetType().FullName}", nameof(inLob));

@@ -25,7 +25,8 @@
 
         internal static int MainWithOptions(CommandLineOptions options)
         {
-            ValidateOptions(options);
+            ValidateCommandLineArguments(options);
+            Console.WriteLine($"note: Using {options.OutputEncoding.HeaderName} for encoding of output CLOBs");
 
             using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputSqlScriptFile);
 
@@ -49,35 +50,16 @@
                     if (fileNameColumnTypeName != "String")
                         throw new InvalidDataException($"Supposed file name column #{options.FileNameColumnIndex} is of type \"{fileNameColumnTypeName}\", but \"string\" expected");
 
-                    string lobColumnTypeName = dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1).Name;
-
-                    IDataReaderToStream dataProcessor;
-                    Action<long, string>? copyStartFeedback; // note: two variables depending on the same switch case, yet the feedback is not good to be placed inside IDataReaderToStram [2do!] rework to Observer pattern (somehow)?
-                    switch (lobColumnTypeName)
-                    {
-                        case "OracleClob":
-                            dataProcessor = new ClobProcessor(options.OutputEncoding);
-                            copyStartFeedback = (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} characters long CLOB to \"{fileName}\" with encoding of {options.OutputEncoding.HeaderName}"); };
-                            break;
-                        case "OracleBlob":
-                            dataProcessor = new BlobProcessor();
-                            copyStartFeedback = (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BLOB to \"{fileName}\""); };
-                            break;
-                        case "OracleBFile":
-                            dataProcessor = new BFileProcessor();
-                            copyStartFeedback = (lobLength, fileName) => { Console.WriteLine($"Saving a {lobLength} bytes long BFILE to \"{fileName}\""); };
-                            break;
-                        default:
-                            throw new InvalidDataException($"Supposed LOB column #{options.LobColumnIndex} is of type \"{lobColumnTypeName}\", but LOB or BFILE expected");
-                    }
-
                     SaveDataFromReader(
                         dbReader,
                         options.FileNameColumnIndex - 1,
                         options.LobColumnIndex - 1,
-                        dataProcessor,
-                        options.OutputFileExtension,
-                        copyStartFeedback
+                        DataReaderToStreamFactory(
+                            $"# {options.LobColumnIndex - 1}",
+                            dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1),
+                            options.OutputEncoding
+                        ),
+                        options.OutputFileExtension
                     );
                 }
             }
@@ -85,7 +67,7 @@
             return 0;
         }
 
-        internal static void ValidateOptions(CommandLineOptions options)
+        internal static void ValidateCommandLineArguments(CommandLineOptions options)
         {
             if (options.FileNameColumnIndex is < 1 or > 1000)
                 throw new ArgumentOutOfRangeException(nameof(options.FileNameColumnIndex), "Must be between 1 and 1000 (inclusive)");
@@ -119,7 +101,18 @@
             return new OracleConnection($"Data Source = {dbService}; User Id = {dbUser}; Password = {dbPassword}");
         }
 
-        internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IDataReaderToStream processor, string? fileNameExt, Action<long, string>? copyStartFeedback)
+        internal static IDataReaderToStream DataReaderToStreamFactory(string lobColumnDescription, Type lobColumnType, Encoding clobOutputEncoding)
+        {
+            return lobColumnType.Name switch
+            {
+                "OracleClob" => new ClobProcessor(clobOutputEncoding),
+                "OracleBlob" => new BlobProcessor(),
+                "OracleBFile" => new BFileProcessor(),
+                _ => throw new InvalidDataException($"Supposed LOB column {lobColumnDescription} is of type \"{lobColumnType.Name}\", but CLOB, BLOB or BFILE expected")
+            };
+        }
+
+        internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IDataReaderToStream processor, string? fileNameExt)
         {
             string cleanedFileNameExt = fileNameExt is not null and not "" ? "." + fileNameExt.Trim('.') : "";
             while (dataReader.Read())
@@ -131,7 +124,7 @@
                 using Stream outFile = new FileStream(fileNameWithExt, FileMode.Create, FileAccess.Write);
 
                 using Stream lobContents = processor.ReadLob(dataReader, lobColumnIx);
-                copyStartFeedback?.Invoke(processor.GetTrueLobLength(lobContents.Length), fileNameWithExt);
+                Console.WriteLine($"Saving a {processor.GetFormattedLobLength(lobContents.Length)} to \"{fileName}\"");
                 processor.SaveLobToStream(lobContents, outFile);
             }
         }

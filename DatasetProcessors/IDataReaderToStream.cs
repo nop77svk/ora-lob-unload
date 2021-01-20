@@ -6,10 +6,12 @@
 
     internal interface IDataReaderToStream
     {
-        internal Stream ReadLob(OracleDataReader dataReader, int fieldIndex);
+        public Stream ReadLob(OracleDataReader dataReader, int fieldIndex);
 
-        internal long GetTrueLobLength(long reportedLength);
+        public long GetTrueLobLength(long reportedLength);
 
-        internal void SaveLobToStream(Stream inLob, Stream outFile);
+        public string GetFormattedLobLength(long reportedLength);
+
+        public void SaveLobToStream(Stream inLob, Stream outFile);
     }
 }
