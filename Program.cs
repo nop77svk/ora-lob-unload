@@ -6,7 +6,7 @@
     using System.Text;
     using CommandLine;
     using Oracle.ManagedDataAccess.Client;
-    using OraLobUnload.DatasetProcessors;
+    using OraLobUnload.StreamColumnProcessors;
 
     internal static class Program
     {

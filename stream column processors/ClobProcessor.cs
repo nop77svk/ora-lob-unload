@@ -1,4 +1,4 @@
-﻿namespace OraLobUnload.DatasetProcessors
+﻿namespace OraLobUnload.StreamColumnProcessors
 {
     using System;
     using System.IO;

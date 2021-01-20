@@ -1,17 +1,15 @@
-﻿namespace OraLobUnload.DatasetProcessors
+﻿namespace OraLobUnload.StreamColumnProcessors
 {
     using System;
     using System.IO;
-    using System.Security.Cryptography;
-    using System.Text;
     using Oracle.ManagedDataAccess.Client;
     using Oracle.ManagedDataAccess.Types;
 
-    internal class BlobProcessor : IStreamColumnProcessor
+    internal class BFileProcessor : IStreamColumnProcessor
     {
         public Stream ReadLob(OracleDataReader dataReader, int fieldIndex)
         {
-            return dataReader.GetOracleBlob(fieldIndex);
+            return dataReader.GetOracleBFile(fieldIndex);
         }
 
         public long GetTrueLobLength(long reportedLength)
@@ -26,8 +24,8 @@
 
         public void SaveLobToStream(Stream inLob, Stream outFile)
         {
-            if (inLob is not OracleBlob)
-                throw new ArgumentException($"Must be OracleBlob, is {inLob.GetType().FullName}", nameof(inLob));
+            if (inLob is not OracleBFile)
+                throw new ArgumentException($"Must be OracleBFile, is {inLob.GetType().FullName}", nameof(inLob));
 
             inLob.CopyTo(outFile);
         }
