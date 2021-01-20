@@ -17,7 +17,7 @@
                 .MapResult<CommandLineOptions, int>(
                     options => MainWithOptions(options),
                     _ => {
-                        Console.WriteLine("Something bad happened on the command line (2do!)");
+                        Console.WriteLine("Something bad happened on the command line"); // 2do! be more specific!
                         return 255;
                     });
         }
