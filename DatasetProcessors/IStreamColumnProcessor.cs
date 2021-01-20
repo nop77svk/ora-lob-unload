@@ -1,10 +1,9 @@
 ﻿namespace OraLobUnload.DatasetProcessors
 {
-    using System;
     using System.IO;
     using Oracle.ManagedDataAccess.Client;
 
-    internal interface IDataReaderToStream
+    internal interface IStreamColumnProcessor
     {
         public Stream ReadLob(OracleDataReader dataReader, int fieldIndex);
 

@@ -7,7 +7,7 @@
     using Oracle.ManagedDataAccess.Client;
     using Oracle.ManagedDataAccess.Types;
 
-    internal class BlobProcessor : IDataReaderToStream
+    internal class BlobProcessor : IStreamColumnProcessor
     {
         public Stream ReadLob(OracleDataReader dataReader, int fieldIndex)
         {

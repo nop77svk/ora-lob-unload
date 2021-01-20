@@ -7,7 +7,7 @@
     using Oracle.ManagedDataAccess.Client;
     using Oracle.ManagedDataAccess.Types;
 
-    internal class ClobProcessor : IDataReaderToStream
+    internal class ClobProcessor : IStreamColumnProcessor
     {
         private readonly Encoding _outputEncoding;
 

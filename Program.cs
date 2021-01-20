@@ -42,9 +42,9 @@
                 {
                     using OracleDataReader dbReader = dbCommand.ExecuteReader(System.Data.CommandBehavior.Default);
 
-                    int minimalDatasetColumnCount = Math.Max(options.FileNameColumnIndex, options.LobColumnIndex);
-                    if (dbReader.FieldCount < minimalDatasetColumnCount)
-                        throw new InvalidDataException($"Dataset field count is {dbReader.FieldCount}, should be at least {minimalDatasetColumnCount}");
+                    int leastDatasetColumnCountNeeded = Math.Max(options.FileNameColumnIndex, options.LobColumnIndex);
+                    if (dbReader.FieldCount < leastDatasetColumnCountNeeded)
+                        throw new InvalidDataException($"Dataset field count is {dbReader.FieldCount}, should be at least {leastDatasetColumnCountNeeded}");
 
                     string fileNameColumnTypeName = dbReader.GetFieldType(options.FileNameColumnIndex - 1).Name;
                     if (fileNameColumnTypeName != "String")
@@ -54,9 +54,9 @@
                         dbReader,
                         options.FileNameColumnIndex - 1,
                         options.LobColumnIndex - 1,
-                        DataReaderToStreamFactory(
-                            $"# {options.LobColumnIndex - 1}",
+                        StreamColumnProcessorFactory(
                             dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1),
+                            $"# {options.LobColumnIndex - 1} ({dbReader.GetName(options.LobColumnIndex - 1)})",
                             options.OutputEncoding
                         ),
                         options.OutputFileExtension
@@ -65,17 +65,6 @@
             }
 
             return 0;
-        }
-
-        internal static IDataReaderToStream DataReaderToStreamFactory(string lobColumnDescription, Type lobColumnType, Encoding clobOutputEncoding)
-        {
-            return lobColumnType.Name switch
-            {
-                "OracleClob" => new ClobProcessor(clobOutputEncoding),
-                "OracleBlob" => new BlobProcessor(),
-                "OracleBFile" => new BFileProcessor(),
-                _ => throw new InvalidDataException($"Supposed LOB column {lobColumnDescription} is of type \"{lobColumnType.Name}\", but CLOB, BLOB or BFILE expected")
-            };
         }
 
         internal static StreamReader OpenInputSqlScript(string? inputSqlScriptFile)
@@ -99,7 +88,7 @@
             return new OracleConnection($"Data Source = {dbService}; User Id = {dbUser}; Password = {dbPassword}");
         }
 
-        internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IDataReaderToStream processor, string? fileNameExt)
+        internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IStreamColumnProcessor processor, string? fileNameExt)
         {
             string cleanedFileNameExt = fileNameExt is not null and not "" ? "." + fileNameExt.Trim('.') : "";
             while (dataReader.Read())
@@ -114,6 +103,17 @@
                 Console.WriteLine($"Saving a {processor.GetFormattedLobLength(lobContents.Length)} to \"{fileName}\"");
                 processor.SaveLobToStream(lobContents, outFile);
             }
+        }
+
+        internal static IStreamColumnProcessor StreamColumnProcessorFactory(Type columnType, string columnDescription, Encoding charColumnOutputEncoding)
+        {
+            return columnType.Name switch
+            {
+                "OracleClob" => new ClobProcessor(charColumnOutputEncoding),
+                "OracleBlob" => new BlobProcessor(),
+                "OracleBFile" => new BFileProcessor(),
+                _ => throw new InvalidDataException($"Supposed LOB column {columnDescription} is of type \"{columnType.Name}\", but CLOB, BLOB or BFILE expected")
+            };
         }
 
         internal static void ValidateCommandLineArguments(CommandLineOptions options)
