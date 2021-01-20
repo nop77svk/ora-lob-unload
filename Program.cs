@@ -67,17 +67,15 @@
             return 0;
         }
 
-        internal static void ValidateCommandLineArguments(CommandLineOptions options)
+        internal static IDataReaderToStream DataReaderToStreamFactory(string lobColumnDescription, Type lobColumnType, Encoding clobOutputEncoding)
         {
-            if (options.FileNameColumnIndex is < 1 or > 1000)
-                throw new ArgumentOutOfRangeException(nameof(options.FileNameColumnIndex), "Must be between 1 and 1000 (inclusive)");
-            if (options.LobColumnIndex is < 1 or > 1000)
-                throw new ArgumentOutOfRangeException(nameof(options.LobColumnIndex), "Must be between 1 and 1000 (inclusive)");
-            if (options.LobColumnIndex == options.FileNameColumnIndex)
-                throw new ArgumentException($"LOB column index {options.LobColumnIndex} cannot be the same as file name column index {options.FileNameColumnIndex}");
-
-            if (options.DbService is null or "" || options.DbUser is null or "" || options.DbPassword is null or "")
-                throw new ArgumentNullException("options.Db*", "Empty or incomplete database credentials supplied");
+            return lobColumnType.Name switch
+            {
+                "OracleClob" => new ClobProcessor(clobOutputEncoding),
+                "OracleBlob" => new BlobProcessor(),
+                "OracleBFile" => new BFileProcessor(),
+                _ => throw new InvalidDataException($"Supposed LOB column {lobColumnDescription} is of type \"{lobColumnType.Name}\", but CLOB, BLOB or BFILE expected")
+            };
         }
 
         internal static StreamReader OpenInputSqlScript(string? inputSqlScriptFile)
@@ -101,17 +99,6 @@
             return new OracleConnection($"Data Source = {dbService}; User Id = {dbUser}; Password = {dbPassword}");
         }
 
-        internal static IDataReaderToStream DataReaderToStreamFactory(string lobColumnDescription, Type lobColumnType, Encoding clobOutputEncoding)
-        {
-            return lobColumnType.Name switch
-            {
-                "OracleClob" => new ClobProcessor(clobOutputEncoding),
-                "OracleBlob" => new BlobProcessor(),
-                "OracleBFile" => new BFileProcessor(),
-                _ => throw new InvalidDataException($"Supposed LOB column {lobColumnDescription} is of type \"{lobColumnType.Name}\", but CLOB, BLOB or BFILE expected")
-            };
-        }
-
         internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IDataReaderToStream processor, string? fileNameExt)
         {
             string cleanedFileNameExt = fileNameExt is not null and not "" ? "." + fileNameExt.Trim('.') : "";
@@ -127,6 +114,19 @@
                 Console.WriteLine($"Saving a {processor.GetFormattedLobLength(lobContents.Length)} to \"{fileName}\"");
                 processor.SaveLobToStream(lobContents, outFile);
             }
+        }
+
+        internal static void ValidateCommandLineArguments(CommandLineOptions options)
+        {
+            if (options.FileNameColumnIndex is < 1 or > 1000)
+                throw new ArgumentOutOfRangeException(nameof(options.FileNameColumnIndex), "Must be between 1 and 1000 (inclusive)");
+            if (options.LobColumnIndex is < 1 or > 1000)
+                throw new ArgumentOutOfRangeException(nameof(options.LobColumnIndex), "Must be between 1 and 1000 (inclusive)");
+            if (options.LobColumnIndex == options.FileNameColumnIndex)
+                throw new ArgumentException($"LOB column index {options.LobColumnIndex} cannot be the same as file name column index {options.FileNameColumnIndex}");
+
+            if (options.DbService is null or "" || options.DbUser is null or "" || options.DbPassword is null or "")
+                throw new ArgumentNullException("options.Db*", "Empty or incomplete database credentials supplied");
         }
     }
 }
