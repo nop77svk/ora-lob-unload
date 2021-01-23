@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\cli\ora_lob_unload.csproj" />
+    <ProjectReference Include="..\ora_lob_unload\ora_lob_unload.csproj" />
   </ItemGroup>
 
 </Project>
