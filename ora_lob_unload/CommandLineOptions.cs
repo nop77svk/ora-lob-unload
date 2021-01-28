@@ -34,9 +34,6 @@
         [Option('c', "use-cursor", Required = true, Default = false, SetName = "in-type-cursor")]
         public bool InputSqlReturnTypeCursor { get; set; }
 
-        [Option('s', "use-scalars", Required = true, Default = false, SetName = "in-type-scalars")]
-        public bool InputSqlReturnTypeScalars { get; set; }
-
         [Option('m', "use-implicit-cursor", Required = true, Default = false, SetName = "in-type-implicit")]
         public bool InputSqlReturnTypeMultiImplicit { get; set; }
 
@@ -62,8 +59,6 @@
                 result = InputSqlReturnType.Table;
             else if (InputSqlReturnTypeSelect)
                 result = InputSqlReturnType.Select;
-            else if (InputSqlReturnTypeScalars)
-                result = InputSqlReturnType.Scalars;
             else if (InputSqlReturnTypeCursor)
                 result = InputSqlReturnType.RefCursor;
             else if (InputSqlReturnTypeMultiImplicit)

@@ -5,7 +5,6 @@
         Table,
         Select,
         RefCursor,
-        MultiImplicitCursors,
-        Scalars,
+        MultiImplicitCursors
     }
 }
