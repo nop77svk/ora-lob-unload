@@ -34,7 +34,7 @@
             dbConnection.Open();
 
             var dbCommandFactory = new InputSqlCommandFactory(dbConnection);
-            IEnumerable<OracleCommand> dbCommandList = dbCommandFactory.CreateDbCommands(options.GetUltimateScriptType(), inputSqlScriptReader, options.InputSqlArguments);
+            IEnumerable<OracleCommand> dbCommandList = dbCommandFactory.CreateDbCommands(options.GetUltimateScriptType(), inputSqlScriptReader);
 
             foreach (OracleCommand dbCommand in dbCommandList)
             {

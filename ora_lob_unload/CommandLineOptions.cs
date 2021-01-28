@@ -49,9 +49,6 @@
         [Option('d', "db", Required = true)]
         public string? DbService { get; set; }
 
-        [Option('v', "argument", Required = false, Separator = ',')]
-        public IEnumerable<string>? InputSqlArguments { get; set; }
-
         internal Encoding OutputEncoding => OutputEncodingId switch
         {
             null or "" => new UTF8Encoding(false, false),

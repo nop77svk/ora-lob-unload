@@ -17,7 +17,7 @@
         // 2do! rework to IEnumerable<ValueTuple<OracleCommand, int fileNameColumnIndex, int lobColumnIndex>> to allow for variable column indices per each table supplied
         // 2do! optionally, make the "table(s)" input type JSON-specified
         // 2do! add the remaining InputSqlReturnType's
-        internal IEnumerable<OracleCommand> CreateDbCommands(InputSqlReturnType returnType, TextReader inputReader, IEnumerable<string>? inputArguments)
+        internal IEnumerable<OracleCommand> CreateDbCommands(InputSqlReturnType returnType, TextReader inputReader)
         {
             IEnumerable<OracleCommand> result = returnType switch
             {
