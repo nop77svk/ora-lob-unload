@@ -28,6 +28,9 @@
         [Option("lob-column-ix", Required = false, Default = 2, SetName = "in-type-table")]
         public int LobColumnIndex { get; set; }
 
+        [Option("lob-init-fetch-size", Required = false, Default = "64K")]
+        public string? LobFetchSize { get; set; }
+
         [Option('q', "use-query", Required = true, Default = false, SetName = "in-type-query")]
         public bool InputSqlReturnTypeSelect { get; set; }
 
@@ -51,6 +54,29 @@
             null or "" => new UTF8Encoding(false, false),
             _ => Encoding.GetEncoding(OutputEncodingId)
         };
+
+        internal int LobFetchSizeB
+        {
+            get
+            {
+                if (LobFetchSize is null or "")
+                {
+                    return 262144;
+                }
+                else
+                {
+                    string lobFetchWoUnit = LobFetchSize.Substring(0, LobFetchSize.Length - 1);
+                    if (LobFetchSize.EndsWith("K", StringComparison.OrdinalIgnoreCase))
+                        return Convert.ToInt32(lobFetchWoUnit) * 1024;
+                    else if (LobFetchSize.EndsWith("M", StringComparison.OrdinalIgnoreCase))
+                        return Convert.ToInt32(lobFetchWoUnit) * 1024 * 1024;
+                    else if (LobFetchSize.EndsWith("G", StringComparison.OrdinalIgnoreCase))
+                        return Convert.ToInt32(lobFetchWoUnit) * 1024 * 1024 * 1024;
+                    else
+                        throw new ArgumentOutOfRangeException(nameof(LobFetchSize), $"Unrecognized unit of LOB fetch size \"{LobFetchSize}\"");
+                }
+            }
+        }
 
         internal InputSqlReturnType GetUltimateScriptType()
         {
