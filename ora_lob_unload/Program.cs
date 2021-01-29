@@ -33,15 +33,13 @@
             using var dbConnection = OracleConnectionFactory(options.DbService, options.DbUser, options.DbPassword);
             dbConnection.Open();
 
-            var dbCommandFactory = new InputSqlCommandFactory(dbConnection);
-            IEnumerable<OracleCommand> dbCommandList = dbCommandFactory.CreateDbCommands(options.GetUltimateScriptType(), inputSqlScriptReader);
+            using var dbCommandFactory = new InputSqlCommandFactory(dbConnection, options.LobFetchSizeB);
+            IEnumerable<OracleDataReader> datasetReaderList = dbCommandFactory.CreateDataReaders(options.GetUltimateScriptType(), inputSqlScriptReader);
 
-            foreach (OracleCommand dbCommand in dbCommandList)
+            foreach (OracleDataReader dbReader in datasetReaderList)
             {
-                using (dbCommand)
+                using (dbReader)
                 {
-                    using OracleDataReader dbReader = dbCommand.ExecuteReader(System.Data.CommandBehavior.Default);
-
                     int leastDatasetColumnCountNeeded = Math.Max(options.FileNameColumnIndex, options.LobColumnIndex);
                     if (dbReader.FieldCount < leastDatasetColumnCountNeeded)
                         throw new InvalidDataException($"Dataset field count is {dbReader.FieldCount}, should be at least {leastDatasetColumnCountNeeded}");
@@ -100,7 +98,7 @@
                 using Stream outFile = new FileStream(fileNameWithExt, FileMode.Create, FileAccess.Write);
 
                 using Stream lobContents = processor.ReadLob(dataReader, lobColumnIx);
-                Console.WriteLine($"Saving a {processor.GetFormattedLobLength(lobContents.Length)} to \"{fileName}\"");
+                Console.WriteLine($"Saving a {processor.GetFormattedLobLength(lobContents.Length)} to \"{fileNameWithExt}\"");
                 processor.SaveLobToStream(lobContents, outFile);
             }
         }
