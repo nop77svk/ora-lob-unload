@@ -43,7 +43,7 @@
 
         private IEnumerable<OracleDataReader> CreateReadersOutputRefCursor(TextReader inputPlsqlStream)
         {
-            OracleParameter outCursor = new OracleParameter("result", OracleDbType.RefCursor, ParameterDirection.Output);
+            OracleParameter outCursor = new OracleParameter("result", OracleDbType.RefCursor, ParameterDirection.Output); // 2do! disposable!
 
             string inputPlsqlBlock = inputPlsqlStream.ReadToEnd();
             OracleCommand dbCommand = new OracleCommand(inputPlsqlBlock, _dbConnection)
