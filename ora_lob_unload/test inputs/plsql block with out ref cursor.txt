@@ -1,0 +1,8 @@
+﻿begin
+    open :result for
+        select *
+        from phr$clob
+        union all
+        select 'dummy-'||file_name, to_clob('dummy content')
+        from phr$clob;
+end;

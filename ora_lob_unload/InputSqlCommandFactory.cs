@@ -34,16 +34,16 @@
             IEnumerable<OracleDataReader> result = returnType switch
             {
                 InputSqlReturnType.Table => CreateReadersTable(inputSql),
-                InputSqlReturnType.RefCursor => CreateReadersReturnRefCursor(inputSql),
+                InputSqlReturnType.RefCursor => CreateReadersOutputRefCursor(inputSql),
                 _ => throw new NotImplementedException($"Using input script type \"{returnType}\" not (yet) implemented!")
             };
 
             return result;
         }
 
-        private IEnumerable<OracleDataReader> CreateReadersReturnRefCursor(TextReader inputPlsqlStream)
+        private IEnumerable<OracleDataReader> CreateReadersOutputRefCursor(TextReader inputPlsqlStream)
         {
-            OracleParameter outCursor = new OracleParameter("RESULT", OracleDbType.RefCursor, ParameterDirection.Output);
+            OracleParameter outCursor = new OracleParameter("result", OracleDbType.RefCursor, ParameterDirection.Output);
 
             string inputPlsqlBlock = inputPlsqlStream.ReadToEnd();
             OracleCommand dbCommand = new OracleCommand(inputPlsqlBlock, _dbConnection)

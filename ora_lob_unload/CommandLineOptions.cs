@@ -19,17 +19,17 @@
         [Option("clob-output-charset", Required = false, Default = "utf-8")]
         public string? OutputEncodingId { get; set; }
 
-        [Option('t', "use-table", Required = true, Default = false, SetName = "in-type-table")]
-        public bool InputSqlReturnTypeTable { get; set; }
-
-        [Option("file-name-column-ix", Required = false, Default = 1, SetName = "in-type-table")]
+        [Option("file-name-column-ix", Required = false, Default = 1)]
         public int FileNameColumnIndex { get; set; }
 
-        [Option("lob-column-ix", Required = false, Default = 2, SetName = "in-type-table")]
+        [Option("lob-column-ix", Required = false, Default = 2)]
         public int LobColumnIndex { get; set; }
 
         [Option("lob-init-fetch-size", Required = false, Default = "64K")]
         public string? LobFetchSize { get; set; }
+
+        [Option('t', "use-table", Required = true, Default = false, SetName = "in-type-table")]
+        public bool InputSqlReturnTypeTable { get; set; }
 
         [Option('q', "use-query", Required = true, Default = false, SetName = "in-type-query")]
         public bool InputSqlReturnTypeSelect { get; set; }
