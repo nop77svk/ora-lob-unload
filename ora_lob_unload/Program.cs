@@ -6,6 +6,7 @@
     using System.Text;
     using CommandLine;
     using Oracle.ManagedDataAccess.Client;
+    using OraLobUnload.InputSqlCommands;
     using OraLobUnload.StreamColumnProcessors;
 
     internal static class Program
@@ -33,10 +34,10 @@
             using var dbConnection = OracleConnectionFactory(options.DbService, options.DbUser, options.DbPassword);
             dbConnection.Open();
 
-            using var dbCommandFactory = new InputSqlCommandFactory(dbConnection, options.LobFetchSizeB);
-            IEnumerable<OracleDataReader> datasetReaderList = dbCommandFactory.CreateDataReaders(options.GetUltimateScriptType(), inputSqlScriptReader);
+            var dbCommandFactory = new InputSqlCommandFactory(dbConnection, options.LobFetchSizeB);
+            using IDataMultiReader dataMultiReader = dbCommandFactory.CreateMultiReader(options.GetUltimateScriptType(), inputSqlScriptReader);
 
-            foreach (OracleDataReader dbReader in datasetReaderList)
+            foreach (OracleDataReader dbReader in dataMultiReader.CreateDataReaders())
             {
                 using (dbReader)
                 {
