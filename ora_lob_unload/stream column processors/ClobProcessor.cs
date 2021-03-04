@@ -4,6 +4,7 @@
     using System.IO;
     using System.Security.Cryptography;
     using System.Text;
+    using nop77svk.lib.StreamProcessors;
     using Oracle.ManagedDataAccess.Client;
     using Oracle.ManagedDataAccess.Types;
 
