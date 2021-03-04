@@ -1,4 +1,4 @@
-﻿namespace OraLobUnload.StreamColumnProcessors
+﻿namespace NoP77svk.OraLobUnload.StreamColumnProcessors
 {
     using System.IO;
     using Oracle.ManagedDataAccess.Client;

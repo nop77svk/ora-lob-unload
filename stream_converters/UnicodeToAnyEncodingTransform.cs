@@ -1,4 +1,4 @@
-﻿namespace nop77svk.lib.StreamProcessors
+﻿namespace NoP77svk.lib.StreamProcessors
 {
     using System;
     using System.Security.Cryptography;

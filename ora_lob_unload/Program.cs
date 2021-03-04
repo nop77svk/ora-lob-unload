@@ -1,13 +1,12 @@
-﻿namespace OraLobUnload
+﻿namespace NoP77svk.OraLobUnload
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Text;
     using CommandLine;
+    using NoP77svk.OraLobUnload.InputSqlCommands;
+    using NoP77svk.OraLobUnload.StreamColumnProcessors;
     using Oracle.ManagedDataAccess.Client;
-    using OraLobUnload.InputSqlCommands;
-    using OraLobUnload.StreamColumnProcessors;
 
     internal static class Program
     {

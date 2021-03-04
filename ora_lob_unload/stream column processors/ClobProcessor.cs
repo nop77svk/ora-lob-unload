@@ -1,10 +1,10 @@
-﻿namespace OraLobUnload.StreamColumnProcessors
+﻿namespace NoP77svk.OraLobUnload.StreamColumnProcessors
 {
     using System;
     using System.IO;
     using System.Security.Cryptography;
     using System.Text;
-    using nop77svk.lib.StreamProcessors;
+    using NoP77svk.lib.StreamProcessors;
     using Oracle.ManagedDataAccess.Client;
     using Oracle.ManagedDataAccess.Types;
 

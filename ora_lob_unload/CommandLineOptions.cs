@@ -1,7 +1,6 @@
-﻿namespace OraLobUnload
+﻿namespace NoP77svk.OraLobUnload
 {
     using System;
-    using System.Collections.Generic;
     using System.Text;
     using CommandLine;
 
@@ -65,7 +64,7 @@
                 }
                 else
                 {
-                    string lobFetchWoUnit = LobFetchSize.Substring(0, LobFetchSize.Length - 1);
+                    string lobFetchWoUnit = LobFetchSize[0..^1];
                     if (LobFetchSize.EndsWith("K", StringComparison.OrdinalIgnoreCase))
                         return Convert.ToInt32(lobFetchWoUnit) * 1024;
                     else if (LobFetchSize.EndsWith("M", StringComparison.OrdinalIgnoreCase))

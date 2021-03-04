@@ -1,8 +1,7 @@
-﻿namespace OraLobUnload.InputSqlCommands
+﻿namespace NoP77svk.OraLobUnload.InputSqlCommands
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using Oracle.ManagedDataAccess.Client;
 
     internal interface IDataMultiReader : IDisposable
