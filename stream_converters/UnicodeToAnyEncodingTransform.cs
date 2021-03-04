@@ -4,9 +4,9 @@
     using System.Security.Cryptography;
     using System.Text;
 
-    public class CharsetEncoderForClob : ICryptoTransform
+    public class UnicodeToAnyEncodingTransform : ICryptoTransform
     {
-        public CharsetEncoderForClob(UnicodeEncoding inputDecoder, Encoding outputEncoder, int inputBufferSizeInChars = 262144)
+        public UnicodeToAnyEncodingTransform(UnicodeEncoding inputDecoder, Encoding outputEncoder, int inputBufferSizeInChars = 262144)
         {
             if (inputBufferSizeInChars <= 0)
                 throw new ArgumentOutOfRangeException(nameof(inputBufferSizeInChars), $"Illegal input buffer size of \"{inputBufferSizeInChars}\" characters");

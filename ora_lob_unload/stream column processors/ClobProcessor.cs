@@ -40,7 +40,7 @@
             var inClob = (OracleClob)inLob;
 
             var utf16decoder = new UnicodeEncoding(false, false);
-            using var transcoder = new CryptoStream(outFile, new CharsetEncoderForClob(utf16decoder, _outputEncoding), CryptoStreamMode.Write, true);
+            using var transcoder = new CryptoStream(outFile, new UnicodeToAnyEncodingTransform(utf16decoder, _outputEncoding), CryptoStreamMode.Write, true);
             inClob.CorrectlyCopyTo(transcoder);
         }
     }
