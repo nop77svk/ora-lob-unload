@@ -1,4 +1,4 @@
-﻿namespace NoP77svk.OraLobUnload
+﻿namespace SK.NoP77svk.OraLobUnload
 {
     using System.IO;
     using Oracle.ManagedDataAccess.Types;

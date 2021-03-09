@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <StartupObject></StartupObject>
-    <RootNamespace>NoP77svk.OraLobUnload</RootNamespace>
+    <RootNamespace>sk.nop77svk.OraLobUnload</RootNamespace>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

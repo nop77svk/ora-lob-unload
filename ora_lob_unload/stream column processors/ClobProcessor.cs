@@ -1,12 +1,12 @@
-﻿namespace NoP77svk.OraLobUnload.StreamColumnProcessors
+﻿namespace SK.NoP77svk.OraLobUnload.StreamColumnProcessors
 {
     using System;
     using System.IO;
     using System.Security.Cryptography;
     using System.Text;
-    using NoP77svk.lib.StreamProcessors;
     using Oracle.ManagedDataAccess.Client;
     using Oracle.ManagedDataAccess.Types;
+    using SK.NoP77svk.Lib.StreamProcessors;
 
     internal class ClobProcessor : IStreamColumnProcessor
     {

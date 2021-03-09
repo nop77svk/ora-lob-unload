@@ -1,4 +1,4 @@
-﻿namespace NoP77svk.OraLobUnload.InputSqlCommands
+﻿namespace SK.NoP77svk.OraLobUnload.InputSqlCommands
 {
     using System;
     using System.Collections.Generic;

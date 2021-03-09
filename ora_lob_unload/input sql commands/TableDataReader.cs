@@ -1,9 +1,8 @@
-﻿namespace NoP77svk.OraLobUnload.InputSqlCommands
+﻿namespace SK.NoP77svk.OraLobUnload.InputSqlCommands
 {
     using System;
     using System.Collections.Generic;
     using System.Data;
-    using System.IO;
     using Oracle.ManagedDataAccess.Client;
 
     internal class TableDataReader : IDataMultiReader
