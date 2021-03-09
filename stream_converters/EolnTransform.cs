@@ -13,11 +13,16 @@
 
         public Encoding StreamEncoding { get; }
 
-        protected const string WindowsEolnSequence = "\000d\000a";
-        protected const string UnixEolnSequence = "\000a";
-
-        protected byte[] WindowsEolnByteSequence => StreamEncoding.GetBytes(WindowsEolnSequence);
-        protected byte[] UnixEolnBytesSequence => StreamEncoding.GetBytes(UnixEolnSequence);
+        // reference: https://en.wikipedia.org/wiki/Newline#Representation
+        protected const string EolnSeqAsciiCrLf = "\u000d\u000a";
+        protected const string EolnSeqAsciiLf = "\u000a";
+        protected const string EolnSeqAsciiCr = "\u000d";
+        protected const string EolnSeqAsciiLfCr = "\u000a\u000a";
+        protected const string EolnSeqUnicodeNel = "\u0085";
+        protected const string EolnSeqUnicodeVertTab = "\u000b";
+        protected const string EolnSeqUnicodeLineSep = "\u2028";
+        protected const string EolnSeqUnicodeParSep = "\u2029";
+        protected const string EolnSeqEbcdic = "\u0015";
 
         public string SourceEolnSequence
         {
@@ -53,25 +58,25 @@
 
         public EolnTransform FromWindows()
         {
-            SourceEolnSequence = WindowsEolnSequence;
+            SourceEolnSequence = EolnSeqAsciiCrLf;
             return this;
         }
 
         public EolnTransform FromUnix()
         {
-            SourceEolnSequence = UnixEolnSequence;
+            SourceEolnSequence = EolnSeqAsciiLf;
             return this;
         }
 
         public EolnTransform ToWindows()
         {
-            TargetEolnSequence = WindowsEolnSequence;
+            TargetEolnSequence = EolnSeqAsciiCrLf;
             return this;
         }
 
         public EolnTransform ToUnix()
         {
-            TargetEolnSequence = UnixEolnSequence;
+            TargetEolnSequence = EolnSeqAsciiLf;
             return this;
         }
 
