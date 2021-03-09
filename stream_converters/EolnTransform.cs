@@ -79,9 +79,7 @@
         {
             AssertValidEolnsSupplied();
 
-            byte[] inputBufferWithLeftovers;
-            byte[] newLeftover;
-            DealWithPartialEolnsInInputBuffer(inputBuffer, inputCount, out inputBufferWithLeftovers, out newLeftover);
+            DealWithPartialEolnsInInputBuffer(inputBuffer, inputCount, out byte[] inputBufferWithLeftovers, out byte[] newLeftover);
 
             ReadOnlySpan<byte> sourceEolnMem = _sourceEoln.AsSpan();
             ReadOnlySpan<byte> inputBufferMem = inputBufferWithLeftovers.AsSpan();
@@ -89,7 +87,7 @@
             List<int> inputBufferEolnOffsets = new List<int>();
             while (sourceOffset > 0)
             {
-                int eolnOffset = inputBufferMem.Slice(sourceOffset).IndexOf(sourceEolnMem);
+                int eolnOffset = inputBufferMem[sourceOffset..].IndexOf(sourceEolnMem);
                 if (eolnOffset >= 0)
                     inputBufferEolnOffsets.Add(eolnOffset);
                 sourceOffset = eolnOffset + sourceEolnMem.Length;
