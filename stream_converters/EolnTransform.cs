@@ -92,7 +92,7 @@
             {
                 for (int rawEolnIx = 0; rawEolnIx < _rawEolnsConsidered.Length; inputSpanOffset++)
                 {
-                    if (input.Slice(inputSpanOffset, _rawEolnsConsidered[rawEolnIx].Length - 1).SequenceEqual(_rawEolnsConsidered[rawEolnIx]))
+                    if (input.Slice(inputSpanOffset, _rawEolnsConsidered[rawEolnIx].Length).SequenceEqual(_rawEolnsConsidered[rawEolnIx]))
                     {
                         int sliceLength = inputSpanOffset - lastInputSpanOffset;
                         input.Slice(lastInputSpanOffset, sliceLength).CopyTo(output.Slice(bytesWritten, sliceLength));
