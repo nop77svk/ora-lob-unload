@@ -7,30 +7,32 @@
 
     public class EolnTransform : ICryptoTransform
     {
-        private byte[] _targetEoln;
-        private byte[] _blockTransformLeftover;
-
-        public Encoding StreamEncoding { get; }
-
         // reference: https://en.wikipedia.org/wiki/Newline#Representation
-        protected const string EolnSeqAsciiCrLf = "\u000d\u000a";
-        protected const string EolnSeqAsciiLf = "\u000a";
-        protected const string EolnSeqAsciiCr = "\u000d";
-        protected const string EolnSeqAsciiLfCr = "\u000a\u000a";
-        protected const string EolnSeqUnicodeNel = "\u0085";
-        protected const string EolnSeqUnicodeVertTab = "\u000b";
-        protected const string EolnSeqUnicodeLineSep = "\u2028";
-        protected const string EolnSeqUnicodeParSep = "\u2029";
-        protected string[] AsciiEolnSequencesPrioritized = {
+        public static string EolnSeqAsciiLf = "\u000a";
+        public static string EolnSeqAsciiCr = "\u000d";
+        public static string EolnSeqAsciiCrLf = "\u000d\u000a";
+        public static string EolnSeqAsciiLfCr = "\u000a\u000a";
+        public static string EolnSeqUnicodeNel = "\u0085";
+        public static string EolnSeqUnicodeLineSep = "\u2028";
+        public static string EolnSeqUnicodeParSep = "\u2029";
+        public static string EolnSeqUnicodeVertTab = "\u000b";
+
+        private static readonly string[] EolnsConsidered = {
             EolnSeqAsciiCrLf,
             EolnSeqAsciiLfCr,
-            EolnSeqUnicodeLineSep,
-            EolnSeqUnicodeNel,
-            EolnSeqUnicodeParSep,
-            EolnSeqUnicodeVertTab,
             EolnSeqAsciiLf,
-            EolnSeqAsciiCr
+            EolnSeqAsciiCr,
+            EolnSeqUnicodeNel,
+            EolnSeqUnicodeLineSep,
+            EolnSeqUnicodeParSep,
+            EolnSeqUnicodeVertTab
         };
+
+        private byte[] _targetEoln;
+        private readonly byte[][] _rawEolnsConsidered;
+        private readonly int _longestRawEolnConsidered;
+
+        public Encoding StreamEncoding { get; }
 
         public string TargetEolnSequence
         {
@@ -42,7 +44,19 @@
         {
             StreamEncoding = streamEncoding;
             TargetEolnSequence = targetEolnSequence;
-            InputBlockSize = inputBufferSizeInChars;
+
+            _rawEolnsConsidered = new byte[EolnsConsidered.Length][];
+            _longestRawEolnConsidered = 0;
+            for (int i = 0; i < EolnsConsidered.Length; i++)
+            {
+                byte[] eolnSequenceRaw = StreamEncoding.GetBytes(EolnsConsidered[i]);
+                _rawEolnsConsidered[i] = eolnSequenceRaw;
+                if (eolnSequenceRaw.Length > _longestRawEolnConsidered)
+                    _longestRawEolnConsidered = eolnSequenceRaw.Length;
+            }
+
+            InputBlockSize = StreamEncoding.GetMaxByteCount(inputBufferSizeInChars);
+            OutputBlockSize = InputBlockSize * _longestRawEolnConsidered;
         }
 
         public bool CanReuseTransform => false;
@@ -69,18 +83,65 @@
             return this;
         }
 
+        protected int TransformBlockInternal(ReadOnlySpan<byte> input, Span<byte> output, int reservedBytesAtTheEnd = 0)
+        {
+            int bytesWritten = 0;
+            int lastInputSpanOffset = 0;
+
+            for (int inputSpanOffset = 0; inputSpanOffset < input.Length - reservedBytesAtTheEnd; inputSpanOffset++) // 2do! how many to subtract??
+            {
+                for (int rawEolnIx = 0; rawEolnIx < _rawEolnsConsidered.Length; inputSpanOffset++)
+                {
+                    if (input.Slice(inputSpanOffset, _rawEolnsConsidered[rawEolnIx].Length - 1).SequenceEqual(_rawEolnsConsidered[rawEolnIx]))
+                    {
+                        int sliceLength = inputSpanOffset - lastInputSpanOffset;
+                        input.Slice(lastInputSpanOffset, sliceLength).CopyTo(output.Slice(bytesWritten, sliceLength));
+                        bytesWritten += sliceLength;
+
+                        _targetEoln.CopyTo(output.Slice(bytesWritten, _targetEoln.Length));
+                        bytesWritten += _targetEoln.Length;
+
+                        inputSpanOffset += _rawEolnsConsidered[rawEolnIx].Length - 1;
+                        break;
+                    }
+                }
+            }
+
+            return bytesWritten;
+        }
+
         public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
         {
             AssertValidEolnsSupplied();
-            DealWithPartialEolnsInInputBuffer(inputBuffer, inputCount, out byte[] inputBufferWithLeftovers, out byte[] newLeftover);
+            int bytesWritten = 0;
 
-            throw new NotImplementedException();
+            ReadOnlySpan<byte> inputSpan = inputBuffer[inputOffset..(inputOffset + inputCount)];
+            int lastInputSpanOffset = 0;
+
+            for (int inputSpanOffset = 0; inputSpanOffset < inputSpan.Length - _longestRawEolnConsidered + 1; inputSpanOffset++)
+            {
+                for (int rawEolnIx = 0; rawEolnIx < _rawEolnsConsidered.Length; inputSpanOffset++)
+                {
+                    if (inputSpan.Slice(inputSpanOffset, _rawEolnsConsidered[rawEolnIx].Length - 1).SequenceEqual(_rawEolnsConsidered[rawEolnIx]))
+                    {
+                        inputSpan[lastInputSpanOffset..inputSpanOffset].CopyTo(outputBuffer[(outputOffset + bytesWritten)..]);
+                        bytesWritten += inputSpanOffset - lastInputSpanOffset;
+
+                        _targetEoln.CopyTo(outputBuffer, outputOffset + bytesWritten);
+                        bytesWritten += _targetEoln.Length;
+
+                        inputSpanOffset += _rawEolnsConsidered[rawEolnIx].Length - 1;
+                        break;
+                    }
+                }
+            }
+
+            return bytesWritten;
         }
 
         public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
         {
             AssertValidEolnsSupplied();
-            DealWithPartialEolnsInInputBuffer(inputBuffer, inputCount, out byte[] inputBufferWithLeftovers, out byte[] newLeftover);
 
             throw new NotImplementedException();
         }
