@@ -13,7 +13,7 @@
                         case when subobject_name is not null then ' ('||subobject_name||')' end||
                         ' - id '||object_id||
                         case when data_object_id is not null then '/'||data_object_id end
-                        order by object_id
+                        order by object_type, object_id
                     ) as common.arr_varchar2_4000),
                     i_delimiter => chr(13)||chr(10)
                 )
