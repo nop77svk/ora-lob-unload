@@ -13,9 +13,9 @@
         /// <param name="source">Source OracleClob stream.</param>
         /// <param name="target">Target Stream.</param>
         /// <param name="bufferSize">Internal buffer size for copying.</param>
-        public static void CorrectlyCopyTo(this OracleClob source, Stream target, int bufferSize = 1048576)
+        public static void CorrectlyCopyTo(this OracleClob source, Stream target, int bufferSize = 262144)
         {
-            var buf = new byte[bufferSize];
+            var buf = new byte[bufferSize * 2];
             int charsRead;
             int bytesRead;
             do
