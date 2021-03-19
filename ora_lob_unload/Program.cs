@@ -1,6 +1,7 @@
 ﻿namespace SK.NoP77svk.OraLobUnload
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Text;
     using CommandLine;
@@ -10,6 +11,8 @@
 
     internal static class Program
     {
+        private static HashSet<string> _foldersCreated = new ();
+
         #pragma warning disable SA1500 // Braces for multi-line statements should not share line
         internal static int Main(string[] args)
         {
@@ -65,6 +68,18 @@
             return 0;
         }
 
+        internal static void CreateFilePath(string? filePath)
+        {
+            if (filePath is not null and not "")
+            {
+                if (!_foldersCreated.Contains(filePath))
+                {
+                    Directory.CreateDirectory(filePath);
+                    _foldersCreated.Add(filePath);
+                }
+            }
+        }
+
         internal static StreamReader OpenInputSqlScript(string? inputSqlScriptFile)
         {
             return inputSqlScriptFile switch
@@ -95,11 +110,14 @@
                 string fileNameWithExt = cleanedFileNameExt != "" && !fileName.EndsWith(cleanedFileNameExt, StringComparison.OrdinalIgnoreCase)
                     ? fileName + cleanedFileNameExt
                     : fileName;
+
+                CreateFilePath(Path.GetDirectoryName(fileNameWithExt));
                 using Stream outFile = new FileStream(fileNameWithExt, FileMode.Create, FileAccess.Write);
 
                 using Stream lobContents = processor.ReadLob(dataReader, lobColumnIx);
-                Console.WriteLine($"Saving a {processor.GetFormattedLobLength(lobContents.Length)} to \"{fileNameWithExt}\"");
+                Console.Write($"{fileNameWithExt}: {processor.GetFormattedLobLength(lobContents.Length)}...");
                 processor.SaveLobToStream(lobContents, outFile);
+                Console.WriteLine(" done");
             }
         }
 
