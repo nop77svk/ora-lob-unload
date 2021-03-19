@@ -3,6 +3,7 @@
     using System;
     using System.Text;
     using CommandLine;
+    using SK.NoP77svk.OraLobUnload.InputSqlCommands;
 
     internal class CommandLineOptions
     {
