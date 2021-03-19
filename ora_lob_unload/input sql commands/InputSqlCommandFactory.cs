@@ -33,7 +33,7 @@
             return result;
         }
 
-        private IEnumerable<string> SplitInputSqlToLines(TextReader inputSql)
+        private static IEnumerable<string> SplitInputSqlToLines(TextReader inputSql)
         {
             string? tableName;
             while ((tableName = inputSql.ReadLine()) != null)
