@@ -11,7 +11,7 @@
 
     internal static class Program
     {
-        private static HashSet<string> _foldersCreated = new ();
+        private static readonly HashSet<string> _foldersCreated = new ();
 
         #pragma warning disable SA1500 // Braces for multi-line statements should not share line
         internal static int Main(string[] args)
