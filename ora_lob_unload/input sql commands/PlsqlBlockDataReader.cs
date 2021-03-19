@@ -24,7 +24,7 @@
                 throw new ArgumentException("Must use at least one out ref cursor return type");
 
             _dbConnection = dbConnection;
-            _plsqlScript = plsqlScript;
+            _plsqlScript = plsqlScript.Trim().Trim('/').Trim();
             _useImplicitCursors = useImplicitCursors;
             _useOutRefCursor = useOutRefCursor;
             _dataReaders = new List<OracleDataReader>();

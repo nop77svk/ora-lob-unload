@@ -29,16 +29,16 @@
         [Option("lob-init-fetch-size", Required = false, Default = "64K", HelpText = "(Internal) Initial LOB fetch size; Use \"K\", \"M\" suffixes to denote 1KB and 1MB sizes respectively")]
         public string? LobFetchSize { get; set; }
 
-        [Option('t', "use-tables", Required = true, Default = false, SetName = "in-type-table", HelpText = "Input script file contains EOLN-delimited list of tables names to query")]
+        [Option('t', "use-tables", Required = false, Default = false, SetName = "in-type-table", HelpText = "Input script file contains EOLN-delimited list of tables names to query")]
         public bool InputSqlReturnTypeTable { get; set; }
 
-        [Option('q', "use-query", Required = true, Default = false, SetName = "in-type-query", HelpText = "Input script file contains a SELECT (w/o trailing semicolon)")]
+        [Option('q', "use-query", Required = false, Default = false, SetName = "in-type-query", HelpText = "Input script file contains a SELECT (w/o trailing semicolon)")]
         public bool InputSqlReturnTypeSelect { get; set; }
 
-        [Option('c', "use-cursor", Required = true, Default = false, SetName = "in-type-cursor", HelpText = "Input script file contains a PL/SQL block with a single out-bound variable of SYS_REFCURSOR type")]
+        [Option('c', "use-cursor", Required = false, Default = false, SetName = "in-type-cursor", HelpText = "Input script file contains a PL/SQL block with a single out-bound variable of SYS_REFCURSOR type")]
         public bool InputSqlReturnTypeCursor { get; set; }
 
-        [Option('m', "use-implicit-cursor", Required = true, Default = false, SetName = "in-type-implicit", HelpText = "Input script file contains a PL/SQL block returning arbitrary number of implicit cursors")]
+        [Option('m', "use-implicit-cursor", Required = false, Default = false, SetName = "in-type-implicit", HelpText = "Input script file contains a PL/SQL block returning arbitrary number of implicit cursors")]
         public bool InputSqlReturnTypeMultiImplicit { get; set; }
 
         [Option("db", Required = false, HelpText = "Database (either as a TNS alias or an EzConnect string) to connect to")]

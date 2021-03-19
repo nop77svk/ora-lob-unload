@@ -60,7 +60,8 @@
                             $"# {options.LobColumnIndex - 1} ({dbReader.GetName(options.LobColumnIndex - 1)})",
                             options.OutputEncoding
                         ),
-                        options.OutputFileExtension
+                        options.OutputFileExtension,
+                        options.OutputFolder
                     );
                 }
             }
@@ -101,12 +102,13 @@
             return new OracleConnection($"Data Source = {dbService}; User Id = {dbUser}; Password = {dbPassword}");
         }
 
-        internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IStreamColumnProcessor processor, string? fileNameExt)
+        internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IStreamColumnProcessor processor, string? fileNameExt, string? outputPath)
         {
             string cleanedFileNameExt = fileNameExt is not null and not "" ? "." + fileNameExt.Trim('.') : "";
             while (dataReader.Read())
             {
                 string fileName = dataReader.GetString(fileNameColumnIx);
+                fileName = Path.Combine(outputPath ?? "", fileName);
                 string fileNameWithExt = cleanedFileNameExt != "" && !fileName.EndsWith(cleanedFileNameExt, StringComparison.OrdinalIgnoreCase)
                     ? fileName + cleanedFileNameExt
                     : fileName;
@@ -115,7 +117,7 @@
                 using Stream outFile = new FileStream(fileNameWithExt, FileMode.Create, FileAccess.Write);
 
                 using Stream lobContents = processor.ReadLob(dataReader, lobColumnIx);
-                Console.Write($"{fileNameWithExt}: {processor.GetFormattedLobLength(lobContents.Length)}...");
+                Console.Write($"{fileNameWithExt} [{processor.GetFormattedLobLength(lobContents.Length)}] ...");
                 processor.SaveLobToStream(lobContents, outFile);
                 Console.WriteLine(" done");
             }

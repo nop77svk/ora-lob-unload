@@ -19,7 +19,7 @@
 
         public string GetFormattedLobLength(long reportedLength)
         {
-            return $"{GetTrueLobLength(reportedLength)} bytes long BLOB";
+            return $"BLOB:{GetTrueLobLength(reportedLength)} bytes";
         }
 
         public void SaveLobToStream(Stream inLob, Stream outFile)

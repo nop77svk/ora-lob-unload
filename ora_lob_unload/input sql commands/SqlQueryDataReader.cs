@@ -18,7 +18,7 @@
         internal SqlQueryDataReader(OracleConnection dbConnection, string sqlQuery, int initialLobFetchSize)
         {
             _dbConnection = dbConnection;
-            _sqlQuery = sqlQuery;
+            _sqlQuery = sqlQuery.Trim().Trim(';').Trim();
             _dataReaders = new List<OracleDataReader>();
             _initialLobFetchSize = initialLobFetchSize;
         }

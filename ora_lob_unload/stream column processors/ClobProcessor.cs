@@ -29,7 +29,7 @@
 
         public string GetFormattedLobLength(long reportedLength)
         {
-            return $"{GetTrueLobLength(reportedLength)} characters long CLOB";
+            return $"CLOB:{GetTrueLobLength(reportedLength)} characters";
         }
 
         public void SaveLobToStream(Stream inLob, Stream outFile)
@@ -41,6 +41,7 @@
 
             var utf16decoder = new UnicodeEncoding(false, false);
             using var transcoder = new CryptoStream(outFile, new UnicodeToAnyEncodingTransform(utf16decoder, _outputEncoding), CryptoStreamMode.Write, true);
+
             // inClob.CorrectlyCopyTo(transcoder); // 2do! does the .CopyTo() work or not?!
             inClob.CopyTo(transcoder);
         }
