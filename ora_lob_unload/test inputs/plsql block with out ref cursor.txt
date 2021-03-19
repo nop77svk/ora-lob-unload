@@ -2,8 +2,8 @@
     open :result for
         select
             'plsql_block_with_out_ref_cursor_output/'||lower(owner) as file_name,
-            phr_clob
-                .init_tmp_lob('This is a CLOB header >>>'||chr(10))
+            common.phr_clob
+                .init_tmp_lob('This is a CLOB header >>>'||chr(13)||chr(10))
                 .append(
                     i_values => cast(collect(
                         case when generated = 'Y' then 'system-generated ' end||
@@ -12,19 +12,16 @@
                         owner||'.'||object_name||
                         case when subobject_name is not null then ' ('||subobject_name||')' end||
                         ' - id '||object_id||
-                        case when data_object_id is not null then '/'||data_object_id end||
-                        ', created '||to_char(created, 'yyyy-mm-dd hh24:mi:ss')||
-                        ', modified '||to_char(last_ddl_time, 'yyyy-mm-dd hh24:mi:ss')||
-                        ', tstamp''d '||timestamp||
-                        ' is '||lower(status)
-                    ) as arr_varchar2_4000),
-                    i_delimiter => chr(10)
+                        case when data_object_id is not null then '/'||data_object_id end
+                        order by object_id
+                    ) as common.arr_varchar2_4000),
+                    i_delimiter => chr(13)||chr(10)
                 )
-                .append(chr(10)||'<<< This is a CLOB footer')
+                .append(chr(13)||chr(10)||'<<< This is a CLOB footer')
                 .get_value()
                 as file_contents
         from all_objects
-        where owner in ('APEX_190200','O_RECO_CORR$CENTRAL','O_RECO_CORR$LDS','X_LDS_BASE')
+        where owner in ('APEX_190200','O_RECO_CORR$CENTRAL','O_RECO_CORR$LDS','X_LDS_BASE','APEX_200200','MDSYS','PUBLIC')
         group by owner
         ;
 end;
