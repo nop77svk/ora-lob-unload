@@ -2,15 +2,15 @@
   "profiles": {
     "test load from tables": {
       "commandName": "Project",
-      "commandLineArgs": "-f \"test inputs\\tables.txt\" -d nop-full -u pierre -p qwe -t -x .txt"
+      "commandLineArgs": "-f \"test inputs\\tables.txt\" --logon=pierre/qwe@nop-full -t -x .txt"
     },
     "test load from plsql block with out ref cursor": {
       "commandName": "Project",
-      "commandLineArgs": "-f \"test inputs\\plsql block with out ref cursor.txt\" -d nop-full -u pierre -p qwe -c -x .txt"
+      "commandLineArgs": "-f \"test inputs\\plsql block with out ref cursor.txt\" --logon=pierre/qwe@nop-full -c -x .txt"
     },
     "test load from sql query": {
       "commandName": "Project",
-      "commandLineArgs": "-f \"test inputs\\sql query.txt\" -d nop-full -u pierre -p qwe -q -x .txt"
+      "commandLineArgs": "-f \"test inputs\\sql query.txt\" --logon=pierre/qwe@nop-full -q -x .txt"
     }
   }
 }

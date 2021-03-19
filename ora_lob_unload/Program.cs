@@ -20,7 +20,7 @@
                 .MapResult<CommandLineOptions, int>(
                     options => MainWithOptions(options),
                     _ => {
-                        Console.WriteLine("Something bad happened on the command line"); // 2do! be more specific!
+                        Console.WriteLine("Invalid arguments supplied");
                         return 255;
                     });
         }
@@ -134,15 +134,19 @@
 
         internal static void ValidateCommandLineArguments(CommandLineOptions options)
         {
+            if (options.DbService is null or "")
+                throw new ArgumentNullException(nameof(options.DbService), "Database service name not supplied");
+            if (options.DbUser is null or "")
+                throw new ArgumentNullException(nameof(options.DbUser), "Connecting database user not supplied");
+            if (options.DbPassword is null or "")
+                throw new ArgumentNullException(nameof(options.DbPassword), "Connecting database user's password not supplied");
+
             if (options.FileNameColumnIndex is < 1 or > 1000)
                 throw new ArgumentOutOfRangeException(nameof(options.FileNameColumnIndex), "Must be between 1 and 1000 (inclusive)");
             if (options.LobColumnIndex is < 1 or > 1000)
                 throw new ArgumentOutOfRangeException(nameof(options.LobColumnIndex), "Must be between 1 and 1000 (inclusive)");
             if (options.LobColumnIndex == options.FileNameColumnIndex)
                 throw new ArgumentException($"LOB column index {options.LobColumnIndex} cannot be the same as file name column index {options.FileNameColumnIndex}");
-
-            if (options.DbService is null or "" || options.DbUser is null or "" || options.DbPassword is null or "")
-                throw new ArgumentNullException("options.Db*", "Empty or incomplete database credentials supplied");
         }
     }
 }
