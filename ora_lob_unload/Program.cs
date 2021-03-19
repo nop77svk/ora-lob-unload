@@ -28,7 +28,15 @@
 
         internal static int MainWithOptions(CommandLineOptions options)
         {
-            ValidateCommandLineArguments(options);
+            try
+            {
+                ValidateCommandLineArguments(options);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"ERROR: {e.Message}");
+                return 254;
+            }
             Console.WriteLine($"note: Using {options.OutputEncoding.HeaderName} for encoding of output CLOBs");
 
             using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputSqlScriptFile);
