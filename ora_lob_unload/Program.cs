@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
+    using System.Reflection;
     using System.Text;
     using CommandLine;
     using Oracle.ManagedDataAccess.Client;
@@ -28,6 +30,13 @@
 
         internal static int MainWithOptions(CommandLineOptions options)
         {
+            Assembly myself = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(myself.Location);
+            Console.WriteLine($"{fvi.ProductName} {fvi.FileVersion}");
+            Console.WriteLine($"by {fvi.CompanyName}");
+            Console.WriteLine($"https://github.com/nop77svk/ora_lob_unload");
+            Console.WriteLine();
+
             try
             {
                 ValidateCommandLineArguments(options);
@@ -37,15 +46,23 @@
                 Console.WriteLine($"ERROR: {e.Message}");
                 return 254;
             }
-            Console.WriteLine($"note: Using {options.OutputEncoding.HeaderName} for encoding of output CLOBs");
 
             using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputSqlScriptFile);
 
+            Console.WriteLine($"Connecting to {options.DbUser}@{options.DbService}");
             using var dbConnection = OracleConnectionFactory(options.DbService, options.DbUser, options.DbPassword);
             dbConnection.Open();
 
+            Console.WriteLine($"Using {InputSqlCommandFactory.GetInputSqlReturnTypeDesc(options.GetUltimateScriptType())} as an input against the database");
             var dbCommandFactory = new InputSqlCommandFactory(dbConnection, options.LobFetchSizeB);
             using IDataMultiReader dataMultiReader = dbCommandFactory.CreateMultiReader(options.GetUltimateScriptType(), inputSqlScriptReader);
+
+            if (options.OutputFolder is not null and not "")
+                Console.WriteLine($"Output folder: {options.OutputFolder}");
+            else
+                Console.WriteLine("Output folder: (current)");
+
+            Console.WriteLine($"Output CLOBs encoding: {options.OutputEncoding.HeaderName}");
 
             foreach (OracleDataReader dbReader in dataMultiReader.CreateDataReaders())
             {
@@ -74,6 +91,7 @@
                 }
             }
 
+            Console.WriteLine("DONE");
             return 0;
         }
 
@@ -145,16 +163,16 @@
         internal static void ValidateCommandLineArguments(CommandLineOptions options)
         {
             if (options.DbService is null or "")
-                throw new ArgumentNullException(nameof(options.DbService), "Database service name not supplied");
+                throw new ArgumentNullException(null, "Database service name not supplied");
             if (options.DbUser is null or "")
-                throw new ArgumentNullException(nameof(options.DbUser), "Connecting database user not supplied");
+                throw new ArgumentNullException(null, "Connecting database user not supplied");
             if (options.DbPassword is null or "")
-                throw new ArgumentNullException(nameof(options.DbPassword), "Connecting database user's password not supplied");
+                throw new ArgumentNullException(null, "Connecting database user's password not supplied");
 
             if (options.FileNameColumnIndex is < 1 or > 1000)
-                throw new ArgumentOutOfRangeException(nameof(options.FileNameColumnIndex), "Must be between 1 and 1000 (inclusive)");
+                throw new ArgumentOutOfRangeException(null, "File name column index must be between 1 and 1000 (inclusive)");
             if (options.LobColumnIndex is < 1 or > 1000)
-                throw new ArgumentOutOfRangeException(nameof(options.LobColumnIndex), "Must be between 1 and 1000 (inclusive)");
+                throw new ArgumentOutOfRangeException(null, "LOB column index must be between 1 and 1000 (inclusive)");
             if (options.LobColumnIndex == options.FileNameColumnIndex)
                 throw new ArgumentException($"LOB column index {options.LobColumnIndex} cannot be the same as file name column index {options.FileNameColumnIndex}");
         }

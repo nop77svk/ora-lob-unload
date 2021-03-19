@@ -7,11 +7,12 @@
     <RootNamespace>sk.nop77svk.OraLobUnload</RootNamespace>
     <Nullable>enable</Nullable>
     <AssemblyName>ora_lob_unload</AssemblyName>
-    <Authors>Peter Hraško</Authors>
+    <Authors>Peter Hraško a.k.a. nop77svk</Authors>
     <Product>Oracle LOB Unloader</Product>
     <Description></Description>
     <PackageProjectUrl>https://github.com/nop77svk/ora_lob_unload</PackageProjectUrl>
     <SignAssembly>false</SignAssembly>
+    <Company></Company>
   </PropertyGroup>
 
   <ItemGroup>

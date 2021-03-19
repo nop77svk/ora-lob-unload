@@ -16,6 +16,20 @@
             _initialLobFetchSize = initialLobFetchSize;
         }
 
+        internal static string GetInputSqlReturnTypeDesc(InputSqlReturnType returnType)
+        {
+            string result = returnType switch
+            {
+                InputSqlReturnType.Table => "list of tables",
+                InputSqlReturnType.RefCursor => "PL/SQL block with output ref cursor",
+                InputSqlReturnType.MultiImplicitCursors => "PL/SQL block with implicit output cursors",
+                InputSqlReturnType.Select => "SQL query",
+                _ => throw new NotImplementedException($"Using input script type \"{returnType}\" not (yet) implemented!")
+            };
+
+            return result;
+        }
+
         // 2do! rework to IEnumerable<ValueTuple<OracleCommand, int fileNameColumnIndex, int lobColumnIndex>> to allow for variable column indices per each table supplied
         // 2do! optionally, make the "table(s)" input type JSON-specified
         // 2do! add the remaining InputSqlReturnType's
