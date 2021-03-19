@@ -26,6 +26,7 @@
                 InputSqlReturnType.Table => new TableDataReader(_dbConnection, SplitInputSqlToLines(inputSql), _initialLobFetchSize),
                 InputSqlReturnType.RefCursor => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), true, false, _initialLobFetchSize),
                 InputSqlReturnType.MultiImplicitCursors => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), false, true, _initialLobFetchSize),
+                InputSqlReturnType.Select => new SqlQueryDataReader(_dbConnection, inputSql.ReadToEnd(), _initialLobFetchSize),
                 _ => throw new NotImplementedException($"Using input script type \"{returnType}\" not (yet) implemented!")
             };
 

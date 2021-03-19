@@ -1,0 +1,23 @@
+﻿select
+    'plsql_block_with_out_ref_cursor_output/'||lower(owner) as file_name,
+    common.phr_clob
+        .init_tmp_lob('This is a CLOB header >>>'||chr(13)||chr(10))
+        .append(
+            i_values => cast(collect(
+                case when generated = 'Y' then 'system-generated ' end||
+                case when temporary = 'Y' then 'temporary ' end||
+                lower(object_type)||' '||
+                owner||'.'||object_name||
+                case when subobject_name is not null then ' ('||subobject_name||')' end||
+                ' - id '||object_id||
+                case when data_object_id is not null then '/'||data_object_id end
+                order by object_id
+            ) as common.arr_varchar2_4000),
+            i_delimiter => chr(13)||chr(10)
+        )
+        .append(chr(13)||chr(10)||'<<< This is a CLOB footer')
+        .get_value()
+        as file_contents
+from all_objects
+where owner in ('APEX_190200','O_RECO_CORR$CENTRAL','O_RECO_CORR$LDS','X_LDS_BASE','APEX_200200','MDSYS','PUBLIC')
+group by owner

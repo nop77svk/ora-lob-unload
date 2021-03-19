@@ -7,6 +7,10 @@
     "test load from plsql block with out ref cursor": {
       "commandName": "Project",
       "commandLineArgs": "-f \"test inputs\\plsql block with out ref cursor.txt\" -d nop-full -u pierre -p qwe -c -x .txt"
+    },
+    "test load from sql query": {
+      "commandName": "Project",
+      "commandLineArgs": "-f \"test inputs\\sql query.txt\" -d nop-full -u pierre -p qwe -q -x .txt"
     }
   }
 }
