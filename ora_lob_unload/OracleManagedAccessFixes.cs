@@ -1,12 +1,11 @@
 ﻿namespace SK.NoP77svk.OraLobUnload
 {
     using System.IO;
+    using System.Text;
     using Oracle.ManagedDataAccess.Types;
 
     public static class OracleManagedAccessFixes
     {
-        private static readonly int UnicodeCharacterSizeInBytes = 2;
-
         /// <summary>
         /// A fix for OracleClob.CopyTo(Stream) badly messing up the copying.
         /// </summary>
@@ -15,7 +14,7 @@
         /// <param name="bufferSize">Internal buffer size for copying.</param>
         public static void CorrectlyCopyTo(this OracleClob source, Stream target, int bufferSize = 262144)
         {
-            var buf = new byte[bufferSize * 2];
+            var buf = new byte[bufferSize * UnicodeEncoding.CharSize];
             int charsRead;
             int bytesRead;
             do
@@ -24,7 +23,7 @@
 
                 if (charsRead > 0)
                 {
-                    bytesRead = charsRead * UnicodeCharacterSizeInBytes;
+                    bytesRead = charsRead * UnicodeEncoding.CharSize;
                     if (bytesRead > 0)
                         target.Write(buf, 0, bytesRead);
 
