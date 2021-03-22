@@ -41,16 +41,7 @@
         [Option('m', "use-implicit-cursor", Required = false, Default = false, SetName = "in-type-implicit", HelpText = "Input script file contains a PL/SQL block returning arbitrary number of implicit cursors")]
         public bool InputSqlReturnTypeMultiImplicit { get; set; }
 
-        [Option("db", Required = false, HelpText = "Database (either as a TNS alias or an EzConnect string) to connect to")]
-        public string? DbService { get; set; }
-
-        [Option("user", Required = false, HelpText = "Database user name to connect to")]
-        public string? DbUser { get; set; }
-
-        [Option("pass", Required = false, HelpText = "The connecting database user's password")]
-        public string? DbPassword { get; set; }
-
-        [Option('u', "logon", Required = false, HelpText = "Full database connection string as used by, e.g, the classic SQL*Plus")]
+        [Option('u', "logon", Required = true, HelpText = "Full database connection string as used by, e.g, the classic SQL*Plus")]
         public string? DbLogonFull
         {
             get => $"{DbUser}/{DbPassword}@{DbService}";
@@ -71,6 +62,15 @@
                 }
             }
         }
+
+        [Option("db", Required = false, HelpText = "Database (either as a TNS alias or an EzConnect string) to connect to")]
+        internal string? DbService { get; set; }
+
+        [Option("user", Required = false, HelpText = "Database user name to connect to")]
+        internal string? DbUser { get; set; }
+
+        [Option("pass", Required = false, HelpText = "The connecting database user's password")]
+        internal string? DbPassword { get; set; }
 
         internal Encoding OutputEncoding => OutputEncodingId switch
         {
