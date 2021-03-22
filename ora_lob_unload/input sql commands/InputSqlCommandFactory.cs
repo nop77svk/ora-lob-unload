@@ -20,9 +20,9 @@
         {
             string result = returnType switch
             {
-                InputSqlReturnType.Table => "list of tables",
-                InputSqlReturnType.RefCursor => "PL/SQL block with output ref cursor",
-                InputSqlReturnType.MultiImplicitCursors => "PL/SQL block with implicit output cursors",
+                InputSqlReturnType.Tables => "list of tables",
+                InputSqlReturnType.OutRefCursor => "PL/SQL block with output ref cursor",
+                InputSqlReturnType.ImplicitCursors => "PL/SQL block with implicit output cursors",
                 InputSqlReturnType.Select => "SQL query",
                 _ => throw new NotImplementedException($"Using input script type \"{returnType}\" not (yet) implemented!")
             };
@@ -37,9 +37,9 @@
         {
             IDataMultiReader result = returnType switch
             {
-                InputSqlReturnType.Table => new TableDataReader(_dbConnection, SplitInputSqlToLines(inputSql), _initialLobFetchSize),
-                InputSqlReturnType.RefCursor => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), true, false, _initialLobFetchSize),
-                InputSqlReturnType.MultiImplicitCursors => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), false, true, _initialLobFetchSize),
+                InputSqlReturnType.Tables => new TableDataReader(_dbConnection, SplitInputSqlToLines(inputSql), _initialLobFetchSize),
+                InputSqlReturnType.OutRefCursor => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), true, false, _initialLobFetchSize),
+                InputSqlReturnType.ImplicitCursors => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), false, true, _initialLobFetchSize),
                 InputSqlReturnType.Select => new SqlQueryDataReader(_dbConnection, inputSql.ReadToEnd(), _initialLobFetchSize),
                 _ => throw new NotImplementedException($"Using input script type \"{returnType}\" not (yet) implemented!")
             };

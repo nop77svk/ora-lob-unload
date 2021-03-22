@@ -8,40 +8,7 @@
 
     internal class CommandLineOptions
     {
-        [Option('f', "file", Required = false, HelpText = "Input SQL script file; If not provided, stdin is used")]
-        public string? InputSqlScriptFile { get; set; }
-
-        [Option('o', "output", Required = false, HelpText = "Output folder")]
-        public string? OutputFolder { get; set; }
-
-        [Option('x', "output-file-extension", Required = false, HelpText = "Output file extension to be appended to the file name if not already appended by DB")]
-        public string? OutputFileExtension { get; set; }
-
-        [Option("clob-output-charset", Required = false, Default = "utf-8", HelpText = "Convert CLOBs automatically to target charset")]
-        public string? OutputEncodingId { get; set; }
-
-        [Option("file-name-column-ix", Required = false, Default = 1, HelpText = "File name is in column #x of output data set(s)")]
-        public int FileNameColumnIndex { get; set; }
-
-        [Option("lob-column-ix", Required = false, Default = 2, HelpText = "LOB contents are in column #x of output data set(s)")]
-        public int LobColumnIndex { get; set; }
-
-        [Option("lob-init-fetch-size", Required = false, Default = "64K", HelpText = "(Internal) Initial LOB fetch size; Use \"K\", \"M\" suffixes to denote 1KB and 1MB sizes respectively")]
-        public string? LobInitFetchSize { get; set; }
-
-        [Option('t', "use-tables", Required = false, Default = false, SetName = "in-type-table", HelpText = "Input script file contains EOLN-delimited list of tables names to query")]
-        public bool InputSqlReturnTypeTable { get; set; }
-
-        [Option('q', "use-query", Required = false, Default = false, SetName = "in-type-query", HelpText = "Input script file contains a SELECT (w/o trailing semicolon)")]
-        public bool InputSqlReturnTypeSelect { get; set; }
-
-        [Option('c', "use-cursor", Required = false, Default = false, SetName = "in-type-cursor", HelpText = "Input script file contains a PL/SQL block with a single out-bound variable of SYS_REFCURSOR type")]
-        public bool InputSqlReturnTypeCursor { get; set; }
-
-        [Option('m', "use-implicit-cursor", Required = false, Default = false, SetName = "in-type-implicit", HelpText = "Input script file contains a PL/SQL block returning arbitrary number of implicit cursors")]
-        public bool InputSqlReturnTypeMultiImplicit { get; set; }
-
-        [Option('u', "logon", Required = true, HelpText = "Full database connection string as used by, e.g, the classic SQL*Plus")]
+        [Option('u', "logon", Required = true, HelpText = "\nFull database connection string as used by, e.g, the classic SQL*Plus")]
         public string? DbLogonFull
         {
             get => $"{DbUser}/{DbPassword}@{DbService}";
@@ -49,6 +16,7 @@
             {
                 if (value is null)
                     return;
+
                 Match m = Regex.Match(value, @"^\s*([^/ ]*)\s*/\s*([^@ ]*)\s*@\s*(\S*)\s*$");
                 if (m.Success)
                 {
@@ -62,6 +30,92 @@
                 }
             }
         }
+
+        [Option('i', "input", Required = false, HelpText = "Input script file\nIf not provided, stdin is used")]
+        public string? InputFile { get; set; }
+
+        [Option('t', "input-content", Group = "Input Content", Required = false, HelpText = "\nInput script file content type\n(One of) query, out-ref-cursor, tables, implicit-cursors")]
+        public string? InputFileContentDesc
+        {
+            get => InputFileContent switch
+            {
+                InputSqlReturnType.Select => "query",
+                InputSqlReturnType.OutRefCursor => "out-ref-cursor",
+                InputSqlReturnType.Tables => "tables",
+                InputSqlReturnType.ImplicitCursors => "implicit-cursors",
+                _ => throw new ArgumentOutOfRangeException($"Don''t know how to interpret file content type {InputFileContent}")
+            };
+
+            set
+            {
+                InputFileContent = value?.Trim()?.ToLower()?.Replace("-", "")?.Replace("_", "") switch
+                {
+                    "select" or "query" => InputSqlReturnType.Select,
+                    "outrefcursor" or "outcursor" or "refcursor" or "cursor" => InputSqlReturnType.OutRefCursor,
+                    "table" or "tables" => InputSqlReturnType.Tables,
+                    "implicitcursors" or "implicitcursor" or "implicit" => InputSqlReturnType.ImplicitCursors,
+                    _ => throw new ArgumentOutOfRangeException($"Don''t know how to interpret file content type {value}")
+                };
+            }
+        }
+
+        [Option('q', "input-content-query", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=query")]
+        public bool InputFilecontentSelect
+        {
+            get => InputFileContent == InputSqlReturnType.Select;
+            set
+            {
+                InputFileContent = InputSqlReturnType.Select;
+            }
+        }
+
+        [Option('c', "input-content-cursor", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=out-ref-cursor")]
+        public bool InputFileContentOutCursor
+        {
+            get => InputFileContent == InputSqlReturnType.OutRefCursor;
+            set
+            {
+                InputFileContent = InputSqlReturnType.OutRefCursor;
+            }
+        }
+
+        [Option("input-content-tables", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=tables")]
+        public bool InputScriptTypeTables
+        {
+            get => InputFileContent == InputSqlReturnType.Tables;
+            set
+            {
+                InputFileContent = InputSqlReturnType.Tables;
+            }
+        }
+
+        [Option('m', "input-content-implicit-cursors", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=implicit-cursors")]
+        public bool InputScriptTypeImplicit
+        {
+            get => InputFileContent == InputSqlReturnType.ImplicitCursors;
+            set
+            {
+                InputFileContent = InputSqlReturnType.ImplicitCursors;
+            }
+        }
+
+        [Option('o', "output", Required = false, HelpText = "Output folder")]
+        public string? OutputFolder { get; set; }
+
+        [Option('x', "output-file-extension", Required = false, HelpText = "Output file extension to be appended to the file name if not already appended by DB")]
+        public string? OutputFileExtension { get; set; }
+
+        [Option("clob-output-charset", Required = false, Default = "utf-8", HelpText = "\nConvert CLOBs automatically to target charset")]
+        public string? OutputEncodingId { get; set; }
+
+        [Option("file-name-column-ix", Required = false, Default = 1, HelpText = "\nFile name is in column #x of the data set(s) being read")]
+        public int FileNameColumnIndex { get; set; }
+
+        [Option("lob-column-ix", Required = false, Default = 2, HelpText = "\nLOB contents are in column #x of the data set(s) being read")]
+        public int LobColumnIndex { get; set; }
+
+        [Option("lob-init-fetch-size", Required = false, Default = "64K", HelpText = "\n(Internal) Initial LOB fetch size\nUse \"K\" or \"M\" suffixes to denote 1KB or 1MB sizes respectively")]
+        internal string? LobInitFetchSize { get; set; }
 
         [Option("db", Required = false, HelpText = "Database (either as a TNS alias or an EzConnect string) to connect to")]
         internal string? DbService { get; set; }
@@ -101,21 +155,6 @@
             }
         }
 
-        internal InputSqlReturnType GetUltimateScriptType()
-        {
-            InputSqlReturnType result;
-            if (InputSqlReturnTypeTable)
-                result = InputSqlReturnType.Table;
-            else if (InputSqlReturnTypeSelect)
-                result = InputSqlReturnType.Select;
-            else if (InputSqlReturnTypeCursor)
-                result = InputSqlReturnType.RefCursor;
-            else if (InputSqlReturnTypeMultiImplicit)
-                result = InputSqlReturnType.MultiImplicitCursors;
-            else
-                throw new ArgumentOutOfRangeException("No input SQL return type specified");
-
-            return result;
-        }
+        internal InputSqlReturnType InputFileContent { get; set; }
     }
 }

@@ -2,9 +2,9 @@
 {
     internal enum InputSqlReturnType
     {
-        Table,
+        Tables,
         Select,
-        RefCursor,
-        MultiImplicitCursors
+        OutRefCursor,
+        ImplicitCursors
     }
 }

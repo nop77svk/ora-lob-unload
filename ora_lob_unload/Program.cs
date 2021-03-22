@@ -2,9 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
-    using System.Reflection;
     using System.Text;
     using CommandLine;
     using Oracle.ManagedDataAccess.Client;
@@ -43,15 +41,15 @@
                 return 254;
             }
 
-            using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputSqlScriptFile);
+            using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputFile);
 
             Console.WriteLine($"Connecting to {options.DbUser}@{options.DbService}");
             using var dbConnection = OracleConnectionFactory(options.DbService, options.DbUser, options.DbPassword);
             dbConnection.Open();
 
-            Console.WriteLine($"Using {InputSqlCommandFactory.GetInputSqlReturnTypeDesc(options.GetUltimateScriptType())} as an input against the database");
+            Console.WriteLine($"Using {InputSqlCommandFactory.GetInputSqlReturnTypeDesc(options.InputFileContent)} as an input against the database");
             var dbCommandFactory = new InputSqlCommandFactory(dbConnection, options.LobInitFetchSizeB);
-            using IDataMultiReader dataMultiReader = dbCommandFactory.CreateMultiReader(options.GetUltimateScriptType(), inputSqlScriptReader);
+            using IDataMultiReader dataMultiReader = dbCommandFactory.CreateMultiReader(options.InputFileContent, inputSqlScriptReader);
 
             if (options.OutputFolder is not null and not "")
                 Console.WriteLine($"Output folder: {options.OutputFolder}");
