@@ -8,7 +8,7 @@
 
     internal class CommandLineOptions
     {
-        [Option('u', "logon", Required = true, HelpText = "\nFull database connection string as used by, e.g, the classic SQL*Plus")]
+        [Option('u', "logon", Required = true, HelpText = "\nFull database connection string in form <username>/<password>@<database>\nNote: \"as sysdba\" is not supported (yet)")]
         public string? DbLogonFull
         {
             get => $"{DbUser}/{DbPassword}@{DbService}";
