@@ -13,7 +13,6 @@
     {
         private static readonly HashSet<string> _foldersCreated = new ();
 
-        #pragma warning disable SA1500 // Braces for multi-line statements should not share line
         internal static int Main(string[] args)
         {
             return Parser.Default.ParseArguments<CommandLineOptions>(args)
@@ -22,7 +21,6 @@
                     _ => 255
                 );
         }
-        #pragma warning restore SA1500 // Braces for multi-line statements should not share line
 
         internal static int MainWithOptions(CommandLineOptions options)
         {
