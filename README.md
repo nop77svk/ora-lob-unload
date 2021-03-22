@@ -1,10 +1,13 @@
 # Oracle LOB unloader
 
-> **STILL UNDER DEVELOPMENT!**
-
 Ever needed to get those damned CLOBs/BLOBs out of the database and save them to your local PC's drive?
 
 Look no further, for this utility is what you'll ever need. :-)
+
+How...?
+=======
+
+<2do!>
 
 A note from the author
 ======================
