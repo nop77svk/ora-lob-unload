@@ -27,7 +27,7 @@
         public int LobColumnIndex { get; set; }
 
         [Option("lob-init-fetch-size", Required = false, Default = "64K", HelpText = "(Internal) Initial LOB fetch size; Use \"K\", \"M\" suffixes to denote 1KB and 1MB sizes respectively")]
-        public string? LobFetchSize { get; set; }
+        public string? LobInitFetchSize { get; set; }
 
         [Option('t', "use-tables", Required = false, Default = false, SetName = "in-type-table", HelpText = "Input script file contains EOLN-delimited list of tables names to query")]
         public bool InputSqlReturnTypeTable { get; set; }
@@ -78,25 +78,25 @@
             _ => Encoding.GetEncoding(OutputEncodingId)
         };
 
-        internal int LobFetchSizeB
+        internal int LobInitFetchSizeB
         {
             get
             {
-                if (LobFetchSize is null or "")
+                if (LobInitFetchSize is null or "")
                 {
-                    return 262144;
+                    return 65536;
                 }
                 else
                 {
-                    string lobFetchWoUnit = LobFetchSize[0..^1];
-                    if (LobFetchSize.EndsWith("K", StringComparison.OrdinalIgnoreCase))
+                    string lobFetchWoUnit = LobInitFetchSize[0..^1];
+                    if (LobInitFetchSize.EndsWith("K", StringComparison.OrdinalIgnoreCase))
                         return Convert.ToInt32(lobFetchWoUnit) * 1024;
-                    else if (LobFetchSize.EndsWith("M", StringComparison.OrdinalIgnoreCase))
+                    else if (LobInitFetchSize.EndsWith("M", StringComparison.OrdinalIgnoreCase))
                         return Convert.ToInt32(lobFetchWoUnit) * 1024 * 1024;
-                    else if (LobFetchSize.EndsWith("G", StringComparison.OrdinalIgnoreCase))
+                    else if (LobInitFetchSize.EndsWith("G", StringComparison.OrdinalIgnoreCase))
                         return Convert.ToInt32(lobFetchWoUnit) * 1024 * 1024 * 1024;
                     else
-                        throw new ArgumentOutOfRangeException(nameof(LobFetchSize), $"Unrecognized unit of LOB fetch size \"{LobFetchSize}\"");
+                        throw new ArgumentOutOfRangeException(nameof(LobInitFetchSize), $"Unrecognized unit of LOB fetch size \"{LobInitFetchSize}\"");
                 }
             }
         }

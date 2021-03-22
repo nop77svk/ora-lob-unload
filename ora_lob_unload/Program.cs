@@ -21,19 +21,15 @@
             return Parser.Default.ParseArguments<CommandLineOptions>(args)
                 .MapResult<CommandLineOptions, int>(
                     options => MainWithOptions(options),
-                    _ => {
-                        Console.WriteLine("Invalid arguments supplied");
-                        return 255;
-                    });
+                    _ => 255
+                );
         }
         #pragma warning restore SA1500 // Braces for multi-line statements should not share line
 
         internal static int MainWithOptions(CommandLineOptions options)
         {
-            Assembly myself = Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(myself.Location);
-            Console.WriteLine($"{fvi.ProductName} {fvi.FileVersion}");
-            Console.WriteLine($"by {fvi.CompanyName}");
+            Console.WriteLine("Oracle LOB Unloader");
+            Console.WriteLine($"by Peter Hraško a.k.a nop77svk");
             Console.WriteLine($"https://github.com/nop77svk/ora_lob_unload");
             Console.WriteLine();
 
@@ -54,7 +50,7 @@
             dbConnection.Open();
 
             Console.WriteLine($"Using {InputSqlCommandFactory.GetInputSqlReturnTypeDesc(options.GetUltimateScriptType())} as an input against the database");
-            var dbCommandFactory = new InputSqlCommandFactory(dbConnection, options.LobFetchSizeB);
+            var dbCommandFactory = new InputSqlCommandFactory(dbConnection, options.LobInitFetchSizeB);
             using IDataMultiReader dataMultiReader = dbCommandFactory.CreateMultiReader(options.GetUltimateScriptType(), inputSqlScriptReader);
 
             if (options.OutputFolder is not null and not "")

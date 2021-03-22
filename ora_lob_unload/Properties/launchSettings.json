@@ -1,16 +1,19 @@
 {
   "profiles": {
-    "test load from tables": {
+    "load from tables": {
       "commandName": "Project",
       "commandLineArgs": "-f \"test inputs\\tables.txt\" --logon=pierre/qwe@nop-full -t -x .txt -o E:\\temp\\x\\"
     },
-    "test load from plsql block with out ref cursor": {
+    "load from plsql block with out ref cursor": {
       "commandName": "Project",
       "commandLineArgs": "-f \"test inputs\\plsql block with out ref cursor.txt\" --logon=pierre/qwe@nop-full -c -x .txt -o E:\\temp\\x\\"
     },
-    "test load from sql query": {
+    "load from sql query": {
       "commandName": "Project",
       "commandLineArgs": "-f \"test inputs\\sql query.txt\" --logon=pierre/qwe@nop-full -q -x .txt -o E:\\temp\\x\\"
+    },
+    "no arguments": {
+      "commandName": "Project"
     }
   }
 }
