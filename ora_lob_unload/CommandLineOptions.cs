@@ -8,27 +8,13 @@
 
     internal class CommandLineOptions
     {
+        private OracleConnectStringParsed _dbLogonFull = new OracleConnectStringParsed();
+
         [Option('u', "logon", Required = true, HelpText = "\nFull database connection string in form <username>/<password>@<database>\nNote: \"as sysdba\" is not supported (yet)")]
         public string? DbLogonFull
         {
-            get => $"{DbUser}/{DbPassword}@{DbService}";
-            set
-            {
-                if (value is null)
-                    return;
-
-                Match m = Regex.Match(value, @"^\s*([^/@ ]*)(\s*/\s*([^@ ]*))?\s*@\s*(\S*)\s*$");
-                if (m.Success)
-                {
-                    DbUser = m.Groups[1].Value;
-                    DbPassword = m.Groups[3].Value;
-                    DbService = m.Groups[4].Value;
-                }
-                else
-                {
-                    throw new ArgumentException($"\"{value}\" is not a valid Oracle connection string");
-                }
-            }
+            get => _dbLogonFull.FullConnectString;
+            set { _dbLogonFull.FullConnectString = value ?? ""; }
         }
 
         [Option('i', "input", Required = false, HelpText = "Input script file\nIf not provided, stdin is used")]
@@ -114,17 +100,35 @@
         [Option("lob-column-ix", Required = false, Default = 2, HelpText = "\nLOB contents are in column #x of the data set(s) being read")]
         public int LobColumnIndex { get; set; }
 
-        [Option("lob-init-fetch-size", Required = false, Default = "64K", HelpText = "\n(Internal) Initial LOB fetch size\nUse \"K\" or \"M\" suffixes to denote 1KB or 1MB sizes respectively")]
+        [Option("lob-init-fetch-size", Required = false, Default = "0", HelpText = "\n(Internal) Initial LOB fetch size\nUse \"K\" or \"M\" suffixes to denote 1KB or 1MB sizes respectively")]
         internal string? LobInitFetchSize { get; set; }
 
         [Option("db", Required = false, HelpText = "Database (either as a TNS alias or an EzConnect string) to connect to")]
-        internal string? DbService { get; set; }
+        internal string? DbService
+        {
+            get => _dbLogonFull.DbService;
+            set { _dbLogonFull.DbService = value ?? ""; }
+        }
 
         [Option("user", Required = false, HelpText = "Database user name to connect to")]
-        internal string? DbUser { get; set; }
+        internal string? DbUser
+        {
+            get => _dbLogonFull.User;
+            set { _dbLogonFull.User = value ?? ""; }
+        }
 
         [Option("pass", Required = false, HelpText = "The connecting database user's password")]
-        internal string? DbPassword { get; set; }
+        internal string? DbPassword
+        {
+            get => _dbLogonFull.Password;
+            set { _dbLogonFull.Password = value ?? ""; }
+        }
+
+        internal OracleUserConnectRole DbUserRole
+        {
+            get => _dbLogonFull.SpecialRole;
+            set { _dbLogonFull.SpecialRole = value; }
+        }
 
         internal Encoding OutputEncoding => OutputEncodingId switch
         {

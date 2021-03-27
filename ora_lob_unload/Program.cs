@@ -41,7 +41,13 @@
 
             using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputFile);
 
-            Console.WriteLine($"Connecting to {options.DbService} as {options.DbUser}");
+            string specialUserConnectRole = options.DbUserRole switch
+            {
+                OracleUserConnectRole.AsSysDba => " (sysdba)",
+                OracleUserConnectRole.AsSysOper => " (sysoper)",
+                _ => ""
+            };
+            Console.WriteLine($"Connecting to {options.DbService} as {options.DbUser}{specialUserConnectRole}");
             using var dbConnection = OracleConnectionFactory(options.DbService, options.DbUser, options.DbPassword);
             dbConnection.Open();
 

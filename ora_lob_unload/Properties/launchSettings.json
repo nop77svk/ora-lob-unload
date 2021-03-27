@@ -10,7 +10,7 @@
     },
     "load from sql query": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"test inputs\\sql query.txt\" -u pierre@nop-full -q -x .txt -o E:\\temp\\x\\"
+      "commandLineArgs": "-i \"test inputs\\sql query.txt\" -u \"pierre@nop-full as sysoper\" -q -x .txt -o E:\\temp\\x\\"
     },
     "no arguments": {
       "commandName": "Project"
