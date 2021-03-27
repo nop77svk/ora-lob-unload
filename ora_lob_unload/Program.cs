@@ -41,12 +41,12 @@
 
             using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputFile);
 
-            Console.WriteLine($"Connecting to {options.DbUser}@{options.DbService}");
+            Console.WriteLine($"Connecting to {options.DbService} as {options.DbUser}");
             using var dbConnection = OracleConnectionFactory(options.DbService, options.DbUser, options.DbPassword);
             dbConnection.Open();
 
-            Console.WriteLine($"Using {InputSqlCommandFactory.GetInputSqlReturnTypeDesc(options.InputFileContent)} as an input against the database");
-            var dbCommandFactory = new InputSqlCommandFactory(dbConnection, options.LobInitFetchSizeB);
+            Console.WriteLine($"Using {InputScriptFactory.GetInputSqlReturnTypeDesc(options.InputFileContent)} as an input against the database");
+            var dbCommandFactory = new InputScriptFactory(dbConnection, options.LobInitFetchSizeB);
             using IDataMultiReader dataMultiReader = dbCommandFactory.CreateMultiReader(options.InputFileContent, inputSqlScriptReader);
 
             if (options.OutputFolder is not null and not "")

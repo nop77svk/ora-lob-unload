@@ -39,10 +39,10 @@
         {
             get => InputFileContent switch
             {
-                InputSqlReturnType.Select => "query",
-                InputSqlReturnType.OutRefCursor => "out-ref-cursor",
-                InputSqlReturnType.Tables => "tables",
-                InputSqlReturnType.ImplicitCursors => "implicit-cursors",
+                InputContentType.Select => "query",
+                InputContentType.OutRefCursor => "out-ref-cursor",
+                InputContentType.Tables => "tables",
+                InputContentType.ImplicitCursors => "implicit-cursors",
                 _ => throw new ArgumentOutOfRangeException($"Don''t know how to interpret file content type {InputFileContent}")
             };
 
@@ -50,10 +50,10 @@
             {
                 InputFileContent = value?.Trim()?.ToLower()?.Replace("-", "")?.Replace("_", "") switch
                 {
-                    "select" or "query" => InputSqlReturnType.Select,
-                    "outrefcursor" or "outcursor" or "refcursor" or "cursor" => InputSqlReturnType.OutRefCursor,
-                    "table" or "tables" => InputSqlReturnType.Tables,
-                    "implicitcursors" or "implicitcursor" or "implicit" => InputSqlReturnType.ImplicitCursors,
+                    "select" or "query" => InputContentType.Select,
+                    "outrefcursor" or "outcursor" or "refcursor" or "cursor" => InputContentType.OutRefCursor,
+                    "table" or "tables" => InputContentType.Tables,
+                    "implicitcursors" or "implicitcursor" or "implicit" => InputContentType.ImplicitCursors,
                     _ => throw new ArgumentOutOfRangeException($"Don''t know how to interpret file content type {value}")
                 };
             }
@@ -62,40 +62,40 @@
         [Option('q', "input-content-query", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=query")]
         public bool InputFilecontentSelect
         {
-            get => InputFileContent == InputSqlReturnType.Select;
+            get => InputFileContent == InputContentType.Select;
             set
             {
-                InputFileContent = InputSqlReturnType.Select;
+                InputFileContent = InputContentType.Select;
             }
         }
 
         [Option('c', "input-content-cursor", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=out-ref-cursor")]
         public bool InputFileContentOutCursor
         {
-            get => InputFileContent == InputSqlReturnType.OutRefCursor;
+            get => InputFileContent == InputContentType.OutRefCursor;
             set
             {
-                InputFileContent = InputSqlReturnType.OutRefCursor;
+                InputFileContent = InputContentType.OutRefCursor;
             }
         }
 
         [Option("input-content-tables", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=tables")]
         public bool InputScriptTypeTables
         {
-            get => InputFileContent == InputSqlReturnType.Tables;
+            get => InputFileContent == InputContentType.Tables;
             set
             {
-                InputFileContent = InputSqlReturnType.Tables;
+                InputFileContent = InputContentType.Tables;
             }
         }
 
         [Option('m', "input-content-implicit-cursors", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=implicit-cursors")]
         public bool InputScriptTypeImplicit
         {
-            get => InputFileContent == InputSqlReturnType.ImplicitCursors;
+            get => InputFileContent == InputContentType.ImplicitCursors;
             set
             {
-                InputFileContent = InputSqlReturnType.ImplicitCursors;
+                InputFileContent = InputContentType.ImplicitCursors;
             }
         }
 
@@ -155,6 +155,6 @@
             }
         }
 
-        internal InputSqlReturnType InputFileContent { get; set; }
+        internal InputContentType InputFileContent { get; set; }
     }
 }
