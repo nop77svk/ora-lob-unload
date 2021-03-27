@@ -158,6 +158,14 @@
                 throw new ArgumentNullException(null, "Database service name not supplied");
             if (options.DbUser is null or "")
                 throw new ArgumentNullException(null, "Connecting database user not supplied");
+
+            if (options.DbPassword is null or "")
+            {
+                Console.Write($"Enter password for {options.DbUser}@{options.DbService}: ");
+                Random charRandomizer = new Random();
+                options.DbPassword = SystemConsoleExt.ReadLineInSecret((x) => Convert.ToChar(charRandomizer.Next(32, 127)), true);
+            }
+
             if (options.DbPassword is null or "")
                 throw new ArgumentNullException(null, "Connecting database user's password not supplied");
 

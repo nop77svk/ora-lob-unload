@@ -17,12 +17,12 @@
                 if (value is null)
                     return;
 
-                Match m = Regex.Match(value, @"^\s*([^/ ]*)\s*/\s*([^@ ]*)\s*@\s*(\S*)\s*$");
+                Match m = Regex.Match(value, @"^\s*([^/@ ]*)(\s*/\s*([^@ ]*))?\s*@\s*(\S*)\s*$");
                 if (m.Success)
                 {
                     DbUser = m.Groups[1].Value;
-                    DbPassword = m.Groups[2].Value;
-                    DbService = m.Groups[3].Value;
+                    DbPassword = m.Groups[3].Value;
+                    DbService = m.Groups[4].Value;
                 }
                 else
                 {
