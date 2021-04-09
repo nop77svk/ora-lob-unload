@@ -13,6 +13,9 @@
 
         public static string ReadLineInSecret(Func<char, string?> remapTheChar, bool cancelOnEscape = false)
         {
+            if (Console.IsInputRedirected)
+                throw new NotImplementedException("Framework restriction: Cannot secretly input password when standard input redirection is in effect");
+
             StringBuilder result = new StringBuilder();
             Stack<string?> resultRemapped = new Stack<string?>();
 
