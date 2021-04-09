@@ -41,14 +41,8 @@
 
             using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputFile);
 
-            string specialUserConnectRole = options.DbUserRole switch
-            {
-                OracleUserConnectRole.AsSysDba => " (sysdba)",
-                OracleUserConnectRole.AsSysOper => " (sysoper)",
-                _ => ""
-            };
-            Console.WriteLine($"Connecting to {options.DbService} as {options.DbUser}{specialUserConnectRole}");
-            using var dbConnection = OracleConnectionFactory(options.DbService, options.DbUser, options.DbPassword);
+            Console.WriteLine($"Connecting to {options.DbLogon.DisplayableConnectString}");
+            using var dbConnection = OracleConnectionFactory(options.DbLogon.DbService, options.DbLogon.User, options.DbLogon.Password);
             dbConnection.Open();
 
             Console.WriteLine($"Using {InputScriptFactory.GetInputSqlReturnTypeDesc(options.InputFileContent)} as an input against the database");
@@ -160,19 +154,19 @@
 
         internal static void ValidateCommandLineArguments(CommandLineOptions options)
         {
-            if (options.DbService is null or "")
+            if (options.DbLogon.DbService is null or "")
                 throw new ArgumentNullException(null, "Database service name not supplied");
-            if (options.DbUser is null or "")
+            if (options.DbLogon.User is null or "")
                 throw new ArgumentNullException(null, "Connecting database user not supplied");
 
-            if (options.DbPassword is null or "")
+            if (options.DbLogon.Password is null or "")
             {
-                Console.Write($"Enter password for {options.DbUser}@{options.DbService}: ");
+                Console.Write($"Enter password for {options.DbLogon.DisplayableConnectString}: ");
                 Random charRandomizer = new Random();
-                options.DbPassword = SystemConsoleExt.ReadLineInSecret((x) => Convert.ToChar(charRandomizer.Next(32, 127)), true);
+                options.DbLogon.Password = SystemConsoleExt.ReadLineInSecret((x) => Convert.ToChar(charRandomizer.Next(32, 127)), true);
             }
 
-            if (options.DbPassword is null or "")
+            if (options.DbLogon.Password is null or "")
                 throw new ArgumentNullException(null, "Connecting database user's password not supplied");
 
             if (options.FileNameColumnIndex is < 1 or > 1000)

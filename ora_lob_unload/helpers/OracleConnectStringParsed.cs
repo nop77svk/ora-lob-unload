@@ -47,9 +47,21 @@
             }
         }
 
+        internal string DisplayableConnectString
+        {
+            get => (User != "" ? User : "")
+                + (DbService != "" ? "@" + DbService : "")
+                + SpecialRole switch
+                {
+                    OracleUserConnectRole.AsSysDba => " as sysdba",
+                    OracleUserConnectRole.AsSysOper => " as sysoper",
+                    _ => ""
+                };
+        }
+
         public override string ToString()
         {
-            return FullConnectString;
+            return DisplayableConnectString;
         }
 
         private static ValueTuple<string, string, string, OracleUserConnectRole> InternalParseConnectString(string value)

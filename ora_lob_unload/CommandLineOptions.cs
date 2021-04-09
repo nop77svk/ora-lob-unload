@@ -8,13 +8,13 @@
 
     internal class CommandLineOptions
     {
-        private OracleConnectStringParsed _dbLogonFull = new OracleConnectStringParsed();
+        private readonly OracleConnectStringParsed _dbLogonParsed = new OracleConnectStringParsed();
 
         [Option('u', "logon", Required = true, HelpText = "\nFull database connection string in form <username>/<password>@<database>\nNote: \"as sysdba\" is not supported (yet)")]
         public string? DbLogonFull
         {
-            get => _dbLogonFull.FullConnectString;
-            set { _dbLogonFull.FullConnectString = value ?? ""; }
+            get => _dbLogonParsed.FullConnectString;
+            set { _dbLogonParsed.FullConnectString = value ?? ""; }
         }
 
         [Option('i', "input", Required = false, HelpText = "Input script file\nIf not provided, stdin is used")]
@@ -103,32 +103,40 @@
         [Option("lob-init-fetch-size", Required = false, Default = "0", HelpText = "\n(Internal) Initial LOB fetch size\nUse \"K\" or \"M\" suffixes to denote 1KB or 1MB sizes respectively")]
         internal string? LobInitFetchSize { get; set; }
 
+        internal OracleConnectStringParsed DbLogon
+        {
+            get => _dbLogonParsed;
+        }
+
+        /*
         [Option("db", Required = false, HelpText = "Database (either as a TNS alias or an EzConnect string) to connect to")]
         internal string? DbService
         {
-            get => _dbLogonFull.DbService;
-            set { _dbLogonFull.DbService = value ?? ""; }
+            get => _dbLogonParsed.DbService;
+            set { _dbLogonParsed.DbService = value ?? ""; }
         }
+
 
         [Option("user", Required = false, HelpText = "Database user name to connect to")]
         internal string? DbUser
         {
-            get => _dbLogonFull.User;
-            set { _dbLogonFull.User = value ?? ""; }
+            get => _dbLogonParsed.User;
+            set { _dbLogonParsed.User = value ?? ""; }
         }
 
         [Option("pass", Required = false, HelpText = "The connecting database user's password")]
         internal string? DbPassword
         {
-            get => _dbLogonFull.Password;
-            set { _dbLogonFull.Password = value ?? ""; }
+            get => _dbLogonParsed.Password;
+            set { _dbLogonParsed.Password = value ?? ""; }
         }
 
         internal OracleUserConnectRole DbUserRole
         {
-            get => _dbLogonFull.SpecialRole;
-            set { _dbLogonFull.SpecialRole = value; }
+            get => _dbLogonParsed.SpecialRole;
+            set { _dbLogonParsed.SpecialRole = value; }
         }
+        */
 
         internal Encoding OutputEncoding => OutputEncodingId switch
         {
