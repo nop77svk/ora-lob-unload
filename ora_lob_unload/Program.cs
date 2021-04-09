@@ -24,10 +24,10 @@
 
         internal static int MainWithOptions(CommandLineOptions options)
         {
-            Console.WriteLine("Oracle LOB Unloader");
-            Console.WriteLine($"by Peter Hraško a.k.a nop77svk");
-            Console.WriteLine($"https://github.com/nop77svk/ora_lob_unload");
-            Console.WriteLine();
+            Console.Error.WriteLine("Oracle LOB Unloader");
+            Console.Error.WriteLine($"by Peter Hraško a.k.a nop77svk");
+            Console.Error.WriteLine($"https://github.com/nop77svk/ora_lob_unload");
+            Console.Error.WriteLine();
 
             try
             {
@@ -35,26 +35,26 @@
             }
             catch (Exception e)
             {
-                Console.WriteLine($"ERROR: {e.Message}");
+                Console.Error.WriteLine($"ERROR: {e.Message}");
                 return 254;
             }
 
             using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputFile);
 
-            Console.WriteLine($"Connecting to {options.DbLogon.DisplayableConnectString}");
+            Console.Error.WriteLine($"Connecting to {options.DbLogon.DisplayableConnectString}");
             using var dbConnection = OracleConnectionFactory(options.DbLogon.DbService, options.DbLogon.User, options.DbLogon.Password);
             dbConnection.Open();
 
-            Console.WriteLine($"Using {InputScriptFactory.GetInputSqlReturnTypeDesc(options.InputFileContent)} as an input against the database");
+            Console.Error.WriteLine($"Using {InputScriptFactory.GetInputSqlReturnTypeDesc(options.InputFileContent)} as an input against the database");
             var dbCommandFactory = new InputScriptFactory(dbConnection, options.LobInitFetchSizeB);
             using IDataMultiReader dataMultiReader = dbCommandFactory.CreateMultiReader(options.InputFileContent, inputSqlScriptReader);
 
             if (options.OutputFolder is not null and not "")
-                Console.WriteLine($"Output folder: {options.OutputFolder}");
+                Console.Error.WriteLine($"Output folder: {options.OutputFolder}");
             else
-                Console.WriteLine("Output folder: (current)");
+                Console.Error.WriteLine("Output folder: (current)");
 
-            Console.WriteLine($"Output CLOBs encoding: {options.OutputEncoding.HeaderName}");
+            Console.Error.WriteLine($"Output CLOBs encoding: {options.OutputEncoding.HeaderName}");
 
             foreach (OracleDataReader dbReader in dataMultiReader.CreateDataReaders())
             {
@@ -83,7 +83,7 @@
                 }
             }
 
-            Console.WriteLine("DONE");
+            Console.Error.WriteLine("DONE");
             return 0;
         }
 
@@ -135,9 +135,9 @@
                 using Stream outFile = new FileStream(fileNameWithExt, FileMode.Create, FileAccess.Write);
 
                 using Stream lobContents = processor.ReadLob(dataReader, lobColumnIx);
-                Console.Write($"{fileNameWithExt} [{processor.GetFormattedLobLength(lobContents.Length)}] ...");
+                Console.Error.Write($"{fileNameWithExt} [{processor.GetFormattedLobLength(lobContents.Length)}] ...");
                 processor.SaveLobToStream(lobContents, outFile);
-                Console.WriteLine(" done");
+                Console.Error.WriteLine(" done");
             }
         }
 
@@ -161,7 +161,7 @@
 
             if (options.DbLogon.Password is null or "")
             {
-                Console.Write($"Enter password for {options.DbLogon.DisplayableConnectString}: ");
+                Console.Error.Write($"Enter password for {options.DbLogon.DisplayableConnectString}: ");
                 Random charRandomizer = new Random();
                 options.DbLogon.Password = SystemConsoleExt.ReadLineInSecret((x) => Convert.ToChar(charRandomizer.Next(32, 127)), true);
             }

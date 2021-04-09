@@ -21,13 +21,13 @@
                 ConsoleKeyInfo key = Console.ReadKey(true);
                 if (key.Key == ConsoleKey.Enter)
                 {
-                    Console.WriteLine();
+                    Console.Error.WriteLine();
                     break;
                 }
                 else if (cancelOnEscape && key.Key == ConsoleKey.Escape)
                 {
                     result.Clear();
-                    Console.WriteLine("<esc!>");
+                    Console.Error.WriteLine("<esc!>");
                     break;
                 }
                 else if (key.Key == ConsoleKey.Backspace)
@@ -40,7 +40,7 @@
                         if (displayPartToRemove is not null and not "")
                         {
                             Console.CursorLeft -= displayPartToRemove.Length;
-                            Console.Write(new string(' ', displayPartToRemove.Length));
+                            Console.Error.Write(new string(' ', displayPartToRemove.Length));
                             Console.CursorLeft -= displayPartToRemove.Length;
                         }
                     }
@@ -51,7 +51,7 @@
 
                     string? displayPartToAdd = remapTheChar(key.KeyChar);
                     if (displayPartToAdd is not null and not "")
-                        Console.Write(displayPartToAdd);
+                        Console.Error.Write(displayPartToAdd);
                     resultRemapped.Push(displayPartToAdd);
                 }
             }
