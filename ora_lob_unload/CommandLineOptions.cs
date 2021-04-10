@@ -10,7 +10,7 @@
     {
         private readonly OracleConnectStringParsed _dbLogonParsed = new OracleConnectStringParsed();
 
-        [Option('u', "logon", Required = true, HelpText = "\nFull database connection string in form <username>/<password>@<database>\nNote: \"as sysdba\" is not supported (yet)")]
+        [Option('u', "logon", Required = true, HelpText = "\nFull database connection string in form\n<username>[/<password>]@<database>[ as sysdba| as sysoper]")]
         public string? DbLogonFull
         {
             get => _dbLogonParsed.FullConnectString;
