@@ -11,7 +11,7 @@
             if (inputBufferSizeInChars <= 0)
                 throw new ArgumentOutOfRangeException(nameof(inputBufferSizeInChars), $"Illegal input buffer size of \"{inputBufferSizeInChars}\" characters");
 
-            InputBlockSize = inputBufferSizeInChars * 2;
+            InputBlockSize = inputBufferSizeInChars * inputDecoder.GetMaxByteCount(1);
 
             InputDecoder = inputDecoder;
             OutputEncoder = outputEncoder;
