@@ -45,9 +45,9 @@
             using var dbConnection = OracleConnectionFactory(options.DbLogon.DbService, options.DbLogon.User, options.DbLogon.Password);
             dbConnection.Open();
 
-            Console.Error.WriteLine($"Using {InputScriptFactory.GetInputSqlReturnTypeDesc(options.InputFileContent)} as an input against the database");
+            Console.Error.WriteLine($"Using {InputScriptFactory.GetInputSqlReturnTypeDesc(options.InputFileContentType)} as an input against the database");
             var dbCommandFactory = new InputScriptFactory(dbConnection, options.LobInitFetchSizeB);
-            using IDataMultiReader dataMultiReader = dbCommandFactory.CreateMultiReader(options.InputFileContent, inputSqlScriptReader);
+            using IDataMultiReader dataMultiReader = dbCommandFactory.CreateMultiReader(options.InputFileContentType, inputSqlScriptReader);
 
             if (options.OutputFolder is not null and not "")
                 Console.Error.WriteLine($"Output folder: {options.OutputFolder}");

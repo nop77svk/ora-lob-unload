@@ -23,18 +23,18 @@
         [Option('t', "input-content", Group = "Input Content", Required = false, HelpText = "\nInput script file content type\n(One of) query, out-ref-cursor, tables, implicit-cursors")]
         public string? InputFileContentDesc
         {
-            get => InputFileContent switch
+            get => InputFileContentType switch
             {
                 InputContentType.Select => "query",
                 InputContentType.OutRefCursor => "out-ref-cursor",
                 InputContentType.Tables => "tables",
                 InputContentType.ImplicitCursors => "implicit-cursors",
-                _ => throw new ArgumentOutOfRangeException($"Don''t know how to interpret file content type {InputFileContent}")
+                _ => throw new ArgumentOutOfRangeException($"Don''t know how to interpret file content type {InputFileContentType}")
             };
 
             set
             {
-                InputFileContent = value?.Trim()?.ToLower()?.Replace("-", "")?.Replace("_", "") switch
+                InputFileContentType = value?.Trim()?.ToLower()?.Replace("-", "")?.Replace("_", "") switch
                 {
                     "select" or "query" => InputContentType.Select,
                     "outrefcursor" or "outcursor" or "refcursor" or "cursor" => InputContentType.OutRefCursor,
@@ -48,40 +48,40 @@
         [Option('q', "input-content-query", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=query")]
         public bool InputFilecontentSelect
         {
-            get => InputFileContent == InputContentType.Select;
+            get => InputFileContentType == InputContentType.Select;
             set
             {
-                InputFileContent = InputContentType.Select;
+                InputFileContentType = InputContentType.Select;
             }
         }
 
         [Option('c', "input-content-cursor", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=out-ref-cursor")]
         public bool InputFileContentOutCursor
         {
-            get => InputFileContent == InputContentType.OutRefCursor;
+            get => InputFileContentType == InputContentType.OutRefCursor;
             set
             {
-                InputFileContent = InputContentType.OutRefCursor;
+                InputFileContentType = InputContentType.OutRefCursor;
             }
         }
 
         [Option("input-content-tables", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=tables")]
         public bool InputScriptTypeTables
         {
-            get => InputFileContent == InputContentType.Tables;
+            get => InputFileContentType == InputContentType.Tables;
             set
             {
-                InputFileContent = InputContentType.Tables;
+                InputFileContentType = InputContentType.Tables;
             }
         }
 
         [Option('m', "input-content-implicit-cursors", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=implicit-cursors")]
         public bool InputScriptTypeImplicit
         {
-            get => InputFileContent == InputContentType.ImplicitCursors;
+            get => InputFileContentType == InputContentType.ImplicitCursors;
             set
             {
-                InputFileContent = InputContentType.ImplicitCursors;
+                InputFileContentType = InputContentType.ImplicitCursors;
             }
         }
 
@@ -167,6 +167,6 @@
             }
         }
 
-        internal InputContentType InputFileContent { get; set; }
+        internal InputContentType InputFileContentType { get; set; }
     }
 }
