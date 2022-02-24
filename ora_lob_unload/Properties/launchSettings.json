@@ -2,15 +2,19 @@
   "profiles": {
     "load from tables": {
       "commandName": "Project",
-      "commandLineArgs": "-f \"test inputs\\tables.txt\" -u pierre@nop-full -t -x .txt -o E:\\temp\\x\\"
+      "commandLineArgs": "-f \"test inputs\\tables.txt\" -u pierre@nop-full -t -x .txt -o %TEMP%\\x"
     },
     "load from plsql block with out ref cursor": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"test inputs\\plsql block with out ref cursor.txt\" -u pierre@nop-full -c -x .txt -o E:\\temp\\x\\"
+      "commandLineArgs": "-i \"test inputs\\plsql block with out ref cursor.txt\" -u pierre@nop-full -c -x .txt -o %TEMP%\\x"
     },
     "load from sql query": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"test inputs\\sql query.txt\" -u \"pierre@nop-full as sysoper\" -q -x .txt -o E:\\temp\\x\\"
+      "commandLineArgs": "-i \"test inputs\\sql query.txt\" -u \"pierre@nop-full as sysoper\" -q -x .txt -o %TEMP%\\x"
+    },
+    "try APEX export via query via BLOBs": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"test inputs\\apex export via blobs.txt\" -u o_reco_corr$central@nop-full -q -x .sql -o %TEMP%\\x"
     },
     "no arguments": {
       "commandName": "Project"
