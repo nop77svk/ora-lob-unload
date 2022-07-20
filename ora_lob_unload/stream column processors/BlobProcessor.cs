@@ -7,9 +7,12 @@
 
     internal class BlobProcessor : IStreamColumnProcessor
     {
+        private OracleBlob? _lobStream;
+
         public Stream ReadLob(OracleDataReader dataReader, int fieldIndex)
         {
-            return dataReader.GetOracleBlob(fieldIndex);
+            _lobStream = dataReader.GetOracleBlob(fieldIndex);
+            return _lobStream;
         }
 
         public long GetTrueLobLength(long reportedLength)
@@ -28,6 +31,11 @@
                 throw new ArgumentException($"Must be OracleBlob, is {inLob.GetType().FullName}", nameof(inLob));
 
             inLob.CopyTo(outFile);
+        }
+
+        public void Dispose()
+        {
+            _lobStream?.Dispose();
         }
     }
 }

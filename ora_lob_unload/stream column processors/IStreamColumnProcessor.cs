@@ -1,9 +1,10 @@
 ﻿namespace SK.NoP77svk.OraLobUnload.StreamColumnProcessors
 {
+    using System;
     using System.IO;
     using Oracle.ManagedDataAccess.Client;
 
-    internal interface IStreamColumnProcessor
+    internal interface IStreamColumnProcessor : IDisposable
     {
         public Stream ReadLob(OracleDataReader dataReader, int fieldIndex);
 

@@ -7,9 +7,14 @@
 
     internal class BFileProcessor : IStreamColumnProcessor
     {
+        private OracleBFile? _lobStream;
+
         public Stream ReadLob(OracleDataReader dataReader, int fieldIndex)
         {
-            return dataReader.GetOracleBFile(fieldIndex);
+            _lobStream = dataReader.GetOracleBFile(fieldIndex);
+            if (!_lobStream.IsOpen)
+                _lobStream.OpenFile();
+            return _lobStream;
         }
 
         public long GetTrueLobLength(long reportedLength)
@@ -28,6 +33,12 @@
                 throw new ArgumentException($"Must be OracleBFile, is {inLob.GetType().FullName}", nameof(inLob));
 
             inLob.CopyTo(outFile);
+        }
+
+        public void Dispose()
+        {
+            _lobStream?.Close();
+            _lobStream?.Dispose();
         }
     }
 }

@@ -68,15 +68,16 @@
                     if (fileNameColumnTypeName != "String")
                         throw new InvalidDataException($"Supposed file name column #{options.FileNameColumnIndex} is of type \"{fileNameColumnTypeName}\", but \"string\" expected");
 
+                    using IStreamColumnProcessor processor = StreamColumnProcessorFactory(
+                        dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1),
+                        $"# {options.LobColumnIndex - 1} ({dbReader.GetName(options.LobColumnIndex - 1)})",
+                        options.OutputEncoding
+                    );
                     SaveDataFromReader(
                         dbReader,
                         options.FileNameColumnIndex - 1,
                         options.LobColumnIndex - 1,
-                        StreamColumnProcessorFactory(
-                            dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1),
-                            $"# {options.LobColumnIndex - 1} ({dbReader.GetName(options.LobColumnIndex - 1)})",
-                            options.OutputEncoding
-                        ),
+                        processor,
                         options.OutputFileExtension,
                         options.OutputFolder
                     );

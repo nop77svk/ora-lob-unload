@@ -11,6 +11,7 @@
     internal class ClobProcessor : IStreamColumnProcessor
     {
         private readonly Encoding _outputEncoding;
+        private OracleClob? _lobStream;
 
         public ClobProcessor(Encoding outputEncoding)
         {
@@ -19,7 +20,8 @@
 
         public Stream ReadLob(OracleDataReader dataReader, int fieldIndex)
         {
-            return dataReader.GetOracleClob(fieldIndex);
+            _lobStream = dataReader.GetOracleClob(fieldIndex);
+            return _lobStream;
         }
 
         public long GetTrueLobLength(long reportedLength)
@@ -44,6 +46,11 @@
 
             // inClob.CorrectlyCopyTo(transcoder); // 2do! does the .CopyTo() work or not?!
             inClob.CopyTo(transcoder);
+        }
+
+        public void Dispose()
+        {
+            _lobStream?.Dispose();
         }
     }
 }
