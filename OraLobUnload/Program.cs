@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using CommandLine;
 using NoP77svk.OraLobUnload.DataReaders;
 using NoP77svk.OraLobUnload.StreamColumnProcessors;
@@ -47,7 +46,10 @@ internal static class Program
         dbConnection.Open();
 
         Console.Error.WriteLine($"Using {InputScriptFactory.GetInputSqlReturnTypeDesc(options.InputFileContentType)} as an input against the database");
-        var dbCommandFactory = new InputScriptFactory(dbConnection, options.LobInitFetchSizeB);
+        var dbCommandFactory = new InputScriptFactory(dbConnection)
+        {
+            InitialLobFetchSize = options.LobInitFetchSizeB
+        };
         using IDataMultiReader dataMultiReader = dbCommandFactory.CreateMultiReader(options.InputFileContentType, inputSqlScriptReader);
 
         if (options.OutputFolder is not null and not "")

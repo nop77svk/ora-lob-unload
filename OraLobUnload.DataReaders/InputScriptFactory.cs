@@ -7,13 +7,13 @@ using Oracle.ManagedDataAccess.Client;
 
 public class InputScriptFactory
 {
-    private readonly OracleConnection _dbConnection;
-    private readonly int _initialLobFetchSize;
+    public int InitialLobFetchSize { get; init; } = 1048576;
 
-    public InputScriptFactory(OracleConnection dbConnection, int initialLobFetchSize)
+    private readonly OracleConnection _dbConnection;
+
+    public InputScriptFactory(OracleConnection dbConnection)
     {
         _dbConnection = dbConnection;
-        _initialLobFetchSize = initialLobFetchSize;
     }
 
     public static string GetInputSqlReturnTypeDesc(InputContentType returnType)
@@ -37,10 +37,10 @@ public class InputScriptFactory
     {
         IDataMultiReader result = returnType switch
         {
-            InputContentType.Tables => new TableDataReader(_dbConnection, SplitInputSqlToLines(inputSql), _initialLobFetchSize),
-            InputContentType.OutRefCursor => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), true, false, _initialLobFetchSize),
-            InputContentType.ImplicitCursors => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), false, true, _initialLobFetchSize),
-            InputContentType.Select => new SqlQueryDataReader(_dbConnection, inputSql.ReadToEnd(), _initialLobFetchSize),
+            InputContentType.Tables => new TableDataReader(_dbConnection, SplitInputSqlToLines(inputSql), InitialLobFetchSize),
+            InputContentType.OutRefCursor => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), true, false, InitialLobFetchSize),
+            InputContentType.ImplicitCursors => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), false, true, InitialLobFetchSize),
+            InputContentType.Select => new SqlQueryDataReader(_dbConnection, inputSql.ReadToEnd(), InitialLobFetchSize),
             _ => throw new NotImplementedException($"Using input script type \"{returnType}\" not (yet) implemented!")
         };
 
