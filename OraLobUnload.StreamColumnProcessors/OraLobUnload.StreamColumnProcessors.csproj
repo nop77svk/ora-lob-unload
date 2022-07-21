@@ -25,7 +25,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="..\ora_lob_unload\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
+		<Compile Include="..\OraLobUnload\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

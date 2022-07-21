@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload", "ora_lob_unload\OraLobUnload.csproj", "{3BC1ED4C-B50A-4106-B548-7E2D9D810A15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload", "OraLobUnload\OraLobUnload.csproj", "{3BC1ED4C-B50A-4106-B548-7E2D9D810A15}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload.Utilities", "OraLobUnload.Utilities\OraLobUnload.Utilities.csproj", "{87C937BB-9B3C-4748-9139-1C532AC50631}"
 EndProject
