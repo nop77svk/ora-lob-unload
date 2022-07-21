@@ -1,0 +1,3 @@
+﻿some_clob_table
+some_other_clob_table
+yet_another_clob_table
