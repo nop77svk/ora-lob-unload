@@ -42,11 +42,11 @@ internal static class Program
         using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputFile);
 
         Console.Error.WriteLine($"Connecting to {options.DbLogon.DisplayableConnectString}");
-        using var dbConnection = OracleConnectionFactory(options.DbLogon.DbService, options.DbLogon.User, options.DbLogon.Password);
+        using OracleConnection dbConnection = OracleConnectionFactory(options.DbLogon.DbService, options.DbLogon.User, options.DbLogon.Password);
         dbConnection.Open();
 
         Console.Error.WriteLine($"Using {InputScriptFactory.GetInputSqlReturnTypeDesc(options.InputFileContentType)} as an input against the database");
-        var dbCommandFactory = new InputScriptFactory(dbConnection)
+        InputScriptFactory dbCommandFactory = new InputScriptFactory(dbConnection)
         {
             InitialLobFetchSize = options.LobInitFetchSizeB
         };
