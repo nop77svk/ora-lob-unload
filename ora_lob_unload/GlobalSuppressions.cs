@@ -16,6 +16,7 @@
 [assembly: SuppressMessage("Style", "SA1011")] // Closing square bracket should be followed by a space
 [assembly: SuppressMessage("Style", "SA1021")] // Negative signe should be preceded by a space
 [assembly: SuppressMessage("Style", "SA1101")] // Prefix local calls with this
+[assembly: SuppressMessage("Style", "SA1108")] // Block statements should not contain embedded comments
 [assembly: SuppressMessage("Style", "SA1111")] // Closing parenthesis should be on line of last parameter
 [assembly: SuppressMessage("Style", "SA1118")] // parameter spans multiple lines // 2do!
 [assembly: SuppressMessage("Style", "SA1122")] // Use string.Empty // 2do!

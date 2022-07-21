@@ -7,16 +7,17 @@ using System.Text;
 public class EolnTransform : ICryptoTransform
 {
     // reference: https://en.wikipedia.org/wiki/Newline#Representation
-    public static string EolnSeqAsciiLf = "\u000a";
-    public static string EolnSeqAsciiCr = "\u000d";
-    public static string EolnSeqAsciiCrLf = "\u000d\u000a";
-    public static string EolnSeqAsciiLfCr = "\u000a\u000a";
-    public static string EolnSeqUnicodeNel = "\u0085";
-    public static string EolnSeqUnicodeLineSep = "\u2028";
-    public static string EolnSeqUnicodeParSep = "\u2029";
-    public static string EolnSeqUnicodeVertTab = "\u000b";
+    public const string EolnSeqAsciiLf = "\u000a";
+    public const string EolnSeqAsciiCr = "\u000d";
+    public const string EolnSeqAsciiCrLf = "\u000d\u000a";
+    public const string EolnSeqAsciiLfCr = "\u000a\u000a";
+    public const string EolnSeqUnicodeNel = "\u0085";
+    public const string EolnSeqUnicodeLineSep = "\u2028";
+    public const string EolnSeqUnicodeParSep = "\u2029";
+    public const string EolnSeqUnicodeVertTab = "\u000b";
 
-    private static readonly string[] EolnsConsidered = {
+    private static readonly string[] EolnsConsidered =
+    {
         EolnSeqAsciiCrLf,
         EolnSeqAsciiLfCr,
         EolnSeqAsciiLf,
@@ -27,9 +28,10 @@ public class EolnTransform : ICryptoTransform
         EolnSeqUnicodeVertTab
     };
 
-    private byte[] _targetEoln;
     private readonly byte[][] _rawEolnsConsidered;
     private readonly int _longestRawEolnConsidered;
+
+    private byte[] _targetEoln;
 
     public Encoding StreamEncoding { get; }
 
@@ -82,39 +84,12 @@ public class EolnTransform : ICryptoTransform
         return this;
     }
 
-    protected int TransformBlockInternal(ReadOnlySpan<byte> input, Span<byte> output, int reservedBytesAtTheEnd = 0)
-    {
-        int bytesWritten = 0;
-        int lastInputSpanOffset = 0;
-
-        for (int inputSpanOffset = 0; inputSpanOffset < input.Length - reservedBytesAtTheEnd; inputSpanOffset++) // 2do! how many to subtract??
-        {
-            for (int rawEolnIx = 0; rawEolnIx < _rawEolnsConsidered.Length; inputSpanOffset++)
-            {
-                if (input.Slice(inputSpanOffset, _rawEolnsConsidered[rawEolnIx].Length).SequenceEqual(_rawEolnsConsidered[rawEolnIx]))
-                {
-                    int sliceLength = inputSpanOffset - lastInputSpanOffset;
-                    input.Slice(lastInputSpanOffset, sliceLength).CopyTo(output.Slice(bytesWritten, sliceLength));
-                    bytesWritten += sliceLength;
-
-                    _targetEoln.CopyTo(output.Slice(bytesWritten, _targetEoln.Length));
-                    bytesWritten += _targetEoln.Length;
-
-                    inputSpanOffset += _rawEolnsConsidered[rawEolnIx].Length - 1;
-                    break;
-                }
-            }
-        }
-
-        return bytesWritten;
-    }
-
     public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
     {
         AssertValidEolnsSupplied();
         int bytesWritten = 0;
 
-        ReadOnlySpan<byte> inputSpan = inputBuffer[inputOffset..(inputOffset + inputCount)];
+        ReadOnlySpan<byte> inputSpan = inputBuffer[inputOffset .. (inputOffset + inputCount)];
         int lastInputSpanOffset = 0;
 
         for (int inputSpanOffset = 0; inputSpanOffset < inputSpan.Length - _longestRawEolnConsidered + 1; inputSpanOffset++)
@@ -154,5 +129,32 @@ public class EolnTransform : ICryptoTransform
     private void DealWithPartialEolnsInInputBuffer(byte[] inputBuffer, int inputCount, out byte[] inputBufferWithLeftovers, out byte[] newLeftover)
     {
         throw new NotImplementedException();
+    }
+
+    private int TransformBlockInternal(ReadOnlySpan<byte> input, Span<byte> output, int reservedBytesAtTheEnd = 0)
+    {
+        int bytesWritten = 0;
+        int lastInputSpanOffset = 0;
+
+        for (int inputSpanOffset = 0; inputSpanOffset < input.Length - reservedBytesAtTheEnd; inputSpanOffset++) // 2do! how many to subtract??
+        {
+            for (int rawEolnIx = 0; rawEolnIx < _rawEolnsConsidered.Length; inputSpanOffset++)
+            {
+                if (input.Slice(inputSpanOffset, _rawEolnsConsidered[rawEolnIx].Length).SequenceEqual(_rawEolnsConsidered[rawEolnIx]))
+                {
+                    int sliceLength = inputSpanOffset - lastInputSpanOffset;
+                    input.Slice(lastInputSpanOffset, sliceLength).CopyTo(output.Slice(bytesWritten, sliceLength));
+                    bytesWritten += sliceLength;
+
+                    _targetEoln.CopyTo(output.Slice(bytesWritten, _targetEoln.Length));
+                    bytesWritten += _targetEoln.Length;
+
+                    inputSpanOffset += _rawEolnsConsidered[rawEolnIx].Length - 1;
+                    break;
+                }
+            }
+        }
+
+        return bytesWritten;
     }
 }
