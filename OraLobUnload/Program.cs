@@ -69,7 +69,7 @@ internal static class Program
                 if (fileNameColumnTypeName != "String")
                     throw new InvalidDataException($"Supposed file name column #{options.FileNameColumnIndex} is of type \"{fileNameColumnTypeName}\", but \"string\" expected");
 
-                using IStreamColumnProcessor processor = StreamColumnProcessorFactory(
+                using IStreamColumnProcessor processor = StreamColumnProcessorFactory.CreateStreamColumnProcessor(
                     dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1),
                     $"# {options.LobColumnIndex - 1} ({dbReader.GetName(options.LobColumnIndex - 1)})",
                     options.OutputEncoding
@@ -141,17 +141,6 @@ internal static class Program
             processor.SaveLobToStream(lobContents, outFile);
             Console.Error.WriteLine(" done");
         }
-    }
-
-    internal static IStreamColumnProcessor StreamColumnProcessorFactory(Type columnType, string columnDescription, Encoding charColumnOutputEncoding)
-    {
-        return columnType.Name switch
-        {
-            "OracleClob" => new ClobProcessor(charColumnOutputEncoding),
-            "OracleBlob" => new BlobProcessor(),
-            "OracleBFile" => new BFileProcessor(),
-            _ => throw new InvalidDataException($"Supposed LOB column {columnDescription} is of type \"{columnType.Name}\", but CLOB, BLOB or BFILE expected")
-        };
     }
 
     internal static void ValidateCommandLineArguments(CommandLineOptions options)
