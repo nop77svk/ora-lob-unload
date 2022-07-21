@@ -1,4 +1,4 @@
-﻿namespace NoP77svk.OraLobUnload;
+﻿namespace NoP77svk.OraLobUnload.Utilities;
 
 using System;
 using System.Collections.Generic;

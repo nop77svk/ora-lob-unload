@@ -7,6 +7,7 @@ using System.Text;
 using CommandLine;
 using NoP77svk.OraLobUnload.InputSqlCommands;
 using NoP77svk.OraLobUnload.StreamColumnProcessors;
+using NoP77svk.OraLobUnload.Utilities;
 using Oracle.ManagedDataAccess.Client;
 
 internal static class Program

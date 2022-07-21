@@ -31,7 +31,7 @@ public class EolnTransform : ICryptoTransform
     private readonly byte[][] _rawEolnsConsidered;
     private readonly int _longestRawEolnConsidered;
 
-    private byte[] _targetEoln;
+    private byte[] _targetEoln = new byte[0];
 
     public Encoding StreamEncoding { get; }
 
