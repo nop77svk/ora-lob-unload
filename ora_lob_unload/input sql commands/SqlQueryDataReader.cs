@@ -1,49 +1,48 @@
-﻿namespace NoP77svk.OraLobUnload.InputSqlCommands
+﻿namespace NoP77svk.OraLobUnload.InputSqlCommands;
+
+using System;
+using System.Collections.Generic;
+using System.Data;
+using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
+
+internal class SqlQueryDataReader : IDataMultiReader
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using Oracle.ManagedDataAccess.Client;
-    using Oracle.ManagedDataAccess.Types;
+    private readonly OracleConnection _dbConnection;
+    private readonly string _sqlQuery;
+    private readonly ICollection<OracleDataReader> _dataReaders;
+    private readonly int _initialLobFetchSize;
 
-    internal class SqlQueryDataReader : IDataMultiReader
+    private OracleCommand? _dbCommand;
+
+    internal SqlQueryDataReader(OracleConnection dbConnection, string sqlQuery, int initialLobFetchSize)
     {
-        private readonly OracleConnection _dbConnection;
-        private readonly string _sqlQuery;
-        private readonly ICollection<OracleDataReader> _dataReaders;
-        private readonly int _initialLobFetchSize;
+        _dbConnection = dbConnection;
+        _sqlQuery = sqlQuery.Trim().Trim(';').Trim();
+        _dataReaders = new List<OracleDataReader>();
+        _initialLobFetchSize = initialLobFetchSize;
+    }
 
-        private OracleCommand? _dbCommand;
-
-        internal SqlQueryDataReader(OracleConnection dbConnection, string sqlQuery, int initialLobFetchSize)
+    public IEnumerable<OracleDataReader> CreateDataReaders()
+    {
+        _dbCommand = new OracleCommand(_sqlQuery, _dbConnection)
         {
-            _dbConnection = dbConnection;
-            _sqlQuery = sqlQuery.Trim().Trim(';').Trim();
-            _dataReaders = new List<OracleDataReader>();
-            _initialLobFetchSize = initialLobFetchSize;
-        }
+            BindByName = false,
+            CommandType = CommandType.Text,
+            InitialLOBFetchSize = _initialLobFetchSize
+        };
 
-        public IEnumerable<OracleDataReader> CreateDataReaders()
-        {
-            _dbCommand = new OracleCommand(_sqlQuery, _dbConnection)
-            {
-                BindByName = false,
-                CommandType = CommandType.Text,
-                InitialLOBFetchSize = _initialLobFetchSize
-            };
+        OracleDataReader result = _dbCommand.ExecuteReader();
+        _dataReaders.Add(result);
+        yield return result;
+    }
 
-            OracleDataReader result = _dbCommand.ExecuteReader();
-            _dataReaders.Add(result);
-            yield return result;
-        }
+    public void Dispose()
+    {
+        foreach (OracleDataReader dataReader in _dataReaders)
+            dataReader.Dispose();
 
-        public void Dispose()
-        {
-            foreach (OracleDataReader dataReader in _dataReaders)
-                dataReader.Dispose();
-
-            if (_dbCommand is not null)
-                _dbCommand.Dispose();
-        }
+        if (_dbCommand is not null)
+            _dbCommand.Dispose();
     }
 }

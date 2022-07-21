@@ -1,9 +1,8 @@
-﻿namespace NoP77svk.OraLobUnload
+﻿namespace NoP77svk.OraLobUnload;
+
+internal enum OracleUserConnectRole
 {
-    internal enum OracleUserConnectRole
-    {
-        Normal,
-        AsSysDba,
-        AsSysOper
-    }
+    Normal,
+    AsSysDba,
+    AsSysOper
 }

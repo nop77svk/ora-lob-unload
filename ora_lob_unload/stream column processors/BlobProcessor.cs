@@ -1,41 +1,40 @@
-﻿namespace NoP77svk.OraLobUnload.StreamColumnProcessors
+﻿namespace NoP77svk.OraLobUnload.StreamColumnProcessors;
+
+using System;
+using System.IO;
+using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
+
+internal class BlobProcessor : IStreamColumnProcessor
 {
-    using System;
-    using System.IO;
-    using Oracle.ManagedDataAccess.Client;
-    using Oracle.ManagedDataAccess.Types;
+    private OracleBlob? _lobStream;
 
-    internal class BlobProcessor : IStreamColumnProcessor
+    public Stream ReadLob(OracleDataReader dataReader, int fieldIndex)
     {
-        private OracleBlob? _lobStream;
+        _lobStream = dataReader.GetOracleBlob(fieldIndex);
+        return _lobStream;
+    }
 
-        public Stream ReadLob(OracleDataReader dataReader, int fieldIndex)
-        {
-            _lobStream = dataReader.GetOracleBlob(fieldIndex);
-            return _lobStream;
-        }
+    public long GetTrueLobLength(long reportedLength)
+    {
+        return reportedLength;
+    }
 
-        public long GetTrueLobLength(long reportedLength)
-        {
-            return reportedLength;
-        }
+    public string GetFormattedLobLength(long reportedLength)
+    {
+        return $"BLOB:{GetTrueLobLength(reportedLength)} bytes";
+    }
 
-        public string GetFormattedLobLength(long reportedLength)
-        {
-            return $"BLOB:{GetTrueLobLength(reportedLength)} bytes";
-        }
+    public void SaveLobToStream(Stream inLob, Stream outFile)
+    {
+        if (inLob is not OracleBlob)
+            throw new ArgumentException($"Must be OracleBlob, is {inLob.GetType().FullName}", nameof(inLob));
 
-        public void SaveLobToStream(Stream inLob, Stream outFile)
-        {
-            if (inLob is not OracleBlob)
-                throw new ArgumentException($"Must be OracleBlob, is {inLob.GetType().FullName}", nameof(inLob));
+        inLob.CopyTo(outFile);
+    }
 
-            inLob.CopyTo(outFile);
-        }
-
-        public void Dispose()
-        {
-            _lobStream?.Dispose();
-        }
+    public void Dispose()
+    {
+        _lobStream?.Dispose();
     }
 }
