@@ -15,8 +15,9 @@ internal static class Program
 
     internal static int Main(string[] args)
     {
-        return Parser.Default.ParseArguments<CLI>(args)
-            .MapResult<CLI, int>(
+        return Parser.Default
+            .ParseArguments<CLI>(args)
+            .MapResult(
                 options => MainWithOptions(options),
                 _ => 255
             );
