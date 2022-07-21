@@ -13,9 +13,7 @@ Oh, you don't yet see the possibilities?
 
 ### _Example_: Exporting APEX application from database to disk (for source control)
 
-Save the export query into a file (e.g., `apex_app_412_export.sql`) on your local drive.
-
-Run the LOB Unloader as
+Save [the export query](https://github.com/nop77svk/ora-lob-unload/blob/main/examples/apex%2020.2%20app%20id%20412%20export.sql) into a file (e.g., `apex_app_412_export.sql`) on your local drive. Run the LOB unloader as
 
 ```
 dotnet ora_lob_unload.dll -u myuser/mypassword@mydatabase -q -i apex_app_412_export.sql -o ./apex_app_412_export -x sql
@@ -29,7 +27,7 @@ The query produces at least 2 columns with the file name being in the first (the
 
 There's a bug in handling of `Oracle.ManagedDataAccess.Core`'s `Oracle.Types.OracleClob` streamed reading which actually renders this whole utility useless for CLOBs. Although I reported the bug to the Oracle .NET team and they managed to successfully reproduce it (and filed under id 32671328 on March 24, 2021), until it's resolved, there's not much sense in using this app for offloading CLOBs. However...!
 
-You can offload BLOBs and BFILEs without restriction. If you are skilled enough in PL/SQL, you can convert your CLOBs to binary data on your database side and offload them this way. You are restricted only by your imagination and creativity. 😉
+You can offload BLOBs and BFILEs without restriction. If you are skilled enough in PL/SQL, you can convert your CLOBs to binary data on your database side and offload them this way. You are restricted only by your imagination and creativity. 😉 However, feel free to get inspired by the examples in the repository.
 
 ## A word from+about the author
 
