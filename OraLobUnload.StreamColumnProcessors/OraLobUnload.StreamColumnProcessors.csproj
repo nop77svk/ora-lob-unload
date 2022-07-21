@@ -29,7 +29,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\stream_converters\OraLobUnload.Utilities.csproj" />
+	  <ProjectReference Include="..\OraLobUnload.Utilities\OraLobUnload.Utilities.csproj" />
 	</ItemGroup>
 
 </Project>

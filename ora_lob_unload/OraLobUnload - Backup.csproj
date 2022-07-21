@@ -56,4 +56,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="input sql commands\" />
+    <Folder Include="stream column processors\" />
+  </ItemGroup>
+
 </Project>
