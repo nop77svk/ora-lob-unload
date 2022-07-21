@@ -27,13 +27,13 @@ jobs:
       run: dotnet build -c Release /p:Version=${VERSION}
     - name: Test
       run: dotnet test -c Release /p:Version=${VERSION} --no-build
-    - name: Pack
-      run: |
-        dotnet pack -c Release /p:Version=${VERSION} --no-build --output .
-    - name: Push
-      run: dotnet nuget push NoP77svk.*.${VERSION}.nupkg --source https://nuget.pkg.github.com/nop77svk/index.json --api-key ${GITHUB_TOKEN}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#    - name: Pack
+#      run: |
+#        dotnet pack -c Release /p:Version=${VERSION} --no-build --output .
+#    - name: Push
+#      run: dotnet nuget push NoP77svk.*.${VERSION}.nupkg --source https://nuget.pkg.github.com/nop77svk/index.json --api-key ${GITHUB_TOKEN}
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Prepare releases
       run: |
         mkdir _publish.all
