@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload", "OraLobUnload\OraLobUnload.csproj", "{3BC1ED4C-B50A-4106-B548-7E2D9D810A15}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload.Utilities", "OraLobUnload.Utilities\OraLobUnload.Utilities.csproj", "{87C937BB-9B3C-4748-9139-1C532AC50631}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload.ConnectStringParser", "OraLobUnload.ConnectStringParser\OraLobUnload.ConnectStringParser.csproj", "{7C23AE7B-F97A-463C-ABFA-E4D014CA5336}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload.DataReaders", "OraLobUnload.DataReaders\OraLobUnload.DataReaders.csproj", "{E943869D-685C-417C-9F81-3CF967164242}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload.StreamColumnProcessors", "OraLobUnload.StreamColumnProcessors\OraLobUnload.StreamColumnProcessors.csproj", "{4652BDA9-08E5-4F49-BB01-60C1111873AE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BC1ED4C-B50A-4106-B548-7E2D9D810A15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BC1ED4C-B50A-4106-B548-7E2D9D810A15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BC1ED4C-B50A-4106-B548-7E2D9D810A15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BC1ED4C-B50A-4106-B548-7E2D9D810A15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87C937BB-9B3C-4748-9139-1C532AC50631}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87C937BB-9B3C-4748-9139-1C532AC50631}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87C937BB-9B3C-4748-9139-1C532AC50631}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87C937BB-9B3C-4748-9139-1C532AC50631}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C23AE7B-F97A-463C-ABFA-E4D014CA5336}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C23AE7B-F97A-463C-ABFA-E4D014CA5336}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C23AE7B-F97A-463C-ABFA-E4D014CA5336}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C23AE7B-F97A-463C-ABFA-E4D014CA5336}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E943869D-685C-417C-9F81-3CF967164242}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E943869D-685C-417C-9F81-3CF967164242}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E943869D-685C-417C-9F81-3CF967164242}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E943869D-685C-417C-9F81-3CF967164242}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4652BDA9-08E5-4F49-BB01-60C1111873AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4652BDA9-08E5-4F49-BB01-60C1111873AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4652BDA9-08E5-4F49-BB01-60C1111873AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4652BDA9-08E5-4F49-BB01-60C1111873AE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AA794C65-7B42-4E22-8C33-BEEAF8B112B8}
+	EndGlobalSection
+EndGlobal
