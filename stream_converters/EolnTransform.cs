@@ -1,7 +1,6 @@
-﻿namespace NoP77svk.Lib.StreamProcessors;
+﻿namespace NoP77svk.OraLobUnload.Utilities;
 
 using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
