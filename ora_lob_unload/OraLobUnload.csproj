@@ -37,6 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OraLobUnload.ConnectStringParser\OraLobUnload.ConnectStringParser.csproj" />
     <ProjectReference Include="..\OraLobUnload.DataReaders\OraLobUnload.DataReaders.csproj" />
+    <ProjectReference Include="..\OraLobUnload.StreamColumnProcessors\OraLobUnload.StreamColumnProcessors.csproj" />
     <ProjectReference Include="..\stream_converters\OraLobUnload.Utilities.csproj" />
   </ItemGroup>
 
@@ -57,6 +58,7 @@
 
   <ItemGroup>
     <Folder Include="input sql commands\" />
+    <Folder Include="stream column processors\" />
   </ItemGroup>
 
 </Project>
