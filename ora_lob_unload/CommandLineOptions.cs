@@ -3,8 +3,8 @@
 using System;
 using System.Text;
 using CommandLine;
-using NoP77svk.OraLobUnload.InputSqlCommands;
 using NoP77svk.OraLobUnload.ConnectStringParser;
+using NoP77svk.OraLobUnload.DataReaders;
 
 internal class CommandLineOptions
 {

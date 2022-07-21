@@ -1,22 +1,22 @@
-﻿namespace NoP77svk.OraLobUnload.InputSqlCommands;
+﻿namespace NoP77svk.OraLobUnload.DataReaders;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using Oracle.ManagedDataAccess.Client;
 
-internal class InputScriptFactory
+public class InputScriptFactory
 {
     private readonly OracleConnection _dbConnection;
     private readonly int _initialLobFetchSize;
 
-    internal InputScriptFactory(OracleConnection dbConnection, int initialLobFetchSize)
+    public InputScriptFactory(OracleConnection dbConnection, int initialLobFetchSize)
     {
         _dbConnection = dbConnection;
         _initialLobFetchSize = initialLobFetchSize;
     }
 
-    internal static string GetInputSqlReturnTypeDesc(InputContentType returnType)
+    public static string GetInputSqlReturnTypeDesc(InputContentType returnType)
     {
         string result = returnType switch
         {
@@ -33,7 +33,7 @@ internal class InputScriptFactory
     // 2do! rework to IEnumerable<ValueTuple<OracleCommand, int fileNameColumnIndex, int lobColumnIndex>> to allow for variable column indices per each table supplied
     // 2do! optionally, make the "table(s)" input type JSON-specified
     // 2do! add the remaining InputSqlReturnType's
-    internal IDataMultiReader CreateMultiReader(InputContentType returnType, TextReader inputSql)
+    public IDataMultiReader CreateMultiReader(InputContentType returnType, TextReader inputSql)
     {
         IDataMultiReader result = returnType switch
         {

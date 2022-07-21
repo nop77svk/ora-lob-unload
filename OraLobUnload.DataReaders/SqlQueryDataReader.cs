@@ -1,4 +1,4 @@
-﻿namespace NoP77svk.OraLobUnload.InputSqlCommands;
+﻿namespace NoP77svk.OraLobUnload.DataReaders;
 
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Data;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 
-internal class SqlQueryDataReader : IDataMultiReader
+public class SqlQueryDataReader : IDataMultiReader
 {
     private readonly OracleConnection _dbConnection;
     private readonly string _sqlQuery;
@@ -15,7 +15,7 @@ internal class SqlQueryDataReader : IDataMultiReader
 
     private OracleCommand? _dbCommand;
 
-    internal SqlQueryDataReader(OracleConnection dbConnection, string sqlQuery, int initialLobFetchSize)
+    public SqlQueryDataReader(OracleConnection dbConnection, string sqlQuery, int initialLobFetchSize)
     {
         _dbConnection = dbConnection;
         _sqlQuery = sqlQuery.Trim().Trim(';').Trim();

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using CommandLine;
-using NoP77svk.OraLobUnload.InputSqlCommands;
+using NoP77svk.OraLobUnload.DataReaders;
 using NoP77svk.OraLobUnload.StreamColumnProcessors;
 using NoP77svk.OraLobUnload.Utilities;
 using Oracle.ManagedDataAccess.Client;

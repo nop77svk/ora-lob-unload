@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OraLobUnload.ConnectStringParser\OraLobUnload.ConnectStringParser.csproj" />
+    <ProjectReference Include="..\OraLobUnload.DataReaders\OraLobUnload.DataReaders.csproj" />
     <ProjectReference Include="..\stream_converters\OraLobUnload.Utilities.csproj" />
   </ItemGroup>
 
@@ -52,6 +53,10 @@
     <None Update="test inputs\tables.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="input sql commands\" />
   </ItemGroup>
 
 </Project>
