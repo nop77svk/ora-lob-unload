@@ -1,16 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ora_lob_unload", "ora_lob_unload\ora_lob_unload.csproj", "{3BC1ED4C-B50A-4106-B548-7E2D9D810A15}"
 EndProject
-		.editorconfig = .editorconfig
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "stream_converters", "stream_converters\stream_converters.csproj", "{87C937BB-9B3C-4748-9139-1C532AC50631}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "stream_converters_tests", "stream_converters_tests\stream_converters_tests.csproj", "{3318B67C-9C91-4667-B3ED-B75875998D20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,9 +21,6 @@ Global
 		{87C937BB-9B3C-4748-9139-1C532AC50631}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87C937BB-9B3C-4748-9139-1C532AC50631}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87C937BB-9B3C-4748-9139-1C532AC50631}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3318B67C-9C91-4667-B3ED-B75875998D20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3318B67C-9C91-4667-B3ED-B75875998D20}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3318B67C-9C91-4667-B3ED-B75875998D20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
