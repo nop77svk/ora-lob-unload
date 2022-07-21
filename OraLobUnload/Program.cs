@@ -15,14 +15,14 @@ internal static class Program
 
     internal static int Main(string[] args)
     {
-        return Parser.Default.ParseArguments<CommandLineOptions>(args)
-            .MapResult<CommandLineOptions, int>(
+        return Parser.Default.ParseArguments<CLI>(args)
+            .MapResult<CLI, int>(
                 options => MainWithOptions(options),
                 _ => 255
             );
     }
 
-    internal static int MainWithOptions(CommandLineOptions options)
+    internal static int MainWithOptions(CLI options)
     {
         Console.Error.WriteLine("Oracle LOB Unloader");
         Console.Error.WriteLine($"by Peter Hraško a.k.a NoP77svk");
@@ -145,7 +145,7 @@ internal static class Program
         }
     }
 
-    internal static void ValidateCommandLineArguments(CommandLineOptions options)
+    internal static void ValidateCommandLineArguments(CLI options)
     {
         if (options.DbLogon.DbService is null or "")
             throw new ArgumentNullException(null, "Database service name not supplied");

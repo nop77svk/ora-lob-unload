@@ -6,7 +6,7 @@ using CommandLine;
 using NoP77svk.OraLobUnload.ConnectStringParser;
 using NoP77svk.OraLobUnload.DataReaders;
 
-internal class CommandLineOptions
+internal class CLI
 {
     private readonly OracleConnectStringParsed _dbLogonParsed = new OracleConnectStringParsed();
 
