@@ -4,14 +4,23 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-public static class SystemConsoleExt
+public class SecretSystemConsole
 {
-    public static string ReadLineInSecret(Func<char, char?> remapTheChar, bool cancelOnEscape = false)
+    public bool CancelOnEscape { get; init; } = false;
+
+    public Func<char, string> ObfuscateTheInputChar { get; init; }
+
+    public SecretSystemConsole(Func<char, string> obfuscateTheInputChar)
     {
-        return ReadLineInSecret((x) => remapTheChar(x)?.ToString(), cancelOnEscape);
+        ObfuscateTheInputChar = obfuscateTheInputChar;
     }
 
-    public static string ReadLineInSecret(Func<char, string?> remapTheChar, bool cancelOnEscape = false)
+    public SecretSystemConsole(Func<char, char> obfuscateTheInputChar)
+    {
+        ObfuscateTheInputChar = x => obfuscateTheInputChar(x).ToString();
+    }
+
+    public string ReadLineInSecret()
     {
         if (Console.IsInputRedirected)
             throw new NotImplementedException("Framework restriction: Cannot secretly input password when standard input redirection is in effect");
@@ -27,7 +36,7 @@ public static class SystemConsoleExt
                 Console.Error.WriteLine();
                 break;
             }
-            else if (cancelOnEscape && key.Key == ConsoleKey.Escape)
+            else if (CancelOnEscape && key.Key == ConsoleKey.Escape)
             {
                 result.Clear();
                 Console.Error.WriteLine("<esc!>");
@@ -52,7 +61,7 @@ public static class SystemConsoleExt
             {
                 result.Append(key.KeyChar);
 
-                string? displayPartToAdd = remapTheChar(key.KeyChar);
+                string? displayPartToAdd = ObfuscateTheInputChar(key.KeyChar);
                 if (displayPartToAdd is not null and not "")
                     Console.Error.Write(displayPartToAdd);
                 resultRemapped.Push(displayPartToAdd);

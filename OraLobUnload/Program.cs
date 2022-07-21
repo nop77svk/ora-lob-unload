@@ -165,7 +165,11 @@ internal static class Program
         {
             Console.Error.Write($"Enter password for {options.DbLogon.DisplayableConnectString}: ");
             Random charRandomizer = new Random();
-            options.DbLogon.Password = SystemConsoleExt.ReadLineInSecret((x) => Convert.ToChar(charRandomizer.Next(32, 127)), true);
+            SecretSystemConsole secretConsole = new SecretSystemConsole(x => Convert.ToChar(charRandomizer.Next(32, 127)))
+            {
+                CancelOnEscape = true
+            };
+            options.DbLogon.Password = secretConsole.ReadLineInSecret();
         }
 
         if (options.DbLogon.Password is null or "")

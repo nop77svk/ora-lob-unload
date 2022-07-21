@@ -41,19 +41,4 @@
     <ProjectReference Include="..\OraLobUnload.Utilities\OraLobUnload.Utilities.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="test inputs\apex export via blobs.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="test inputs\plsql block with out ref cursor.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="test inputs\sql query.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="test inputs\tables.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
