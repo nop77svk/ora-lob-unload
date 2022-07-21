@@ -1,15 +1,11 @@
-﻿namespace NoP77svk.OraLobUnload;
+﻿namespace NoP77svk.OraLobUnload.ConnectStringParser;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-internal class OracleConnectStringParsed
+public class OracleConnectStringParsed
 {
-    internal OracleConnectStringParsed()
+    public OracleConnectStringParsed()
     {
         User = "";
         Password = "";
@@ -17,20 +13,20 @@ internal class OracleConnectStringParsed
         SpecialRole = OracleUserConnectRole.Normal;
     }
 
-    internal OracleConnectStringParsed(string connectString)
+    public OracleConnectStringParsed(string connectString)
     {
-        (User, Password, DbService, SpecialRole) = InternalParseConnectString(connectString);
+        (User, Password, DbService, SpecialRole) = publicParseConnectString(connectString);
     }
 
-    internal string User { get; set; }
+    public string User { get; set; }
 
-    internal string Password { get; set; }
+    public string Password { get; set; }
 
-    internal string DbService { get; set; }
+    public string DbService { get; set; }
 
-    internal OracleUserConnectRole SpecialRole { get; set; }
+    public OracleUserConnectRole SpecialRole { get; set; }
 
-    internal string FullConnectString
+    public string FullConnectString
     {
         get => (User != "" ? User : "")
             + (User != "" && Password != "" ? "/" + Password : "")
@@ -43,11 +39,11 @@ internal class OracleConnectStringParsed
             };
         set
         {
-            (User, Password, DbService, SpecialRole) = InternalParseConnectString(value);
+            (User, Password, DbService, SpecialRole) = publicParseConnectString(value);
         }
     }
 
-    internal string DisplayableConnectString
+    public string DisplayableConnectString
     {
         get => (User != "" ? User : "")
             + (DbService != "" ? "@" + DbService : "")
@@ -64,7 +60,7 @@ internal class OracleConnectStringParsed
         return DisplayableConnectString;
     }
 
-    private static ValueTuple<string, string, string, OracleUserConnectRole> InternalParseConnectString(string value)
+    private static ValueTuple<string, string, string, OracleUserConnectRole> publicParseConnectString(string value)
     {
         ValueTuple<string, string, string, OracleUserConnectRole> result;
 

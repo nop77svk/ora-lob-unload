@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload", "ora_lob_unl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload.Utilities", "stream_converters\OraLobUnload.Utilities.csproj", "{87C937BB-9B3C-4748-9139-1C532AC50631}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OraLobUnload.ConnectStringParser", "OraLobUnload.ConnectStringParser\OraLobUnload.ConnectStringParser.csproj", "{7C23AE7B-F97A-463C-ABFA-E4D014CA5336}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{87C937BB-9B3C-4748-9139-1C532AC50631}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87C937BB-9B3C-4748-9139-1C532AC50631}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87C937BB-9B3C-4748-9139-1C532AC50631}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C23AE7B-F97A-463C-ABFA-E4D014CA5336}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C23AE7B-F97A-463C-ABFA-E4D014CA5336}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C23AE7B-F97A-463C-ABFA-E4D014CA5336}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C23AE7B-F97A-463C-ABFA-E4D014CA5336}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

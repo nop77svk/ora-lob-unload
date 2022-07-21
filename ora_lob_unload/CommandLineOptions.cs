@@ -2,9 +2,9 @@
 
 using System;
 using System.Text;
-using System.Text.RegularExpressions;
 using CommandLine;
 using NoP77svk.OraLobUnload.InputSqlCommands;
+using NoP77svk.OraLobUnload.ConnectStringParser;
 
 internal class CommandLineOptions
 {

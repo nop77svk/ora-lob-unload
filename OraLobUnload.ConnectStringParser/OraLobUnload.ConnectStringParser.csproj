@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<RootNamespace>NoP77svk.OraLobUnload.Utilities</RootNamespace>
+		<RootNamespace>NoP77svk.OraLobUnload.ConnectStringParser</RootNamespace>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
@@ -11,7 +11,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.61" />
 		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,7 +20,7 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
 		<DebugType>none</DebugType>
-	    <DebugSymbols>false</DebugSymbols>
+		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
 	<ItemGroup>
