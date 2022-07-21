@@ -1,10 +1,10 @@
-﻿namespace SK.NoP77svk.OraLobUnload
+﻿namespace NoP77svk.OraLobUnload
 {
     using System;
     using System.Text;
     using System.Text.RegularExpressions;
     using CommandLine;
-    using SK.NoP77svk.OraLobUnload.InputSqlCommands;
+    using NoP77svk.OraLobUnload.InputSqlCommands;
 
     internal class CommandLineOptions
     {

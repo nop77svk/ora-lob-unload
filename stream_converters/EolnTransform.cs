@@ -1,4 +1,4 @@
-﻿namespace SK.NoP77svk.Lib.StreamProcessors
+﻿namespace NoP77svk.Lib.StreamProcessors
 {
     using System;
     using System.Collections.Generic;

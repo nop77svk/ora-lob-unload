@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <StartupObject></StartupObject>
-    <RootNamespace>sk.nop77svk.OraLobUnload</RootNamespace>
+    <RootNamespace>Nop77svk.OraLobUnload</RootNamespace>
     <Nullable>enable</Nullable>
     <AssemblyName>ora_lob_unload</AssemblyName>
     <Authors>Peter Hraško a.k.a. nop77svk</Authors>

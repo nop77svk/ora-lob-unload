@@ -1,4 +1,4 @@
-﻿namespace SK.NoP77svk.OraLobUnload.StreamColumnProcessors
+﻿namespace NoP77svk.OraLobUnload.StreamColumnProcessors
 {
     using System;
     using System.IO;

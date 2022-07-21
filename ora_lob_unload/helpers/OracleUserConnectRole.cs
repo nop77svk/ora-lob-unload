@@ -1,4 +1,4 @@
-﻿namespace SK.NoP77svk.OraLobUnload
+﻿namespace NoP77svk.OraLobUnload
 {
     internal enum OracleUserConnectRole
     {

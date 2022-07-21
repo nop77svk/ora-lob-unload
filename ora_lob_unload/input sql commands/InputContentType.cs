@@ -1,4 +1,4 @@
-﻿namespace SK.NoP77svk.OraLobUnload.InputSqlCommands
+﻿namespace NoP77svk.OraLobUnload.InputSqlCommands
 {
     internal enum InputContentType
     {

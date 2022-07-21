@@ -1,13 +1,13 @@
-﻿namespace SK.NoP77svk.OraLobUnload
+﻿namespace NoP77svk.OraLobUnload
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
     using CommandLine;
+    using NoP77svk.OraLobUnload.InputSqlCommands;
+    using NoP77svk.OraLobUnload.StreamColumnProcessors;
     using Oracle.ManagedDataAccess.Client;
-    using SK.NoP77svk.OraLobUnload.InputSqlCommands;
-    using SK.NoP77svk.OraLobUnload.StreamColumnProcessors;
 
     internal static class Program
     {
@@ -25,8 +25,8 @@
         internal static int MainWithOptions(CommandLineOptions options)
         {
             Console.Error.WriteLine("Oracle LOB Unloader");
-            Console.Error.WriteLine($"by Peter Hraško a.k.a nop77svk");
-            Console.Error.WriteLine($"https://github.com/nop77svk/ora_lob_unload");
+            Console.Error.WriteLine($"by Peter Hraško a.k.a NoP77svk");
+            Console.Error.WriteLine($"https://github.com/NoP77svk/ora_lob_unload");
             Console.Error.WriteLine();
 
             try
