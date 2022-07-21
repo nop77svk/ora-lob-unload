@@ -23,6 +23,16 @@ so that it connects (`-u`) to the `mydatabase` DB as the `myuser` user with the 
 
 The query produces at least 2 columns with the file name being in the first (the default of the `--file-name-column-ix` parameter) column and file contents being the in the second (the default of the `--lob-column-ix` parameter) column of the query. The query itself may project arbitrary number of columns for that matter.
 
+### _Example_: Exporting PLSQL sources from the current schema
+
+Save [the export query](https://github.com/nop77svk/ora-lob-unload/blob/main/examples/current%20schema%20PLSQL%20export%20via%20BLOBs.sql) into a file (e.g., `schema_plsql_export.sql`) on your local drive and run the LOB unloader as
+
+```
+dotnet ora_lob_unload.dll -u myuser/mypassword@mydatabase -q -i schema_plsql_export.sql -o ./myuser_schema_export
+```
+
+Principle is the same as for the prior example.
+
 ## Technical issues
 
 There's a bug in handling of `Oracle.ManagedDataAccess.Core`'s `Oracle.Types.OracleClob` streamed reading which actually renders this whole utility useless for CLOBs. Although I reported the bug to the Oracle .NET team and they managed to successfully reproduce it (and filed under id 32671328 on March 24, 2021), until it's resolved, there's not much sense in using this app for offloading CLOBs. However...!
