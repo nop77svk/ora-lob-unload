@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload.DataReaders", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload.StreamColumnProcessors", "OraLobUnload.StreamColumnProcessors\OraLobUnload.StreamColumnProcessors.csproj", "{4652BDA9-08E5-4F49-BB01-60C1111873AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OraLobUnload.Engine", "OraLobUnload.Engine\OraLobUnload.Engine.csproj", "{055B3F0D-8AA1-4957-B529-A7767C4CE82B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{4652BDA9-08E5-4F49-BB01-60C1111873AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4652BDA9-08E5-4F49-BB01-60C1111873AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4652BDA9-08E5-4F49-BB01-60C1111873AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055B3F0D-8AA1-4957-B529-A7767C4CE82B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055B3F0D-8AA1-4957-B529-A7767C4CE82B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055B3F0D-8AA1-4957-B529-A7767C4CE82B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055B3F0D-8AA1-4957-B529-A7767C4CE82B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

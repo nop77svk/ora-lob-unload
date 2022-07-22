@@ -1,10 +1,10 @@
 ﻿namespace NoP77svk.OraLobUnload;
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using CommandLine;
 using NoP77svk.OraLobUnload.DataReaders;
+using NoP77svk.OraLobUnload.Engine;
 using NoP77svk.OraLobUnload.OracleStuff;
 using NoP77svk.OraLobUnload.StreamColumnProcessors;
 using NoP77svk.OraLobUnload.Utilities;
@@ -12,8 +12,6 @@ using Oracle.ManagedDataAccess.Client;
 
 internal static class Program
 {
-    private static readonly HashSet<string> _foldersCreated = new ();
-
     internal static int Main(string[] args)
     {
         return Parser.Default
@@ -61,6 +59,16 @@ internal static class Program
 
         Console.Error.WriteLine($"Output CLOBs encoding: {options.OutputEncoding.HeaderName}");
 
+        DataUnloader unloader = new DataUnloader()
+        {
+            FileNameColumnIndex = options.FileNameColumnIndex,
+            LobColumnIndex = options.LobColumnIndex,
+            OutputPath = options.OutputFolder,
+            OutputFileExtension = options.OutputFileExtension,
+            VisualFeedbackStartUnloading = (fName, lobLen) => { Console.Error.Write($"{fName} [{lobLen}] ..."); },
+            VisualFeedbackFinish = () => { Console.Error.WriteLine(" done"); }
+        };
+
         foreach (OracleDataReader dbReader in dataMultiReader.CreateDataReaders())
         {
             using (dbReader)
@@ -78,31 +86,13 @@ internal static class Program
                     $"# {options.LobColumnIndex - 1} ({dbReader.GetName(options.LobColumnIndex - 1)})",
                     options.OutputEncoding
                 );
-                SaveDataFromReader(
-                    dbReader,
-                    options.FileNameColumnIndex - 1,
-                    options.LobColumnIndex - 1,
-                    processor,
-                    options.OutputFileExtension,
-                    options.OutputFolder
-                );
+
+                unloader.UnloadDataFromReader(dbReader, processor);
             }
         }
 
         Console.Error.WriteLine("DONE");
         return 0;
-    }
-
-    internal static void CreateFilePath(string? filePath)
-    {
-        if (!string.IsNullOrEmpty(filePath))
-        {
-            if (!_foldersCreated.Contains(filePath))
-            {
-                Directory.CreateDirectory(filePath);
-                _foldersCreated.Add(filePath);
-            }
-        }
     }
 
     internal static StreamReader OpenInputSqlScript(string? inputSqlScriptFile)
@@ -111,27 +101,6 @@ internal static class Program
             return new StreamReader(Console.OpenStandardInput());
         else
             return File.OpenText(inputSqlScriptFile);
-    }
-
-    internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IStreamColumnProcessor processor, string? fileNameExt, string? outputPath)
-    {
-        string cleanedFileNameExt = !string.IsNullOrEmpty(fileNameExt) ? "." + fileNameExt.Trim('.') : string.Empty;
-        while (dataReader.Read())
-        {
-            string fileName = dataReader.GetString(fileNameColumnIx);
-            fileName = Path.Combine(outputPath ?? string.Empty, fileName);
-            string fileNameWithExt = !string.IsNullOrEmpty(cleanedFileNameExt) && !fileName.EndsWith(cleanedFileNameExt, StringComparison.OrdinalIgnoreCase)
-                ? fileName + cleanedFileNameExt
-                : fileName;
-
-            CreateFilePath(Path.GetDirectoryName(fileNameWithExt));
-            using Stream outFile = new FileStream(fileNameWithExt, FileMode.Create, FileAccess.Write);
-
-            using Stream lobContents = processor.ReadLob(dataReader, lobColumnIx);
-            Console.Error.Write($"{fileNameWithExt} [{processor.GetFormattedLobLength(lobContents.Length)}] ...");
-            processor.SaveLobToStream(lobContents, outFile);
-            Console.Error.WriteLine(" done");
-        }
     }
 
     internal static void ValidateCommandLineArguments(CLI options)
