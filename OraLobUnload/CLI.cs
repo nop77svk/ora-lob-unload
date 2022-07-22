@@ -3,8 +3,8 @@
 using System;
 using System.Text;
 using CommandLine;
-using NoP77svk.OraLobUnload.ConnectStringParser;
 using NoP77svk.OraLobUnload.DataReaders;
+using NoP77svk.OraLobUnload.OracleStuff;
 
 internal class CLI
 {

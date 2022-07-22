@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using CommandLine;
 using NoP77svk.OraLobUnload.DataReaders;
+using NoP77svk.OraLobUnload.OracleStuff;
 using NoP77svk.OraLobUnload.StreamColumnProcessors;
 using NoP77svk.OraLobUnload.Utilities;
 using Oracle.ManagedDataAccess.Client;
@@ -43,7 +44,7 @@ internal static class Program
         using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputFile);
 
         Console.Error.WriteLine($"Connecting to {options.DbLogon.DisplayableConnectString}");
-        using OracleConnection dbConnection = OracleConnectionFactory(options.DbLogon.DbService, options.DbLogon.User, options.DbLogon.Password);
+        using OracleConnection dbConnection = OracleConnectionFactory.CreateOracleConnection(options.DbLogon.DbService, options.DbLogon.User, options.DbLogon.Password);
         dbConnection.Open();
 
         Console.Error.WriteLine($"Using {InputScriptFactory.GetInputSqlReturnTypeDesc(options.InputFileContentType)} as an input against the database");
@@ -111,18 +112,6 @@ internal static class Program
             "" or null => new StreamReader(Console.OpenStandardInput()),
             _ => File.OpenText(inputSqlScriptFile)
         };
-    }
-
-    internal static OracleConnection OracleConnectionFactory(string? dbService, string? dbUser, string? dbPassword)
-    {
-        if (dbService is null or "")
-            throw new ArgumentNullException(nameof(dbService));
-        if (dbUser is null or "")
-            throw new ArgumentNullException(nameof(dbUser));
-        if (dbPassword is null or "")
-            throw new ArgumentNullException(nameof(dbPassword));
-
-        return new OracleConnection($"Data Source = {dbService}; User Id = {dbUser}; Password = {dbPassword}");
     }
 
     internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IStreamColumnProcessor processor, string? fileNameExt, string? outputPath)

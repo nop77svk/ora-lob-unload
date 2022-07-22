@@ -38,10 +38,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\OraLobUnload.ConnectStringParser\OraLobUnload.ConnectStringParser.csproj" />
 		<ProjectReference Include="..\OraLobUnload.DataReaders\OraLobUnload.DataReaders.csproj" />
 		<ProjectReference Include="..\OraLobUnload.StreamColumnProcessors\OraLobUnload.StreamColumnProcessors.csproj" />
 		<ProjectReference Include="..\OraLobUnload.Utilities\OraLobUnload.Utilities.csproj" />
+		<ProjectReference Include="..\OraLobUnload.OracleStuff\OraLobUnload.OracleStuff.csproj" />
 	</ItemGroup>
 
 </Project>

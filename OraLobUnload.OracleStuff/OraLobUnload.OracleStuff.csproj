@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<RootNamespace>NoP77svk.OraLobUnload.ConnectStringParser</RootNamespace>
+		<RootNamespace>NoP77svk.OraLobUnload.OracleStuff</RootNamespace>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
@@ -25,6 +25,7 @@
 
 	<ItemGroup>
 		<Compile Include="..\OraLobUnload\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
+		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.61" />
 	</ItemGroup>
 
 </Project>

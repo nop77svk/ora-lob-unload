@@ -1,4 +1,4 @@
-﻿namespace NoP77svk.OraLobUnload.ConnectStringParser;
+﻿namespace NoP77svk.OraLobUnload.OracleStuff;
 
 using System;
 using System.Text.RegularExpressions;

@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload", "OraLobUnloa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload.Utilities", "OraLobUnload.Utilities\OraLobUnload.Utilities.csproj", "{87C937BB-9B3C-4748-9139-1C532AC50631}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload.ConnectStringParser", "OraLobUnload.ConnectStringParser\OraLobUnload.ConnectStringParser.csproj", "{7C23AE7B-F97A-463C-ABFA-E4D014CA5336}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload.OracleStuff", "OraLobUnload.OracleStuff\OraLobUnload.OracleStuff.csproj", "{7C23AE7B-F97A-463C-ABFA-E4D014CA5336}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OraLobUnload.DataReaders", "OraLobUnload.DataReaders\OraLobUnload.DataReaders.csproj", "{E943869D-685C-417C-9F81-3CF967164242}"
 EndProject
