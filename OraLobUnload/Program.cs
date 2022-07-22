@@ -14,30 +14,21 @@ internal static class Program
 {
     internal static int Main(string[] args)
     {
-        return Parser.Default
+        Parser
+            .Default
             .ParseArguments<CLI>(args)
-            .MapResult(
-                options => MainWithOptions(options),
-                _ => 255
-            );
+            .WithParsed(opt => MainWithOptions(opt));
+        return 0;
     }
 
-    internal static int MainWithOptions(CLI options)
+    internal static void MainWithOptions(CLI options)
     {
         Console.Error.WriteLine("Oracle LOB Unloader");
         Console.Error.WriteLine($"by Peter Hraško a.k.a NoP77svk");
         Console.Error.WriteLine($"https://github.com/NoP77svk/ora-lob-unload");
         Console.Error.WriteLine();
 
-        try
-        {
-            ValidateCommandLineArguments(options);
-        }
-        catch (Exception e)
-        {
-            Console.Error.WriteLine($"ERROR: {e.Message}");
-            return 254;
-        }
+        ValidateCommandLineArguments(options);
 
         using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputFile);
 
@@ -91,7 +82,6 @@ internal static class Program
         }
 
         Console.Error.WriteLine("DONE");
-        return 0;
     }
 
     internal static StreamReader OpenInputSqlScript(string? inputSqlScriptFile)
