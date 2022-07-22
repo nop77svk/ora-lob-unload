@@ -14,7 +14,7 @@ internal class CLI
     public string? DbLogonFull
     {
         get => _dbLogonParsed.FullConnectString;
-        set { _dbLogonParsed.FullConnectString = value ?? ""; }
+        set { _dbLogonParsed.FullConnectString = value ?? string.Empty; }
     }
 
     [Option('i', "input", Required = false, HelpText = "Input script file\nIf not provided, stdin is used")]
@@ -34,7 +34,7 @@ internal class CLI
 
         set
         {
-            InputFileContentType = value?.Trim()?.ToLower()?.Replace("-", "")?.Replace("_", "") switch
+            InputFileContentType = value?.Trim()?.ToLower()?.Replace("-", string.Empty)?.Replace("_", string.Empty) switch
             {
                 "select" or "query" => InputContentType.Select,
                 "outrefcursor" or "outcursor" or "refcursor" or "cursor" => InputContentType.OutRefCursor,
@@ -113,7 +113,7 @@ internal class CLI
     internal string? DbService
     {
         get => _dbLogonParsed.DbService;
-        set { _dbLogonParsed.DbService = value ?? ""; }
+        set { _dbLogonParsed.DbService = value ?? string.Empty; }
     }
 
 
@@ -121,14 +121,14 @@ internal class CLI
     internal string? DbUser
     {
         get => _dbLogonParsed.User;
-        set { _dbLogonParsed.User = value ?? ""; }
+        set { _dbLogonParsed.User = value ?? string.Empty; }
     }
 
     [Option("pass", Required = false, HelpText = "The connecting database user's password")]
     internal string? DbPassword
     {
         get => _dbLogonParsed.Password;
-        set { _dbLogonParsed.Password = value ?? ""; }
+        set { _dbLogonParsed.Password = value ?? string.Empty; }
     }
 
     internal OracleUserConnectRole DbUserRole
@@ -138,17 +138,15 @@ internal class CLI
     }
     */
 
-    internal Encoding OutputEncoding => OutputEncodingId switch
-    {
-        null or "" => new UTF8Encoding(false, false),
-        _ => Encoding.GetEncoding(OutputEncodingId)
-    };
+    internal Encoding OutputEncoding => string.IsNullOrEmpty(OutputEncodingId)
+        ? new UTF8Encoding(false, false)
+        : Encoding.GetEncoding(OutputEncodingId);
 
     internal int LobInitFetchSizeB
     {
         get
         {
-            if (LobInitFetchSize is null or "")
+            if (string.IsNullOrEmpty(LobInitFetchSize))
             {
                 return 65536;
             }

@@ -49,7 +49,7 @@ public class SecretSystemConsole
                     result.Remove(result.Length - 1, 1);
 
                     string? displayPartToRemove = resultRemapped.Pop();
-                    if (displayPartToRemove is not null and not "")
+                    if (!string.IsNullOrEmpty(displayPartToRemove))
                     {
                         Console.CursorLeft -= displayPartToRemove.Length;
                         Console.Error.Write(new string(' ', displayPartToRemove.Length));
@@ -62,7 +62,7 @@ public class SecretSystemConsole
                 result.Append(key.KeyChar);
 
                 string? displayPartToAdd = ObfuscateTheInputChar(key.KeyChar);
-                if (displayPartToAdd is not null and not "")
+                if (!string.IsNullOrEmpty(displayPartToAdd))
                     Console.Error.Write(displayPartToAdd);
                 resultRemapped.Push(displayPartToAdd);
             }

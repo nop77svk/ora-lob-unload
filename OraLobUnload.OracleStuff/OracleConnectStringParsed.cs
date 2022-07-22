@@ -7,9 +7,9 @@ public class OracleConnectStringParsed
 {
     public OracleConnectStringParsed()
     {
-        User = "";
-        Password = "";
-        DbService = "";
+        User = string.Empty;
+        Password = string.Empty;
+        DbService = string.Empty;
         SpecialRole = OracleUserConnectRole.Normal;
     }
 
@@ -28,14 +28,14 @@ public class OracleConnectStringParsed
 
     public string FullConnectString
     {
-        get => (User != "" ? User : "")
-            + (User != "" && Password != "" ? "/" + Password : "")
-            + (DbService != "" ? "@" + DbService : "")
+        get => (!string.IsNullOrEmpty(User) ? User : string.Empty)
+            + (!string.IsNullOrEmpty(User) && !string.IsNullOrEmpty(Password) ? "/" + Password : string.Empty)
+            + (!string.IsNullOrEmpty(DbService) ? "@" + DbService : string.Empty)
             + SpecialRole switch
             {
                 OracleUserConnectRole.AsSysDba => " as sysdba",
                 OracleUserConnectRole.AsSysOper => " as sysoper",
-                _ => ""
+                _ => string.Empty
             };
         set
         {
@@ -45,13 +45,13 @@ public class OracleConnectStringParsed
 
     public string DisplayableConnectString
     {
-        get => (User != "" ? User : "")
-            + (DbService != "" ? "@" + DbService : "")
+        get => (!string.IsNullOrEmpty(User) ? User : string.Empty)
+            + (!string.IsNullOrEmpty(DbService) ? "@" + DbService : string.Empty)
             + SpecialRole switch
             {
                 OracleUserConnectRole.AsSysDba => " as sysdba",
                 OracleUserConnectRole.AsSysOper => " as sysoper",
-                _ => ""
+                _ => string.Empty
             };
     }
 
@@ -64,11 +64,11 @@ public class OracleConnectStringParsed
     {
         ValueTuple<string, string, string, OracleUserConnectRole> result;
 
-        if (value is null or "")
+        if (string.IsNullOrEmpty(value))
         {
-            result.Item1 = "";
-            result.Item2 = "";
-            result.Item3 = "";
+            result.Item1 = string.Empty;
+            result.Item2 = string.Empty;
+            result.Item3 = string.Empty;
             result.Item4 = OracleUserConnectRole.Normal;
         }
         else

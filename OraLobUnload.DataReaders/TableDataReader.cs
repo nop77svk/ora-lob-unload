@@ -27,7 +27,7 @@ public class TableDataReader : IDataMultiReader
         foreach (string tableName in _tableNames)
         {
             string cleanedUpTableName = tableName.Trim().ToUpper();
-            if (cleanedUpTableName == "")
+            if (string.IsNullOrEmpty(cleanedUpTableName))
                 continue;
 
             OracleCommand dbCommand = new OracleCommand(cleanedUpTableName, _dbConnection)

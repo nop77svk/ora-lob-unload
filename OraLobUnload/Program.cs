@@ -54,7 +54,7 @@ internal static class Program
         };
         using IDataMultiReader dataMultiReader = inputScriptFactory.CreateMultiReader(options.InputFileContentType, inputSqlScriptReader);
 
-        if (options.OutputFolder is not null and not "")
+        if (!string.IsNullOrEmpty(options.OutputFolder))
             Console.Error.WriteLine($"Output folder: {options.OutputFolder}");
         else
             Console.Error.WriteLine("Output folder: (current)");
@@ -95,7 +95,7 @@ internal static class Program
 
     internal static void CreateFilePath(string? filePath)
     {
-        if (filePath is not null and not "")
+        if (!string.IsNullOrEmpty(filePath))
         {
             if (!_foldersCreated.Contains(filePath))
             {
@@ -107,21 +107,20 @@ internal static class Program
 
     internal static StreamReader OpenInputSqlScript(string? inputSqlScriptFile)
     {
-        return inputSqlScriptFile switch
-        {
-            "" or null => new StreamReader(Console.OpenStandardInput()),
-            _ => File.OpenText(inputSqlScriptFile)
-        };
+        if (string.IsNullOrEmpty(inputSqlScriptFile))
+            return new StreamReader(Console.OpenStandardInput());
+        else
+            return File.OpenText(inputSqlScriptFile);
     }
 
     internal static void SaveDataFromReader(OracleDataReader dataReader, int fileNameColumnIx, int lobColumnIx, IStreamColumnProcessor processor, string? fileNameExt, string? outputPath)
     {
-        string cleanedFileNameExt = fileNameExt is not null and not "" ? "." + fileNameExt.Trim('.') : "";
+        string cleanedFileNameExt = !string.IsNullOrEmpty(fileNameExt) ? "." + fileNameExt.Trim('.') : string.Empty;
         while (dataReader.Read())
         {
             string fileName = dataReader.GetString(fileNameColumnIx);
-            fileName = Path.Combine(outputPath ?? "", fileName);
-            string fileNameWithExt = cleanedFileNameExt != "" && !fileName.EndsWith(cleanedFileNameExt, StringComparison.OrdinalIgnoreCase)
+            fileName = Path.Combine(outputPath ?? string.Empty, fileName);
+            string fileNameWithExt = !string.IsNullOrEmpty(cleanedFileNameExt) && !fileName.EndsWith(cleanedFileNameExt, StringComparison.OrdinalIgnoreCase)
                 ? fileName + cleanedFileNameExt
                 : fileName;
 
@@ -137,12 +136,12 @@ internal static class Program
 
     internal static void ValidateCommandLineArguments(CLI options)
     {
-        if (options.DbLogon.DbService is null or "")
+        if (string.IsNullOrEmpty(options.DbLogon.DbService))
             throw new ArgumentNullException(null, "Database service name not supplied");
-        if (options.DbLogon.User is null or "")
+        if (string.IsNullOrEmpty(options.DbLogon.User))
             throw new ArgumentNullException(null, "Connecting database user not supplied");
 
-        if (options.DbLogon.Password is null or "")
+        if (string.IsNullOrEmpty(options.DbLogon.Password))
         {
             Console.Error.Write($"Enter password for {options.DbLogon.DisplayableConnectString}: ");
             Random charRandomizer = new Random();
@@ -153,7 +152,7 @@ internal static class Program
             options.DbLogon.Password = secretConsole.ReadLineInSecret();
         }
 
-        if (options.DbLogon.Password is null or "")
+        if (string.IsNullOrEmpty(options.DbLogon.Password))
             throw new ArgumentNullException(null, "Connecting database user's password not supplied");
 
         if (options.FileNameColumnIndex is < 1 or > 1000)

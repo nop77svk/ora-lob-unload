@@ -53,7 +53,7 @@ public class InputScriptFactory
         while ((tableName = inputSql.ReadLine()) != null)
         {
             string cleanedUpTableName = tableName.Trim().ToUpper();
-            if (cleanedUpTableName != "")
+            if (!string.IsNullOrEmpty(cleanedUpTableName))
                 yield return cleanedUpTableName;
         }
     }
