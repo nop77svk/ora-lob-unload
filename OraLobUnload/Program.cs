@@ -83,7 +83,6 @@ internal static class Program
 
                 using IStreamColumnProcessor processor = StreamColumnProcessorFactory.CreateStreamColumnProcessor(
                     dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1),
-                    $"# {options.LobColumnIndex - 1} ({dbReader.GetName(options.LobColumnIndex - 1)})",
                     options.OutputEncoding
                 );
 
