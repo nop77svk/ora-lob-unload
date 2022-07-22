@@ -48,11 +48,11 @@ internal static class Program
         dbConnection.Open();
 
         Console.Error.WriteLine($"Using {InputScriptFactory.GetInputSqlReturnTypeDesc(options.InputFileContentType)} as an input against the database");
-        InputScriptFactory dbCommandFactory = new InputScriptFactory(dbConnection)
+        InputScriptFactory inputScriptFactory = new InputScriptFactory(dbConnection)
         {
             InitialLobFetchSize = options.LobInitFetchSizeB
         };
-        using IDataMultiReader dataMultiReader = dbCommandFactory.CreateMultiReader(options.InputFileContentType, inputSqlScriptReader);
+        using IDataMultiReader dataMultiReader = inputScriptFactory.CreateMultiReader(options.InputFileContentType, inputSqlScriptReader);
 
         if (options.OutputFolder is not null and not "")
             Console.Error.WriteLine($"Output folder: {options.OutputFolder}");
