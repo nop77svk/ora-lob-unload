@@ -58,10 +58,10 @@ select
         as file_name,
     X.object_ddl as file_contents
 from (
-        select --+ no_merge
+        select --+ no_merge noparallel
             sys_context('userenv', 'session_user') as owner, S.type as object_type, S.name as object_name,
             clob_listagg(
-                i_lines => cast(collect(S.text order by S.line) as sys.ora_mining_varchar2_nt),
+                i_lines => cast(collect(S.text order by S.line asc) as sys.ora_mining_varchar2_nt),
                 i_prefix => 'create or replace ',
                 i_suffix => chr(10)||'/'||chr(10)
             ) as object_ddl
