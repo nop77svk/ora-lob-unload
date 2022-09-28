@@ -6,7 +6,7 @@ using Oracle.ManagedDataAccess.Client;
 
 public interface IStreamColumnProcessor : IDisposable
 {
-    public Stream ReadLob(OracleDataReader dataReader, int fieldIndex);
+    public Stream OpenLob(OracleDataReader dataReader, int fieldIndex);
 
     public long GetTrueLobLength(long reportedLength);
 

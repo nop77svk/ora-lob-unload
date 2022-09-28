@@ -18,7 +18,7 @@ public class ClobProcessor : IStreamColumnProcessor
         _outputEncoding = outputEncoding;
     }
 
-    public Stream ReadLob(OracleDataReader dataReader, int fieldIndex)
+    public Stream OpenLob(OracleDataReader dataReader, int fieldIndex)
     {
         _lobStream = dataReader.GetOracleClob(fieldIndex);
         return _lobStream;
@@ -44,7 +44,6 @@ public class ClobProcessor : IStreamColumnProcessor
         var utf16decoder = new UnicodeEncoding(false, false);
         using var transcoder = new CryptoStream(outFile, new UnicodeToAnyEncodingTransform(utf16decoder, _outputEncoding), CryptoStreamMode.Write, true);
 
-        // inClob.CorrectlyCopyTo(transcoder); // 2do! does the .CopyTo() work or not?!
         inClob.CopyTo(transcoder);
     }
 

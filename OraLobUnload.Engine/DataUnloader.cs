@@ -30,7 +30,7 @@ public class DataUnloader
 
             CreateFilePath(Path.GetDirectoryName(fileNameWithExt));
             using Stream outFile = new FileStream(fileNameWithExt, FileMode.Create, FileAccess.Write);
-            using Stream lobContents = processor.ReadLob(dataReader, LobColumnIndex - 1);
+            using Stream lobContents = processor.OpenLob(dataReader, LobColumnIndex - 1);
             VisualFeedbackStartUnloading?.Invoke(fileNameWithExt, processor.GetFormattedLobLength(lobContents.Length));
 
             processor.SaveLobToStream(lobContents, outFile);
