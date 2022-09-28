@@ -41,6 +41,10 @@ There's a bug in `Oracle.ManagedDataAccess.Core`'s handling of `Oracle.Types.Ora
 
 You can offload BLOBs and BFILEs without restriction. If you are skilled enough in PL/SQL, you can convert your CLOBs to binary data on your database side and offload them this way. You are restricted only by your imagination and creativity. 😉 However, feel free to get inspired by [the examples in the repository](https://github.com/nop77svk/ora-lob-unload/tree/main/examples).
 
+### Update, 2022/09/28
+
+Oracle's .NET team e-mailed me about the bug having been fixed. Testing of the fix is currently ongoing.
+
 ## A word from+about the author
 
 As a long-time (15+ years) Oracle PL/SQL dev who's hit the boundaries of PL/SQL's capabilities (even with pretty heavy use of Oracle's OOP), I wanted to expand on the options of expressing myself via computer code. And while Java still seems to be widely more popular across the world, I've chosen C# and .NET (Core) as the "middle tier" platform of my choice simply because I somehow (irrationally, perhaps) liked the C# language more than the Java language. C# seems more concise, more readable, more pragmatic than Java and ever since I found out about the wonderful cross-platform .NET Core, my "destiny" seemed clear.
