@@ -27,13 +27,13 @@ The query produces at least 2 columns with the file name being in the first (the
 
 ### _Example_: Exporting PLSQL sources from the current schema
 
-Save [the export query](https://github.com/nop77svk/ora-lob-unload/blob/main/examples/current%20schema%20PLSQL%20export%20via%20BLOBs.sql) into a file (e.g., `schema_plsql_export.sql`) on your local drive and run the LOB unloader as
+Save [the export query](https://github.com/nop77svk/ora-lob-unload/blob/main/examples/current%20schema%20PLSQL%20export.sql) into a file (e.g., `schema_plsql_export.sql`) on your local drive and run the LOB unloader as
 
 ```
 dotnet ora_lob_unload.dll -u myuser/mypassword@mydatabase -q -i schema_plsql_export.sql -o ./myuser_schema_export
 ```
 
-Principle is the same as for the prior example.
+Principle is the same as for the previous example.
 
 ## Technical issues
 
@@ -43,7 +43,7 @@ Principle is the same as for the prior example.
 
 ### Update, 2022/09/28
 
-Oracle's .NET team was so nice to have e-mailed me about the bug having been fixed in their managed data access library as of version 3.21.70. The problem of messed up text LOB streams (CLOBs) seems to be gone now.
+Oracle's .NET team was so nice to have e-mailed me about the bug 32671328 having been fixed in their managed data access library as of version 3.21.70. The problem of messed up text LOB streams (CLOBs) seems to be gone now. (Still, be on the lookout for any problems, though!)
 
 ## A word from+about the author
 
