@@ -9,7 +9,7 @@ public class BFileProcessor : IStreamColumnProcessor
 {
     private OracleBFile? _lobStream;
 
-    public Stream ReadLob(OracleDataReader dataReader, int fieldIndex)
+    public Stream OpenLob(OracleDataReader dataReader, int fieldIndex)
     {
         _lobStream = dataReader.GetOracleBFile(fieldIndex);
         if (!_lobStream.IsOpen)

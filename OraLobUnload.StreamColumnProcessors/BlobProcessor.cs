@@ -9,7 +9,7 @@ public class BlobProcessor : IStreamColumnProcessor
 {
     private OracleBlob? _lobStream;
 
-    public Stream ReadLob(OracleDataReader dataReader, int fieldIndex)
+    public Stream OpenLob(OracleDataReader dataReader, int fieldIndex)
     {
         _lobStream = dataReader.GetOracleBlob(fieldIndex);
         return _lobStream;
