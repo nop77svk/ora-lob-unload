@@ -35,6 +35,8 @@ dotnet ora_lob_unload.dll -u myuser/mypassword@mydatabase -q -i schema_plsql_exp
 
 Principle is the same as for the previous example.
 
+This is as fast as schema's PL/SQL export can get!
+
 ## Technical issues
 
 ~~There's a bug in `Oracle.ManagedDataAccess.Core`'s handling of `Oracle.Types.OracleClob` streamed reading which actually renders this whole utility useless for CLOBs. Although I reported the bug to the Oracle .NET team and they managed to successfully reproduce it (and filed under id 32671328 on March 24, 2021), until it's resolved, there's not much sense in using this app for offloading CLOBs. However...!~~
