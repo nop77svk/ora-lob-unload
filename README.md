@@ -9,7 +9,12 @@ Look no further, for this utility is what you'll ever need! 😎
 
 ## The solution...
 
-Download your Oracle LOB Unloader build from the [Releases](https://github.com/nop77svk/ora-lob-unload/releases) page, unzip, run as `dotnet ora_lob_unload.dll --help` and see what happens. (You're going to need the [.NET 6 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) for the *Portable* build to work.)
+1. Download your Oracle LOB Unloader build from the [Releases](https://github.com/nop77svk/ora-lob-unload/releases) page,
+1. unzip,
+1. run as `dotnet ora_lob_unload.dll --help`,
+1. and see what happens.
+
+(You're going to need the [.NET 6 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) for the *Portable* build to work.)
 
 Oh, you don't yet see the possibilities?
 
