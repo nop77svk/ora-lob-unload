@@ -20,11 +20,11 @@ public class DataUnloader
     public void UnloadDataFromReader(OracleDataReader dataReader, IStreamColumnProcessor processor)
     {
         string cleanedFileNameExt = !string.IsNullOrEmpty(OutputFileExtension) ? "." + OutputFileExtension.Trim('.') : string.Empty;
-        try
+        while (dataReader.Read())
         {
-            while (dataReader.Read())
+            string fileName = dataReader.GetString(FileNameColumnIndex - 1);
+            try
             {
-                string fileName = dataReader.GetString(FileNameColumnIndex - 1);
                 fileName = Path.Combine(OutputPath ?? string.Empty, fileName);
                 string fileNameWithExt = !string.IsNullOrEmpty(cleanedFileNameExt) && !fileName.EndsWith(cleanedFileNameExt, StringComparison.OrdinalIgnoreCase)
                     ? fileName + cleanedFileNameExt
@@ -41,10 +41,10 @@ public class DataUnloader
                 lobContents.Close();
                 outFile.Close();
             }
-        }
-        catch (OracleException e)
-        {
-            throw new DataUnloaderException(cleanedFileNameExt, e);
+            catch (OracleException e)
+            {
+                throw new DataUnloaderException(fileName, e);
+            }
         }
     }
 
