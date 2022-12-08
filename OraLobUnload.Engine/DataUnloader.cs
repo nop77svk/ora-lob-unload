@@ -20,24 +20,31 @@ public class DataUnloader
     public void UnloadDataFromReader(OracleDataReader dataReader, IStreamColumnProcessor processor)
     {
         string cleanedFileNameExt = !string.IsNullOrEmpty(OutputFileExtension) ? "." + OutputFileExtension.Trim('.') : string.Empty;
-        while (dataReader.Read())
+        try
         {
-            string fileName = dataReader.GetString(FileNameColumnIndex - 1);
-            fileName = Path.Combine(OutputPath ?? string.Empty, fileName);
-            string fileNameWithExt = !string.IsNullOrEmpty(cleanedFileNameExt) && !fileName.EndsWith(cleanedFileNameExt, StringComparison.OrdinalIgnoreCase)
-                ? fileName + cleanedFileNameExt
-                : fileName;
+            while (dataReader.Read())
+            {
+                string fileName = dataReader.GetString(FileNameColumnIndex - 1);
+                fileName = Path.Combine(OutputPath ?? string.Empty, fileName);
+                string fileNameWithExt = !string.IsNullOrEmpty(cleanedFileNameExt) && !fileName.EndsWith(cleanedFileNameExt, StringComparison.OrdinalIgnoreCase)
+                    ? fileName + cleanedFileNameExt
+                    : fileName;
 
-            CreateFilePath(Path.GetDirectoryName(fileNameWithExt));
-            using Stream outFile = new FileStream(fileNameWithExt, FileMode.Create, FileAccess.Write);
-            using Stream lobContents = processor.OpenLob(dataReader, LobColumnIndex - 1);
-            VisualFeedbackStartUnloading?.Invoke(fileNameWithExt, processor.GetFormattedLobLength(lobContents.Length));
+                CreateFilePath(Path.GetDirectoryName(fileNameWithExt));
+                using Stream outFile = new FileStream(fileNameWithExt, FileMode.Create, FileAccess.Write);
+                using Stream lobContents = processor.OpenLob(dataReader, LobColumnIndex - 1);
+                VisualFeedbackStartUnloading?.Invoke(fileNameWithExt, processor.GetFormattedLobLength(lobContents.Length));
 
-            processor.SaveLobToStream(lobContents, outFile);
-            VisualFeedbackFinish?.Invoke();
+                processor.SaveLobToStream(lobContents, outFile);
+                VisualFeedbackFinish?.Invoke();
 
-            lobContents.Close();
-            outFile.Close();
+                lobContents.Close();
+                outFile.Close();
+            }
+        }
+        catch (OracleException e)
+        {
+            throw new DataUnloaderException(cleanedFileNameExt, e);
         }
     }
 

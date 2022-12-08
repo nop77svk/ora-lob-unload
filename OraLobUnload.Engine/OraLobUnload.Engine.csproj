@@ -1,35 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<RootNamespace>NoP77svk.OraLobUnload.Engine</RootNamespace>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)'=='Release'">
-		<DebugType>none</DebugType>
-		<DebugSymbols>false</DebugSymbols>
-		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-	</PropertyGroup>
-
-	<ItemGroup Condition="'$(Configuration)'=='Debug'">
-		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Compile Include="..\OraLobUnload\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
-		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.70" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\OraLobUnload.StreamColumnProcessors\OraLobUnload.StreamColumnProcessors.csproj" />
-	</ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>NoP77svk.OraLobUnload.Engine</RootNamespace>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\OraLobUnload\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.70" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OraLobUnload.StreamColumnProcessors\OraLobUnload.StreamColumnProcessors.csproj" />
+  </ItemGroup>
 </Project>
