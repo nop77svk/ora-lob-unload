@@ -26,6 +26,10 @@
 	<ItemGroup>
 		<Compile Include="..\OraLobUnload\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
 		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
+		<PackageReference Include="SonarAnalyzer.CSharp" Version="*">
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+		</PackageReference>
 	</ItemGroup>
 
 </Project>
