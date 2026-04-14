@@ -59,8 +59,7 @@ public class OracleTestContainerFixture : IAsyncLifetime
         {
             DataSource = $"127.0.0.1:{OracleContainerHostPort}/FREEPDB1",
             UserID = "SYSTEM",
-            Password = OracleContainerPassword,
-            //DBAPrivilege = "SYSDBA"
+            Password = OracleContainerPassword
         }.ConnectionString;
 
         _connection = new OracleConnection(ConnectionString);
@@ -102,18 +101,22 @@ public class OracleTestContainerFixture : IAsyncLifetime
         using var command = _connection.CreateCommand();
         command.CommandText = insertSql;
 
-        byte[] testBlobData = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }; // PNG header
-        string testClobData = "This is a test CLOB containing multiple lines of text.\nLine 2: Lorem ipsum dolor sit amet.\nLine 3: Test complete.";
+        byte[] testBlobData = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]; // PNG header
+        string testClobData = """
+            This is a test CLOB containing multiple lines of text.
+            Line 2: Lorem ipsum dolor sit amet.
+            Line 3: Test complete.
+            """;
 
         // Add test rows
         for (int i = 1; i <= 3; i++)
         {
             command.Parameters.Clear();
             command.Parameters.Add("id", i);
-            command.Parameters.Add("fileName", $"testfile_{i}");
-            command.Parameters.Add("blobContent", testBlobData);
-            command.Parameters.Add("clobContent", testClobData + $" Row {i}");
-            command.Parameters.Add("bfileContent", DBNull.Value);
+            command.Parameters.Add("fileName", OracleDbType.Varchar2, $"testfile_{i}", System.Data.ParameterDirection.Input);
+            command.Parameters.Add("blobContent", OracleDbType.Blob, testBlobData, System.Data.ParameterDirection.Input);
+            command.Parameters.Add("clobContent", OracleDbType.Clob, testClobData + $" Row {i}", System.Data.ParameterDirection.Input);
+            command.Parameters.Add("bfileContent", OracleDbType.BFile, DBNull.Value, System.Data.ParameterDirection.Input);
 
             await command.ExecuteNonQueryAsync();
         }

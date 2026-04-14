@@ -39,8 +39,8 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         };
 
         // Act
-        using var reader = await command.ExecuteReaderAsync();
-        Assert.True(await reader.ReadAsync(), "Should retrieve at least one row");
+        using var reader = await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
+        Assert.True(await reader.ReadAsync(TestContext.Current.CancellationToken), "Should retrieve at least one row");
 
         string fileName = reader.GetString(0);
         using var processor = new BlobProcessor();
@@ -72,8 +72,8 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         };
 
         // Act
-        using var reader = await command.ExecuteReaderAsync();
-        Assert.True(await reader.ReadAsync(), "Should retrieve at least one row");
+        using var reader = await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
+        Assert.True(await reader.ReadAsync(TestContext.Current.CancellationToken), "Should retrieve at least one row");
 
         string fileName = reader.GetString(0);
         using var processor = new ClobProcessor(Encoding.UTF8);
@@ -90,7 +90,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
 
         // Verify content can be read
         using var memoryStream = new MemoryStream();
-        await clobStream.CopyToAsync(memoryStream);
+        await clobStream.CopyToAsync(memoryStream, TestContext.Current.CancellationToken);
         Assert.NotEmpty(memoryStream.ToArray());
 
         await _fixture.ClearTestDataAsync();
@@ -110,8 +110,8 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         };
 
         // Act
-        using var reader = await command.ExecuteReaderAsync();
-        Assert.True(await reader.ReadAsync(), "Should retrieve at least one row");
+        using var reader = await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
+        Assert.True(await reader.ReadAsync(TestContext.Current.CancellationToken), "Should retrieve at least one row");
 
         using var processor = new BFileProcessor();
 
@@ -135,7 +135,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         try
         {
             using var createCommand = new OracleCommand(createTableSql, connection);
-            await createCommand.ExecuteNonQueryAsync();
+            await createCommand.ExecuteNonQueryAsync(TestContext.Current.CancellationToken);
         }
         catch (OracleException ex) when (ex.Number == 955)
         {
@@ -144,7 +144,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
 
         string insertSql = "INSERT INTO test_null_lobs (id, content, text_content) VALUES (1, NULL, NULL)";
         using var insertCommand = new OracleCommand(insertSql, connection);
-        await insertCommand.ExecuteNonQueryAsync();
+        await insertCommand.ExecuteNonQueryAsync(TestContext.Current.CancellationToken);
 
         string selectSql = "SELECT id, content, text_content FROM test_null_lobs WHERE id = 1";
         using var command = new OracleCommand(selectSql, connection)
@@ -153,11 +153,11 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         };
 
         // Act
-        using var reader = await command.ExecuteReaderAsync();
-        Assert.True(await reader.ReadAsync(), "Should retrieve at least one row");
+        using var reader = await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
+        Assert.True(await reader.ReadAsync(TestContext.Current.CancellationToken), "Should retrieve at least one row");
 
-        bool isBlobNull = await reader.IsDBNullAsync(1);
-        bool isClobNull = await reader.IsDBNullAsync(2);
+        bool isBlobNull = await reader.IsDBNullAsync(1, TestContext.Current.CancellationToken);
+        bool isClobNull = await reader.IsDBNullAsync(2, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.True(isBlobNull, "BLOB should be NULL");
@@ -167,7 +167,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         using var deleteCommand = new OracleCommand("DROP TABLE test_null_lobs", connection);
         try
         {
-            await deleteCommand.ExecuteNonQueryAsync();
+            await deleteCommand.ExecuteNonQueryAsync(TestContext.Current.CancellationToken);
         }
         catch (OracleException)
         {
@@ -193,8 +193,8 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         command.Parameters.Add("id", rowId);
 
         // Act
-        using var reader = await command.ExecuteReaderAsync();
-        Assert.True(await reader.ReadAsync());
+        using var reader = await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
+        Assert.True(await reader.ReadAsync(TestContext.Current.CancellationToken));
 
         int id = reader.GetInt32(0);
         string fileName = reader.GetString(1);
@@ -230,13 +230,13 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
             END;
             """;
 
-        var reader = new PlsqlBlockDataReader(connection, plsqlScript, PlsqlBlockReturnType.OutRefCursor, 4096);
+        using IDataMultiReader reader = new PlsqlBlockDataReader(connection, plsqlScript, PlsqlBlockReturnType.OutRefCursor, 4096);
 
         // Act
         int rowCount = 0;
         foreach (var dataReader in reader.GetDataReaders())
         {
-            while (await dataReader.ReadAsync())
+            while (await dataReader.ReadAsync(TestContext.Current.CancellationToken))
             {
                 rowCount++;
                 string fileName = dataReader.GetString(0);
