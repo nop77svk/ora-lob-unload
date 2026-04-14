@@ -1,9 +1,9 @@
-﻿namespace NoP77svk.OraLobUnload.OracleStuff;
+namespace NoP77svk.OraLobUnload.OracleStuff;
 
 using System;
 using System.Text.RegularExpressions;
 
-public class OracleConnectStringParsed
+public partial class OracleConnectStringParsed
 {
     public OracleConnectStringParsed()
     {
@@ -15,7 +15,7 @@ public class OracleConnectStringParsed
 
     public OracleConnectStringParsed(string connectString)
     {
-        (User, Password, DbService, SpecialRole) = publicParseConnectString(connectString);
+        (User, Password, DbService, SpecialRole) = ParseConnectString(connectString);
     }
 
     public string User { get; set; }
@@ -39,7 +39,7 @@ public class OracleConnectStringParsed
             };
         set
         {
-            (User, Password, DbService, SpecialRole) = publicParseConnectString(value);
+            (User, Password, DbService, SpecialRole) = ParseConnectString(value);
         }
     }
 
@@ -60,7 +60,7 @@ public class OracleConnectStringParsed
         return DisplayableConnectString;
     }
 
-    private static ValueTuple<string, string, string, OracleUserConnectRole> publicParseConnectString(string value)
+    private static ValueTuple<string, string, string, OracleUserConnectRole> ParseConnectString(string value)
     {
         ValueTuple<string, string, string, OracleUserConnectRole> result;
 
@@ -73,7 +73,7 @@ public class OracleConnectStringParsed
         }
         else
         {
-            Match m = Regex.Match(value, @"^\s*([^/@ ]*)(\s*/\s*([^@ ]*))?\s*@\s*(\S*)\s*(as\s*(sysdba|sysoper))?\s*$", RegexOptions.IgnoreCase);
+            Match m = RxParseConnectionString().Match(value);
             if (m.Success)
             {
                 result.Item1 = m.Groups[1].Value;
@@ -94,4 +94,7 @@ public class OracleConnectStringParsed
 
         return result;
     }
+
+    [GeneratedRegex(@"^\s*([^/@ ]*)(\s*/\s*([^@ ]*))?\s*@\s*(\S*)\s*(as\s*(sysdba|sysoper))?\s*$", RegexOptions.IgnoreCase, "sk-SK")]
+    private static partial Regex RxParseConnectionString();
 }

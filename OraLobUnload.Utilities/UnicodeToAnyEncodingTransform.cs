@@ -1,4 +1,4 @@
-﻿namespace NoP77svk.OraLobUnload.Utilities;
+namespace NoP77svk.OraLobUnload.Utilities;
 
 using System;
 using System.Security.Cryptography;
@@ -9,7 +9,9 @@ public class UnicodeToAnyEncodingTransform : ICryptoTransform
     public UnicodeToAnyEncodingTransform(UnicodeEncoding inputDecoder, Encoding outputEncoder, int inputBufferSizeInChars = 262144)
     {
         if (inputBufferSizeInChars <= 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(inputBufferSizeInChars), $"Illegal input buffer size of \"{inputBufferSizeInChars}\" characters");
+        }
 
         InputBlockSize = inputBufferSizeInChars * inputDecoder.GetMaxByteCount(1);
 

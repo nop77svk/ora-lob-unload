@@ -1,4 +1,4 @@
-﻿namespace NoP77svk.OraLobUnload.StreamColumnProcessors;
+namespace NoP77svk.OraLobUnload.StreamColumnProcessors;
 
 using System;
 using System.IO;
@@ -8,12 +8,16 @@ using Oracle.ManagedDataAccess.Types;
 public class BFileProcessor : IStreamColumnProcessor
 {
     private OracleBFile? _lobStream;
+    private bool _disposedValue;
 
     public Stream OpenLob(OracleDataReader dataReader, int fieldIndex)
     {
         _lobStream = dataReader.GetOracleBFile(fieldIndex);
         if (!_lobStream.IsOpen)
+        {
             _lobStream.OpenFile();
+        }
+
         return _lobStream;
     }
 
@@ -30,14 +34,31 @@ public class BFileProcessor : IStreamColumnProcessor
     public void SaveLobToStream(Stream inLob, Stream outFile)
     {
         if (inLob is not OracleBFile)
+        {
             throw new ArgumentException($"Must be OracleBFile, is {inLob.GetType().FullName}", nameof(inLob));
+        }
 
         inLob.CopyTo(outFile);
     }
 
     public void Dispose()
     {
-        _lobStream?.Close();
-        _lobStream?.Dispose();
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                _lobStream?.Close();
+                _lobStream?.Dispose();
+            }
+
+            _disposedValue = true;
+        }
     }
 }

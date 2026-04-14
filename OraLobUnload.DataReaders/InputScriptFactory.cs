@@ -1,4 +1,4 @@
-﻿namespace NoP77svk.OraLobUnload.DataReaders;
+namespace NoP77svk.OraLobUnload.DataReaders;
 
 using System;
 using System.Collections.Generic;
@@ -38,8 +38,8 @@ public class InputScriptFactory
         IDataMultiReader result = returnType switch
         {
             InputContentType.Tables => new TableDataReader(_dbConnection, SplitInputSqlToLines(inputSql), InitialLobFetchSize),
-            InputContentType.OutRefCursor => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), true, false, InitialLobFetchSize),
-            InputContentType.ImplicitCursors => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), false, true, InitialLobFetchSize),
+            InputContentType.OutRefCursor => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), PlsqlBlockReturnType.OutRefCursor, InitialLobFetchSize),
+            InputContentType.ImplicitCursors => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), PlsqlBlockReturnType.ImplicitCursors, InitialLobFetchSize),
             InputContentType.Select => new SqlQueryDataReader(_dbConnection, inputSql.ReadToEnd(), InitialLobFetchSize),
             _ => throw new NotImplementedException($"Using input script type \"{returnType}\" not (yet) implemented!")
         };
@@ -54,7 +54,9 @@ public class InputScriptFactory
         {
             string cleanedUpTableName = tableName.Trim().ToUpper();
             if (!string.IsNullOrEmpty(cleanedUpTableName))
+            {
                 yield return cleanedUpTableName;
+            }
         }
     }
 }

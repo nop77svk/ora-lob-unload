@@ -1,4 +1,5 @@
-﻿namespace NoP77svk.OraLobUnload.DataReaders;
+#pragma warning disable CA2000 // Dispose objects before losing scope
+namespace NoP77svk.OraLobUnload.DataReaders;
 
 using System;
 using System.Collections.Generic;
@@ -10,53 +11,49 @@ public class PlsqlBlockDataReader : IDataMultiReader
 {
     private readonly OracleConnection _dbConnection;
     private readonly string _plsqlScript;
-    private readonly bool _useOutRefCursor;
-    private readonly bool _useImplicitCursors;
-    private readonly ICollection<OracleDataReader> _dataReaders;
+    private readonly PlsqlBlockReturnType _plsqlBlockReturnType;
+    private readonly ICollection<OracleDataReader> _dataReaders = new List<OracleDataReader>();
+    private readonly ICollection<OracleCommand> _dbCommands = new List<OracleCommand>();
     private readonly int _initialLobFetchSize;
+    private bool _disposedValue;
 
-    private OracleCommand? _dbCommand;
-    private OracleParameter? _outCursor;
-
-    public PlsqlBlockDataReader(OracleConnection dbConnection, string plsqlScript, bool useOutRefCursor, bool useImplicitCursors, int initialLobFetchSize)
+    public PlsqlBlockDataReader(OracleConnection dbConnection, string plsqlScript, PlsqlBlockReturnType plsqlBlockReturnType, int initialLobFetchSize)
     {
-        if (!useImplicitCursors && !useOutRefCursor)
-            throw new ArgumentException("Must use at least one out ref cursor return type");
-
         _dbConnection = dbConnection;
+        _plsqlBlockReturnType = plsqlBlockReturnType;
         _plsqlScript = plsqlScript.Trim().Trim('/').Trim();
-        _useImplicitCursors = useImplicitCursors;
-        _useOutRefCursor = useOutRefCursor;
-        _dataReaders = new List<OracleDataReader>();
         _initialLobFetchSize = initialLobFetchSize;
     }
 
-    public IEnumerable<OracleDataReader> CreateDataReaders()
+    public IEnumerable<OracleDataReader> GetDataReaders()
     {
-        if (_useOutRefCursor)
-            _outCursor = new OracleParameter("result", OracleDbType.RefCursor, ParameterDirection.Output);
-
-        _dbCommand = new OracleCommand(_plsqlScript, _dbConnection)
+        OracleParameter outCursor = new OracleParameter("result", OracleDbType.RefCursor, ParameterDirection.Output);
+        OracleCommand dbCommand = new OracleCommand(_plsqlScript, _dbConnection)
         {
             BindByName = false,
             CommandType = CommandType.Text,
             InitialLOBFetchSize = _initialLobFetchSize
         };
 
-        if (_outCursor is not null)
-            _dbCommand.Parameters.Add(_outCursor);
+        _dbCommands.Add(dbCommand);
 
-        _dbCommand.ExecuteNonQuery();
-        if (_outCursor is not null)
+        if (_plsqlBlockReturnType.HasFlag(PlsqlBlockReturnType.OutRefCursor))
         {
-            OracleDataReader result = ((OracleRefCursor)_outCursor.Value).GetDataReader();
+            dbCommand.Parameters.Add(outCursor);
+        }
+
+        dbCommand.ExecuteNonQuery();
+
+        if (_plsqlBlockReturnType.HasFlag(PlsqlBlockReturnType.OutRefCursor))
+        {
+            OracleDataReader result = ((OracleRefCursor)outCursor.Value).GetDataReader();
             _dataReaders.Add(result);
             yield return result;
         }
 
-        if (_useImplicitCursors)
+        if (_plsqlBlockReturnType.HasFlag(PlsqlBlockReturnType.ImplicitCursors))
         {
-            foreach (OracleRefCursor implicitCursor in _dbCommand.ImplicitRefCursors)
+            foreach (OracleRefCursor implicitCursor in dbCommand.ImplicitRefCursors)
             {
                 OracleDataReader result = implicitCursor.GetDataReader();
                 _dataReaders.Add(result);
@@ -67,13 +64,36 @@ public class PlsqlBlockDataReader : IDataMultiReader
 
     public void Dispose()
     {
-        foreach (OracleDataReader dataReader in _dataReaders)
-            dataReader.Dispose();
-
-        if (_dbCommand is not null)
-            _dbCommand.Dispose();
-
-        if (_outCursor is not null)
-            _outCursor.Dispose();
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                foreach (OracleDataReader dataReader in _dataReaders)
+                {
+                    dataReader.Dispose();
+                }
+
+                foreach (OracleCommand oracleCommand in _dbCommands)
+                {
+                    oracleCommand.Dispose();
+                }
+            }
+
+            _disposedValue = true;
+        }
+    }
+}
+
+[Flags]
+public enum PlsqlBlockReturnType
+{
+    OutRefCursor = 1,
+    ImplicitCursors = 2
 }
