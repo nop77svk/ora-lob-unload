@@ -11,11 +11,11 @@
 		<PackageReference Include="xunit.v3.assert" Version="*" />
 		<PackageReference Include="xunit.analyzers" Version="*" />
 
-		<PackageReference Include="Testcontainers.Oracle" Version="*" />
-
 		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
 
 		<Using Include="Xunit" />
+
+		<PackageReference Include="Testcontainers.Oracle" Version="*" />
 	</ItemGroup>
 
 	<ItemGroup>

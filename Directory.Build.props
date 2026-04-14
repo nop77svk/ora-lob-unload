@@ -4,6 +4,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
 
 		<Product>Oracle LOB Unloader</Product>
 		<Authors>Peter Hraško</Authors>
@@ -31,7 +32,7 @@
 		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="*" />
 	</ItemGroup>
 
-	<PropertyGroup Label="Remove Debug Symbols in Release Mode" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	<PropertyGroup Label="Remove Debug Symbols in Release Mode" Condition="'$(Configuration)'=='Release'">
 		<DebugType>none</DebugType>
 		<DebugSymbols>false</DebugSymbols>
 		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
