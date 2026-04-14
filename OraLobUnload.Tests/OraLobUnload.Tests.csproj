@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<UseRidGraph>true</UseRidGraph>
+		<IsPackable>false</IsPackable>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup Label="test support">
+		<PackageReference Include="xunit.v3.mtp-v2" Version="*" />
+		<PackageReference Include="xunit.v3.assert" Version="*" />
+		<PackageReference Include="xunit.analyzers" Version="*" />
+
+		<PackageReference Include="Testcontainers.Oracle" Version="*" />
+
+		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\OraLobUnload\OraLobUnload.csproj" />
+		<ProjectReference Include="..\OraLobUnload.StreamColumnProcessors\OraLobUnload.StreamColumnProcessors.csproj" />
+		<ProjectReference Include="..\OraLobUnload.DataReaders\OraLobUnload.DataReaders.csproj" />
+		<ProjectReference Include="..\OraLobUnload.Engine\OraLobUnload.Engine.csproj" />
+	</ItemGroup>
+
+</Project>

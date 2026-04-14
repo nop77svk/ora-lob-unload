@@ -3,6 +3,7 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 
 		<Product>Oracle LOB Unloader</Product>
 		<Authors>Peter Hraško</Authors>

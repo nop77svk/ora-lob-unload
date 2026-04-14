@@ -3,6 +3,7 @@
   <Project Path="OraLobUnload.Engine/OraLobUnload.Engine.csproj" />
   <Project Path="OraLobUnload.OracleStuff/OraLobUnload.OracleStuff.csproj" />
   <Project Path="OraLobUnload.StreamColumnProcessors/OraLobUnload.StreamColumnProcessors.csproj" />
+  <Project Path="OraLobUnload.Tests/OraLobUnload.Tests.csproj" />
   <Project Path="OraLobUnload.Utilities/OraLobUnload.Utilities.csproj" />
   <Project Path="OraLobUnload/OraLobUnload.csproj" />
 </Solution>
