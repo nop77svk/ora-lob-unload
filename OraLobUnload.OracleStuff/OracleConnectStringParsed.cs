@@ -15,7 +15,7 @@ public partial class OracleConnectStringParsed
 
     public OracleConnectStringParsed(string connectString)
     {
-        (User, Password, DbService, SpecialRole) = publicParseConnectString(connectString);
+        (User, Password, DbService, SpecialRole) = ParseConnectString(connectString);
     }
 
     public string User { get; set; }
@@ -39,7 +39,7 @@ public partial class OracleConnectStringParsed
             };
         set
         {
-            (User, Password, DbService, SpecialRole) = publicParseConnectString(value);
+            (User, Password, DbService, SpecialRole) = ParseConnectString(value);
         }
     }
 
@@ -60,7 +60,7 @@ public partial class OracleConnectStringParsed
         return DisplayableConnectString;
     }
 
-    private static ValueTuple<string, string, string, OracleUserConnectRole> publicParseConnectString(string value)
+    private static ValueTuple<string, string, string, OracleUserConnectRole> ParseConnectString(string value)
     {
         ValueTuple<string, string, string, OracleUserConnectRole> result;
 
