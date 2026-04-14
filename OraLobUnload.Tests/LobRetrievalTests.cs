@@ -245,7 +245,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         }
 
         // Assert
-        Assert.NotEqual(0, rowCount);
+        Assert.Equal(3, rowCount);
 
         reader.Dispose();
         await _fixture.ClearTestDataAsync();
