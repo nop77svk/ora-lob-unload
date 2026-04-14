@@ -47,7 +47,6 @@ jobs:
             -o ./_publish.win-x64 \
             -r win-x64 \
             --self-contained \
-            --no-restore \
             -p:UseAppHost=true
         cd ./_publish.win-x64
         cp ../LICENSE .
@@ -60,7 +59,6 @@ jobs:
             -o ./_publish.linux-x64 \
             -r linux-x64 \
             --self-contained \
-            --no-restore \
             -p:UseAppHost=true
         cd ./_publish.linux-x64
         cp ../LICENSE .
@@ -74,7 +72,6 @@ jobs:
             -r win-x64 \
             --no-self-contained \
             -p:PublishTrimmed=false \
-            --no-restore \
             -p:UseAppHost=true
         cd ./_publish.portable
         cp ../LICENSE .
