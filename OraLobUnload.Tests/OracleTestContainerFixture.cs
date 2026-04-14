@@ -39,7 +39,7 @@ public class OracleTestContainerFixture : IAsyncLifetime
     public async ValueTask InitializeAsync()
     {
         _container = new OracleBuilder("container-registry.oracle.com/database/free:latest-lite")
-            .WithDockerEndpoint(DockerDaemonUri)
+            //.WithDockerEndpoint(DockerDaemonUri)
             .WithPassword(OracleContainerPassword)
             .WithAutoRemove(true)
             .WithCleanUp(true)
