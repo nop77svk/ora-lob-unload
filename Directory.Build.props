@@ -26,6 +26,10 @@
 		</PackageReference>
 	</ItemGroup>
 
+	<ItemGroup Label="Common Nugets">
+		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="*" />
+	</ItemGroup>
+
 	<PropertyGroup Label="Remove Debug Symbols in Release Mode" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<DebugType>none</DebugType>
 		<DebugSymbols>false</DebugSymbols>

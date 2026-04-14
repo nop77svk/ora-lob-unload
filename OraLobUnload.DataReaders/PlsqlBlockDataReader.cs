@@ -7,13 +7,6 @@ using System.Data;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 
-[Flags]
-public enum PlsqlBlockReturnType
-{
-    OutRefCursor = 1,
-    ImplicitCursors = 2
-}
-
 public class PlsqlBlockDataReader : IDataMultiReader
 {
     private readonly OracleConnection _dbConnection;
@@ -96,4 +89,11 @@ public class PlsqlBlockDataReader : IDataMultiReader
             _disposedValue = true;
         }
     }
+}
+
+[Flags]
+public enum PlsqlBlockReturnType
+{
+    OutRefCursor = 1,
+    ImplicitCursors = 2
 }

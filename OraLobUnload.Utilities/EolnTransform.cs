@@ -96,7 +96,7 @@ public class EolnTransform : ICryptoTransform
 
         for (int inputSpanOffset = 0; inputSpanOffset < inputSpan.Length - _longestRawEolnConsidered + 1; inputSpanOffset++)
         {
-            for (int rawEolnIx = 0; rawEolnIx < _rawEolnsConsidered.Length; inputSpanOffset++)
+            for (int rawEolnIx = 0; rawEolnIx < _rawEolnsConsidered.Length; rawEolnIx++)
             {
                 if (inputSpan.Slice(inputSpanOffset, _rawEolnsConsidered[rawEolnIx].Length - 1).SequenceEqual(_rawEolnsConsidered[rawEolnIx]))
                 {
@@ -128,37 +128,5 @@ public class EolnTransform : ICryptoTransform
         {
             throw new ArgumentOutOfRangeException(nameof(TargetEolnSequence), "NULL or empty target EOLN sequence supplied");
         }
-    }
-
-    private void DealWithPartialEolnsInInputBuffer(byte[] inputBuffer, int inputCount, out byte[] inputBufferWithLeftovers, out byte[] newLeftover)
-    {
-        throw new NotImplementedException();
-    }
-
-    private int TransformBlockInternal(ReadOnlySpan<byte> input, Span<byte> output, int reservedBytesAtTheEnd = 0)
-    {
-        int bytesWritten = 0;
-        int lastInputSpanOffset = 0;
-
-        for (int inputSpanOffset = 0; inputSpanOffset < input.Length - reservedBytesAtTheEnd; inputSpanOffset++) // 2do! how many to subtract??
-        {
-            for (int rawEolnIx = 0; rawEolnIx < _rawEolnsConsidered.Length; inputSpanOffset++)
-            {
-                if (input.Slice(inputSpanOffset, _rawEolnsConsidered[rawEolnIx].Length).SequenceEqual(_rawEolnsConsidered[rawEolnIx]))
-                {
-                    int sliceLength = inputSpanOffset - lastInputSpanOffset;
-                    input.Slice(lastInputSpanOffset, sliceLength).CopyTo(output.Slice(bytesWritten, sliceLength));
-                    bytesWritten += sliceLength;
-
-                    _targetEoln.CopyTo(output.Slice(bytesWritten, _targetEoln.Length));
-                    bytesWritten += _targetEoln.Length;
-
-                    inputSpanOffset += _rawEolnsConsidered[rawEolnIx].Length - 1;
-                    break;
-                }
-            }
-        }
-
-        return bytesWritten;
     }
 }

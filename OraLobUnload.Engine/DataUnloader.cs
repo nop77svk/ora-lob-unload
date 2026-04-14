@@ -50,13 +50,10 @@ public class DataUnloader
 
     private static void CreateFilePath(string? filePath)
     {
-        if (!string.IsNullOrEmpty(filePath))
+        if (!string.IsNullOrEmpty(filePath) && !_foldersCreated.Contains(filePath))
         {
-            if (!_foldersCreated.Contains(filePath))
-            {
-                Directory.CreateDirectory(filePath);
-                _foldersCreated.Add(filePath);
-            }
+            Directory.CreateDirectory(filePath);
+            _foldersCreated.Add(filePath);
         }
     }
 }

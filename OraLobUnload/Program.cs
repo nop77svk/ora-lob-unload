@@ -67,27 +67,24 @@ internal static class Program
 
         foreach (OracleDataReader dbReader in dataMultiReader.GetDataReaders())
         {
-            using (dbReader)
+            int leastDatasetColumnCountNeeded = Math.Max(options.FileNameColumnIndex, options.LobColumnIndex);
+            if (dbReader.FieldCount < leastDatasetColumnCountNeeded)
             {
-                int leastDatasetColumnCountNeeded = Math.Max(options.FileNameColumnIndex, options.LobColumnIndex);
-                if (dbReader.FieldCount < leastDatasetColumnCountNeeded)
-                {
-                    throw new InvalidDataException($"Dataset field count is {dbReader.FieldCount}, should be at least {leastDatasetColumnCountNeeded}");
-                }
-
-                string fileNameColumnTypeName = dbReader.GetFieldType(options.FileNameColumnIndex - 1).Name;
-                if (fileNameColumnTypeName != "String")
-                {
-                    throw new InvalidDataException($"Supposed file name column #{options.FileNameColumnIndex} is of type \"{fileNameColumnTypeName}\", but \"string\" expected");
-                }
-
-                using IStreamColumnProcessor processor = StreamColumnProcessorFactory.CreateStreamColumnProcessor(
-                    dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1),
-                    options.OutputEncoding
-                );
-
-                unloader.UnloadDataFromReader(dbReader, processor);
+                throw new InvalidDataException($"Dataset field count is {dbReader.FieldCount}, should be at least {leastDatasetColumnCountNeeded}");
             }
+
+            string fileNameColumnTypeName = dbReader.GetFieldType(options.FileNameColumnIndex - 1).Name;
+            if (fileNameColumnTypeName != "String")
+            {
+                throw new InvalidDataException($"Supposed file name column #{options.FileNameColumnIndex} is of type \"{fileNameColumnTypeName}\", but \"string\" expected");
+            }
+
+            using IStreamColumnProcessor processor = StreamColumnProcessorFactory.CreateStreamColumnProcessor(
+                dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1),
+                options.OutputEncoding
+            );
+
+            unloader.UnloadDataFromReader(dbReader, processor);
         }
 
         Console.Error.WriteLine("DONE");
