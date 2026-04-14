@@ -18,10 +18,6 @@ public class OracleTestContainerFixture : IAsyncLifetime
     private OracleContainer? _container;
     private OracleConnection? _connection;
 
-    public string DockerDaemonHost { get; init; } = "localhost";
-    public int DockerDaemonPort { get; init; } = 2375;
-    public Uri DockerDaemonUri => new UriBuilder("http", DockerDaemonHost, DockerDaemonPort).Uri;
-
     public int OracleContainerHostPort { get; init; } = 1522;
 
     public string? ConnectionString { get; private set; }
@@ -39,7 +35,6 @@ public class OracleTestContainerFixture : IAsyncLifetime
     public async ValueTask InitializeAsync()
     {
         _container = new OracleBuilder("container-registry.oracle.com/database/free:latest-lite")
-            //.WithDockerEndpoint(DockerDaemonUri)
             .WithPassword(OracleContainerPassword)
             .WithAutoRemove(true)
             .WithCleanUp(true)
