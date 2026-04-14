@@ -1,4 +1,4 @@
-﻿namespace NoP77svk.OraLobUnload.Utilities;
+namespace NoP77svk.OraLobUnload.Utilities;
 
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,9 @@ public class SecretSystemConsole
     public string ReadLineInSecret()
     {
         if (Console.IsInputRedirected)
+        {
             throw new NotImplementedException("Framework restriction: Cannot secretly input password when standard input redirection is in effect");
+        }
 
         StringBuilder result = new StringBuilder();
         Stack<string?> resultRemapped = new Stack<string?>();
@@ -63,7 +65,10 @@ public class SecretSystemConsole
 
                 string? displayPartToAdd = ObfuscateTheInputChar(key.KeyChar);
                 if (!string.IsNullOrEmpty(displayPartToAdd))
+                {
                     Console.Error.Write(displayPartToAdd);
+                }
+
                 resultRemapped.Push(displayPartToAdd);
             }
         }

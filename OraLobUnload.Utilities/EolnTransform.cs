@@ -1,4 +1,4 @@
-﻿namespace NoP77svk.OraLobUnload.Utilities;
+namespace NoP77svk.OraLobUnload.Utilities;
 
 using System;
 using System.Security.Cryptography;
@@ -53,7 +53,9 @@ public class EolnTransform : ICryptoTransform
             byte[] eolnSequenceRaw = StreamEncoding.GetBytes(EolnsConsidered[i]);
             _rawEolnsConsidered[i] = eolnSequenceRaw;
             if (eolnSequenceRaw.Length > _longestRawEolnConsidered)
+            {
                 _longestRawEolnConsidered = eolnSequenceRaw.Length;
+            }
         }
 
         InputBlockSize = StreamEncoding.GetMaxByteCount(inputBufferSizeInChars);
@@ -123,7 +125,9 @@ public class EolnTransform : ICryptoTransform
     private void AssertValidEolnsSupplied()
     {
         if (_targetEoln == null || _targetEoln.Length <= 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(TargetEolnSequence), "NULL or empty target EOLN sequence supplied");
+        }
     }
 
     private void DealWithPartialEolnsInInputBuffer(byte[] inputBuffer, int inputCount, out byte[] inputBufferWithLeftovers, out byte[] newLeftover)

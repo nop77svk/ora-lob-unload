@@ -1,37 +1,36 @@
-﻿namespace NoP77svk.OraLobUnload.DataReaders;
+namespace NoP77svk.OraLobUnload.DataReaders;
 
 using System;
 using System.Collections.Generic;
 using System.Data;
 using Oracle.ManagedDataAccess.Client;
-using Oracle.ManagedDataAccess.Types;
 
 public class SqlQueryDataReader : IDataMultiReader
 {
-    private readonly OracleConnection _dbConnection;
-    private readonly string _sqlQuery;
     private readonly ICollection<OracleDataReader> _dataReaders;
     private readonly int _initialLobFetchSize;
 
-    private OracleCommand? _dbCommand;
+    private readonly OracleCommand _dbCommand;
+    private bool _disposedValue;
+
+    public string SqlQuery { get; }
 
     public SqlQueryDataReader(OracleConnection dbConnection, string sqlQuery, int initialLobFetchSize)
     {
-        _dbConnection = dbConnection;
-        _sqlQuery = sqlQuery.Trim().Trim(';').Trim();
-        _dataReaders = new List<OracleDataReader>();
-        _initialLobFetchSize = initialLobFetchSize;
-    }
-
-    public IEnumerable<OracleDataReader> CreateDataReaders()
-    {
-        _dbCommand = new OracleCommand(_sqlQuery, _dbConnection)
+        SqlQuery = sqlQuery.Trim().Trim(';').Trim();
+        _dbCommand = new OracleCommand(SqlQuery, dbConnection)
         {
             BindByName = false,
             CommandType = CommandType.Text,
             InitialLOBFetchSize = _initialLobFetchSize
         };
 
+        _dataReaders = new List<OracleDataReader>();
+        _initialLobFetchSize = initialLobFetchSize;
+    }
+
+    public IEnumerable<OracleDataReader> GetDataReaders()
+    {
         OracleDataReader result = _dbCommand.ExecuteReader();
         _dataReaders.Add(result);
         yield return result;
@@ -39,10 +38,26 @@ public class SqlQueryDataReader : IDataMultiReader
 
     public void Dispose()
     {
-        foreach (OracleDataReader dataReader in _dataReaders)
-            dataReader.Dispose();
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 
-        if (_dbCommand is not null)
-            _dbCommand.Dispose();
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                foreach (OracleDataReader dataReader in _dataReaders)
+                {
+                    dataReader.Dispose();
+                }
+
+                _dbCommand.Dispose();
+            }
+
+            _disposedValue = true;
+        }
     }
 }

@@ -1,9 +1,9 @@
-﻿namespace NoP77svk.OraLobUnload.OracleStuff;
+namespace NoP77svk.OraLobUnload.OracleStuff;
 
 using System;
 using System.Text.RegularExpressions;
 
-public class OracleConnectStringParsed
+public partial class OracleConnectStringParsed
 {
     public OracleConnectStringParsed()
     {
@@ -73,7 +73,7 @@ public class OracleConnectStringParsed
         }
         else
         {
-            Match m = Regex.Match(value, @"^\s*([^/@ ]*)(\s*/\s*([^@ ]*))?\s*@\s*(\S*)\s*(as\s*(sysdba|sysoper))?\s*$", RegexOptions.IgnoreCase);
+            Match m = RxParseConnectionString().Match(value);
             if (m.Success)
             {
                 result.Item1 = m.Groups[1].Value;
@@ -94,4 +94,7 @@ public class OracleConnectStringParsed
 
         return result;
     }
+
+    [GeneratedRegex(@"^\s*([^/@ ]*)(\s*/\s*([^@ ]*))?\s*@\s*(\S*)\s*(as\s*(sysdba|sysoper))?\s*$", RegexOptions.IgnoreCase, "sk-SK")]
+    private static partial Regex RxParseConnectionString();
 }

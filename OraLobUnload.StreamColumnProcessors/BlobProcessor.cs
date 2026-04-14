@@ -1,13 +1,15 @@
-﻿namespace NoP77svk.OraLobUnload.StreamColumnProcessors;
+namespace NoP77svk.OraLobUnload.StreamColumnProcessors;
 
 using System;
 using System.IO;
+
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 
 public class BlobProcessor : IStreamColumnProcessor
 {
     private OracleBlob? _lobStream;
+    private bool _disposedValue;
 
     public Stream OpenLob(OracleDataReader dataReader, int fieldIndex)
     {
@@ -28,13 +30,30 @@ public class BlobProcessor : IStreamColumnProcessor
     public void SaveLobToStream(Stream inLob, Stream outFile)
     {
         if (inLob is not OracleBlob)
+        {
             throw new ArgumentException($"Must be OracleBlob, is {inLob.GetType().FullName}", nameof(inLob));
+        }
 
         inLob.CopyTo(outFile);
     }
 
     public void Dispose()
     {
-        _lobStream?.Dispose();
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                _lobStream?.Dispose();
+            }
+
+            _disposedValue = true;
+        }
     }
 }
