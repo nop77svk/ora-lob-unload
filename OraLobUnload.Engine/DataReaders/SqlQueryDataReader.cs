@@ -27,7 +27,7 @@ public class SqlQueryDataReader : IDataMultiReader
 
     public async IAsyncEnumerable<DataMultiReaderRow> GetDataAsync(int fieldNameIndex, int fieldValueIndex)
     {
-        using OracleDataReader reader = (OracleDataReader)await _dbCommand.ExecuteReaderAsync();
+        using OracleDataReader reader = await _dbCommand.ExecuteReaderAsync();
         await foreach (var kvp in IDataMultiReader.FetchDataFromReaderAsync(fieldNameIndex, fieldValueIndex, reader))
         {
             yield return kvp;

@@ -1,3 +1,4 @@
+#pragma warning disable S3881
 namespace NoP77svk.OraLobUnload.Engine.Infrastructure;
 
 using System;
