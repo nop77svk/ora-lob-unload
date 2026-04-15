@@ -247,7 +247,40 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
     }
 
     [Fact]
-    public async Task SqlDataReader_RetrievesBlobData()
+    public async Task PlsqlBlockDataReader_WithOutRefCursor_RetrievesClobData()
+    {
+        // Arrange
+        await _fixture.SeedTestDataAsync();
+        var connection = _fixture.GetConnection();
+
+        string plsqlScript = """
+            DECLARE
+                v_cursor SYS_REFCURSOR;
+            BEGIN
+                OPEN v_cursor FOR SELECT file_name, clob_content FROM test_lob_data;
+                :result := v_cursor;
+            END;
+            """;
+
+        IDataMultiReader reader = new PlsqlBlockDataReader(connection, plsqlScript, PlsqlBlockReturnType.OutRefCursor, 4096);
+
+        // Act
+        int rowCount = 0;
+        await foreach (var row in reader.GetDataAsync(0, 1))
+        {
+            rowCount++;
+            Assert.NotEmpty(row.LobName);
+            Assert.IsType<OracleClob>(row.LobContents);
+        }
+
+        // Assert
+        Assert.Equal(3, rowCount);
+
+        await _fixture.ClearTestDataAsync();
+    }
+
+    [Fact]
+    public async Task SqlQueryDataReader_RetrievesBlobData()
     {
         // Arrange
         await _fixture.SeedTestDataAsync();
@@ -266,6 +299,34 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
             rowCount++;
             Assert.NotEmpty(row.LobName);
             Assert.IsType<OracleBlob>(row.LobContents);
+        }
+
+        // Assert
+        Assert.Equal(3, rowCount);
+
+        await _fixture.ClearTestDataAsync();
+    }
+
+    [Fact]
+    public async Task SqlQueryDataReader_RetrievesClobData()
+    {
+        // Arrange
+        await _fixture.SeedTestDataAsync();
+        var connection = _fixture.GetConnection();
+
+        string sqlScript = """
+            SELECT file_name, clob_content FROM test_lob_data;
+            """;
+
+        IDataMultiReader reader = new SqlQueryDataReader(connection, sqlScript, 4096);
+
+        // Act
+        int rowCount = 0;
+        await foreach (var row in reader.GetDataAsync(0, 1))
+        {
+            rowCount++;
+            Assert.NotEmpty(row.LobName);
+            Assert.IsType<OracleClob>(row.LobContents);
         }
 
         // Assert
