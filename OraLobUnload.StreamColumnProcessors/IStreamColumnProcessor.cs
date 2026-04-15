@@ -1,16 +1,12 @@
-﻿namespace NoP77svk.OraLobUnload.StreamColumnProcessors;
+namespace NoP77svk.OraLobUnload.StreamColumnProcessors;
 
-using System;
 using System.IO;
-using Oracle.ManagedDataAccess.Client;
 
-public interface IStreamColumnProcessor : IDisposable
+public interface IStreamColumnProcessor
 {
-    public Stream OpenLob(OracleDataReader dataReader, int fieldIndex);
+    long GetTrueLobLength(long reportedLength);
 
-    public long GetTrueLobLength(long reportedLength);
+    string GetFormattedLobLength(long reportedLength);
 
-    public string GetFormattedLobLength(long reportedLength);
-
-    public void SaveLobToStream(Stream inLob, Stream outFile);
+    void SaveLobToStream(Stream inLob, Stream outFile);
 }

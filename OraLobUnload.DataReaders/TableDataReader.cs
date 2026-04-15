@@ -25,7 +25,7 @@ public class TableDataReader : IDataMultiReader
         _initialLobFetchSize = initialLobFetchSize;
     }
 
-    public async IAsyncEnumerable<KeyValuePair<string, object>> GetDataAsync(int fieldNameIndex, int fieldValueIndex)
+    public async IAsyncEnumerable<DataMultiReaderRow> GetDataAsync(int fieldNameIndex, int fieldValueIndex)
     {
         var cleanedUpTableNames = _tableNames
             .Select(tableName => tableName.Trim().ToUpper())

@@ -1,18 +1,21 @@
-﻿namespace NoP77svk.OraLobUnload.StreamColumnProcessors;
+namespace NoP77svk.OraLobUnload.StreamColumnProcessors;
+
 using System;
 using System.IO;
 using System.Text;
 
+using Oracle.ManagedDataAccess.Types;
+
 public static class StreamColumnProcessorFactory
 {
-    public static IStreamColumnProcessor CreateStreamColumnProcessor(Type columnType, Encoding charColumnOutputEncoding)
+    public static IStreamColumnProcessor CreateStreamColumnProcessor(Type? columnType, Encoding charColumnOutputEncoding)
     {
-        return columnType.Name switch
+        return columnType?.Name switch
         {
-            "OracleClob" => new ClobProcessor(charColumnOutputEncoding),
-            "OracleBlob" => new BlobProcessor(),
-            "OracleBFile" => new BFileProcessor(),
-            _ => throw new InvalidDataException($"Supposed LOB column is of type \"{columnType.Name}\", but CLOB, BLOB or BFILE expected")
+            nameof(OracleClob) => new ClobProcessor(charColumnOutputEncoding),
+            nameof(OracleBlob) => new BlobProcessor(),
+            nameof(OracleBFile) => new BFileProcessor(),
+            _ => throw new InvalidDataException($"Supposed LOB column is of type \"{columnType?.Name}\", but CLOB, BLOB or BFILE expected")
         };
     }
 }

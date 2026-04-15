@@ -32,7 +32,7 @@ public class SqlQueryDataReader : IDataMultiReader
         _initialLobFetchSize = initialLobFetchSize;
     }
 
-    public async IAsyncEnumerable<KeyValuePair<string, object>> GetDataAsync(int fieldNameIndex, int fieldValueIndex)
+    public async IAsyncEnumerable<DataMultiReaderRow> GetDataAsync(int fieldNameIndex, int fieldValueIndex)
     {
         using OracleDataReader reader = await _dbCommand.ExecuteReaderAsync();
         await foreach (var kvp in IDataMultiReader.FetchDataFromReaderAsync(fieldNameIndex, fieldValueIndex, reader))

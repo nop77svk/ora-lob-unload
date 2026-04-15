@@ -1,9 +1,14 @@
 namespace NoP77svk.OraLobUnload.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
+
+using NoP77svk.OraLobUnload.DataReaders;
 using NoP77svk.OraLobUnload.StreamColumnProcessors;
+
 using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
 
 public class DataUnloader
 {
@@ -15,36 +20,43 @@ public class DataUnloader
     public Action<string, string>? VisualFeedbackStartUnloading { get; init; }
     public Action? VisualFeedbackFinish { get; init; }
 
-    private static readonly HashSet<string> _foldersCreated = new ();
+    private static readonly HashSet<string> _foldersCreated = new();
 
-    public void UnloadDataFromReader(OracleDataReader dataReader, IStreamColumnProcessor processor)
+    private string CleanedFileNameExt
+        => !string.IsNullOrEmpty(OutputFileExtension)
+        ? "." + OutputFileExtension.Trim('.')
+        : string.Empty;
+
+    public async Task UnloadDataFromMultiReaderAsync(string fileName, Stream? fileContents, IStreamColumnProcessor processor)
     {
-        string cleanedFileNameExt = !string.IsNullOrEmpty(OutputFileExtension) ? "." + OutputFileExtension.Trim('.') : string.Empty;
-        while (dataReader.Read())
+        string cleanedFileNameExt = CleanedFileNameExt;
+        try
         {
-            string fileName = dataReader.GetString(FileNameColumnIndex - 1);
-            try
-            {
-                fileName = Path.Combine(OutputPath ?? string.Empty, fileName);
-                string fileNameWithExt = !string.IsNullOrEmpty(cleanedFileNameExt) && !fileName.EndsWith(cleanedFileNameExt, StringComparison.OrdinalIgnoreCase)
-                    ? fileName + cleanedFileNameExt
-                    : fileName;
+            string fileNameWithPath = Path.Combine(OutputPath ?? string.Empty, fileName);
+            string fileNameWithExt = !string.IsNullOrEmpty(cleanedFileNameExt) && !fileName.EndsWith(cleanedFileNameExt, StringComparison.OrdinalIgnoreCase)
+                ? fileNameWithPath + cleanedFileNameExt
+                : fileNameWithPath;
 
-                CreateFilePath(Path.GetDirectoryName(fileNameWithExt));
-                using Stream outFile = new FileStream(fileNameWithExt, FileMode.Create, FileAccess.Write);
-                using Stream lobContents = processor.OpenLob(dataReader, LobColumnIndex - 1);
+            CreateFilePath(Path.GetDirectoryName(fileNameWithExt));
+            await using Stream outFile = new FileStream(fileNameWithExt, FileMode.Create, FileAccess.Write);
+
+            if (fileContents is not null)
+            {
+                await using Stream lobContents = fileContents;
+
                 VisualFeedbackStartUnloading?.Invoke(fileNameWithExt, processor.GetFormattedLobLength(lobContents.Length));
 
                 processor.SaveLobToStream(lobContents, outFile);
                 VisualFeedbackFinish?.Invoke();
 
                 lobContents.Close();
-                outFile.Close();
             }
-            catch (OracleException e)
-            {
-                throw new DataUnloaderException(fileName, e);
-            }
+
+            outFile.Close();
+        }
+        catch (OracleException ex)
+        {
+            throw new DataUnloaderException(fileName, ex);
         }
     }
 

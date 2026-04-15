@@ -5,9 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	</ItemGroup>
-
-	<ItemGroup>
+		<ProjectReference Include="..\OraLobUnload.DataReaders\OraLobUnload.DataReaders.csproj" />
 		<ProjectReference Include="..\OraLobUnload.StreamColumnProcessors\OraLobUnload.StreamColumnProcessors.csproj" />
 	</ItemGroup>
 </Project>

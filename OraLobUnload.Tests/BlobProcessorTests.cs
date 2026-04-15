@@ -15,7 +15,7 @@ public class BlobProcessorTests
     public void GetFormattedLobLength_ForBlob_ReturnsCorrectFormat()
     {
         // Arrange
-        using var processor = new BlobProcessor();
+        var processor = new BlobProcessor();
         long blobLength = 1024 * 100; // 100 KB
 
         // Act
@@ -29,7 +29,7 @@ public class BlobProcessorTests
     public void GetTrueLobLength_ForBlob_ReturnsSameValue()
     {
         // Arrange
-        using var processor = new BlobProcessor();
+        var processor = new BlobProcessor();
         long reportedLength = 2048;
 
         // Act
@@ -43,7 +43,7 @@ public class BlobProcessorTests
     public void SaveLobToStream_WithNonOracleBlobStream_ThrowsArgumentException()
     {
         // Arrange
-        using var processor = new BlobProcessor();
+        var processor = new BlobProcessor();
         using var invalidStream = new MemoryStream(new byte[] { 1, 2, 3 });
         using var outputStream = new MemoryStream();
 

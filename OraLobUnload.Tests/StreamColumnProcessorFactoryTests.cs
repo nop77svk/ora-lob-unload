@@ -24,7 +24,6 @@ public class StreamColumnProcessorFactoryTests
 
         // Assert
         Assert.IsType<ClobProcessor>(processor);
-        processor.Dispose();
     }
 
     [Fact]
@@ -38,7 +37,6 @@ public class StreamColumnProcessorFactoryTests
 
         // Assert
         Assert.IsType<BlobProcessor>(processor);
-        processor.Dispose();
     }
 
     [Fact]
@@ -52,7 +50,6 @@ public class StreamColumnProcessorFactoryTests
 
         // Assert
         Assert.IsType<BFileProcessor>(processor);
-        processor.Dispose();
     }
 
     [Fact]

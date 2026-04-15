@@ -2,6 +2,7 @@ namespace NoP77svk.OraLobUnload.Tests;
 
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,8 +44,8 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         Assert.True(await reader.ReadAsync(TestContext.Current.CancellationToken), "Should retrieve at least one row");
 
         string fileName = reader.GetString(0);
-        using var processor = new BlobProcessor();
-        using var blobStream = processor.OpenLob(reader, 1);
+        using var blobStream = reader.GetOracleBlob(1);
+        var processor = new BlobProcessor();
 
         // Assert
         Assert.NotNull(blobStream);
@@ -54,6 +55,11 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
 
         string formattedLength = processor.GetFormattedLobLength(blobStream.Length);
         Assert.StartsWith("BLOB:", formattedLength);
+
+        // Verify content can be read
+        using var memoryStream = new MemoryStream();
+        processor.SaveLobToStream(blobStream, memoryStream);
+        Assert.NotEmpty(memoryStream.ToArray());
 
         await _fixture.ClearTestDataAsync();
     }
@@ -76,8 +82,8 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         Assert.True(await reader.ReadAsync(TestContext.Current.CancellationToken), "Should retrieve at least one row");
 
         string fileName = reader.GetString(0);
-        using var processor = new ClobProcessor(Encoding.UTF8);
-        using var clobStream = processor.OpenLob(reader, 1);
+        using var clobStream = reader.GetOracleClob(1);
+        var processor = new ClobProcessor(Encoding.UTF8);
 
         // Assert
         Assert.NotNull(clobStream);
@@ -90,7 +96,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
 
         // Verify content can be read
         using var memoryStream = new MemoryStream();
-        await clobStream.CopyToAsync(memoryStream, TestContext.Current.CancellationToken);
+        processor.SaveLobToStream(clobStream, memoryStream);
         Assert.NotEmpty(memoryStream.ToArray());
 
         await _fixture.ClearTestDataAsync();
@@ -113,7 +119,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         using var reader = await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
         Assert.True(await reader.ReadAsync(TestContext.Current.CancellationToken), "Should retrieve at least one row");
 
-        using var processor = new BFileProcessor();
+        var processor = new BFileProcessor();
 
         // Since test container may not have BFILE setup, we verify the processor exists
         Assert.NotNull(processor);
@@ -199,11 +205,11 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         int id = reader.GetInt32(0);
         string fileName = reader.GetString(1);
 
-        using var blobProcessor = new BlobProcessor();
-        using var blobStream = blobProcessor.OpenLob(reader, 2);
+        var blobProcessor = new BlobProcessor();
+        using var blobStream = reader.GetOracleBlob(2);
 
-        using var clobProcessor = new ClobProcessor(Encoding.UTF8);
-        using var clobStream = clobProcessor.OpenLob(reader, 3);
+        var clobProcessor = new ClobProcessor(Encoding.UTF8);
+        using var clobStream = reader.GetOracleClob(3);
 
         // Assert
         Assert.Equal(rowId, id);

@@ -2,12 +2,16 @@ namespace NoP77svk.OraLobUnload;
 
 using System;
 using System.IO;
+using System.Reflection.PortableExecutable;
+
 using CommandLine;
+
 using NoP77svk.OraLobUnload.DataReaders;
 using NoP77svk.OraLobUnload.Engine;
 using NoP77svk.OraLobUnload.OracleStuff;
 using NoP77svk.OraLobUnload.StreamColumnProcessors;
 using NoP77svk.OraLobUnload.Utilities;
+
 using Oracle.ManagedDataAccess.Client;
 
 internal static class Program
@@ -17,26 +21,26 @@ internal static class Program
         Parser
             .Default
             .ParseArguments<CliOptions>(args)
-            .WithParsed(opt => MainWithOptions(opt));
+            .WithParsedAsync(async opt => await MainWithOptions(opt));
         return 0;
     }
 
-    internal static void MainWithOptions(CliOptions options)
+    internal static async Task MainWithOptions(CliOptions options)
     {
-        Console.Error.WriteLine("Oracle LOB Unloader");
-        Console.Error.WriteLine($"by Peter Hraško a.k.a NoP77svk");
-        Console.Error.WriteLine($"https://github.com/NoP77svk/ora-lob-unload");
-        Console.Error.WriteLine();
+        await Console.Error.WriteLineAsync("Oracle LOB Unloader");
+        await Console.Error.WriteLineAsync($"by Peter Hraško a.k.a NoP77svk");
+        await Console.Error.WriteLineAsync($"https://github.com/NoP77svk/ora-lob-unload");
+        await Console.Error.WriteLineAsync();
 
         ValidateCommandLineArguments(options);
 
         using StreamReader inputSqlScriptReader = OpenInputSqlScript(options.InputFile);
 
-        Console.Error.WriteLine($"Connecting to {options.DbLogon.DisplayableConnectString}");
-        using OracleConnection dbConnection = OracleConnectionFactory.CreateOracleConnection(options.DbLogon.DbService, options.DbLogon.User, options.DbLogon.Password);
-        dbConnection.Open();
+        await Console.Error.WriteLineAsync($"Connecting to {options.DbLogon.DisplayableConnectString}");
+        await using OracleConnection dbConnection = OracleConnectionFactory.CreateOracleConnection(options.DbLogon.DbService, options.DbLogon.User, options.DbLogon.Password);
+        await dbConnection.OpenAsync();
 
-        Console.Error.WriteLine($"Using {InputScriptFactory.GetInputSqlReturnTypeDesc(options.InputFileContentType)} as an input against the database");
+        await Console.Error.WriteLineAsync($"Using {InputScriptFactory.GetInputSqlReturnTypeDesc(options.InputFileContentType)} as an input against the database");
         InputScriptFactory inputScriptFactory = new InputScriptFactory(dbConnection)
         {
             InitialLobFetchSize = options.GetLobInitFetchSizeB()
@@ -46,14 +50,14 @@ internal static class Program
 
         if (!string.IsNullOrEmpty(options.OutputFolder))
         {
-            Console.Error.WriteLine($"Output folder: {options.OutputFolder}");
+            await Console.Error.WriteLineAsync($"Output folder: {options.OutputFolder}");
         }
         else
         {
-            Console.Error.WriteLine("Output folder: (current)");
+            await Console.Error.WriteLineAsync("Output folder: (current)");
         }
 
-        Console.Error.WriteLine($"Output CLOBs encoding: {options.OutputEncoding.HeaderName}");
+        await Console.Error.WriteLineAsync($"Output CLOBs encoding: {options.OutputEncoding.HeaderName}");
 
         DataUnloader unloader = new DataUnloader()
         {
@@ -65,29 +69,13 @@ internal static class Program
             VisualFeedbackFinish = () => { Console.Error.WriteLine(" done"); }
         };
 
-        foreach (OracleDataReader dbReader in dataMultiReader.GetDataReaders())
+        await foreach (DataMultiReaderRow row in dataMultiReader.GetDataAsync(options.FileNameColumnIndex - 1, options.LobColumnIndex - 1))
         {
-            int leastDatasetColumnCountNeeded = Math.Max(options.FileNameColumnIndex, options.LobColumnIndex);
-            if (dbReader.FieldCount < leastDatasetColumnCountNeeded)
-            {
-                throw new InvalidDataException($"Dataset field count is {dbReader.FieldCount}, should be at least {leastDatasetColumnCountNeeded}");
-            }
-
-            string fileNameColumnTypeName = dbReader.GetFieldType(options.FileNameColumnIndex - 1).Name;
-            if (fileNameColumnTypeName != "String")
-            {
-                throw new InvalidDataException($"Supposed file name column #{options.FileNameColumnIndex} is of type \"{fileNameColumnTypeName}\", but \"string\" expected");
-            }
-
-            using IStreamColumnProcessor processor = StreamColumnProcessorFactory.CreateStreamColumnProcessor(
-                dbReader.GetProviderSpecificFieldType(options.LobColumnIndex - 1),
-                options.OutputEncoding
-            );
-
-            unloader.UnloadDataFromReader(dbReader, processor);
+            IStreamColumnProcessor processor = StreamColumnProcessorFactory.CreateStreamColumnProcessor(row.LobContents?.GetType(), options.OutputEncoding);
+            await unloader.UnloadDataFromMultiReaderAsync(row.LobName, row.LobContents, processor);
         }
 
-        Console.Error.WriteLine("DONE");
+        await Console.Error.WriteLineAsync("DONE");
     }
 
     internal static StreamReader OpenInputSqlScript(string? inputSqlScriptFile)

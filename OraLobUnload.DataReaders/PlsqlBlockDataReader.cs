@@ -25,7 +25,7 @@ public class PlsqlBlockDataReader : IDataMultiReader
         _initialLobFetchSize = initialLobFetchSize;
     }
 
-    public async IAsyncEnumerable<KeyValuePair<string, object>> GetDataAsync(int fieldNameIndex, int fieldValueIndex)
+    public async IAsyncEnumerable<DataMultiReaderRow> GetDataAsync(int fieldNameIndex, int fieldValueIndex)
     {
         using OracleParameter outCursor = new OracleParameter("result", OracleDbType.RefCursor, ParameterDirection.Output);
 
