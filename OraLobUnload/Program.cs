@@ -16,12 +16,13 @@ using Oracle.ManagedDataAccess.Client;
 
 internal static class Program
 {
-    internal static int Main(string[] args)
+    internal static async Task<int> Main(string[] args)
     {
-        Parser
+        await Parser
             .Default
             .ParseArguments<CliOptions>(args)
             .WithParsedAsync(async opt => await MainWithOptions(opt));
+
         return 0;
     }
 
