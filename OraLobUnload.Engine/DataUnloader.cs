@@ -4,16 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-using NoP77svk.OraLobUnload.DataReaders;
-using NoP77svk.OraLobUnload.StreamColumnProcessors;
+using NoP77svk.OraLobUnload.Engine.StreamColumnProcessors;
 
 using Oracle.ManagedDataAccess.Client;
-using Oracle.ManagedDataAccess.Types;
 
 public class DataUnloader
 {
-    public int FileNameColumnIndex { get; init; } = 1;
-    public int LobColumnIndex { get; init; } = 2;
     public string? OutputPath { get; init; } = null;
     public string? OutputFileExtension { get; init; } = null;
 
@@ -30,6 +26,7 @@ public class DataUnloader
     public async Task UnloadDataFromMultiReaderAsync(string fileName, Stream? fileContents, IStreamColumnProcessor processor)
     {
         string cleanedFileNameExt = CleanedFileNameExt;
+
         try
         {
             string fileNameWithPath = Path.Combine(OutputPath ?? string.Empty, fileName);

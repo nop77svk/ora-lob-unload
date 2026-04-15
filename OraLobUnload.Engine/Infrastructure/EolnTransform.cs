@@ -1,4 +1,6 @@
-namespace NoP77svk.OraLobUnload.Utilities;
+#pragma warning disable S3881
+#pragma warning disable S127
+namespace NoP77svk.OraLobUnload.Engine.Infrastructure;
 
 using System;
 using System.Security.Cryptography;
@@ -43,6 +45,8 @@ public class EolnTransform : ICryptoTransform
 
     public EolnTransform(Encoding streamEncoding, string targetEolnSequence, int inputBufferSizeInChars = 262144)
     {
+        ArgumentException.ThrowIfNullOrEmpty(targetEolnSequence);
+
         StreamEncoding = streamEncoding;
         TargetEolnSequence = targetEolnSequence;
 
@@ -88,7 +92,6 @@ public class EolnTransform : ICryptoTransform
 
     public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
     {
-        AssertValidEolnsSupplied();
         int bytesWritten = 0;
 
         ReadOnlySpan<byte> inputSpan = inputBuffer[inputOffset .. (inputOffset + inputCount)];
@@ -117,16 +120,6 @@ public class EolnTransform : ICryptoTransform
 
     public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
     {
-        AssertValidEolnsSupplied();
-
         throw new NotImplementedException();
-    }
-
-    private void AssertValidEolnsSupplied()
-    {
-        if (_targetEoln == null || _targetEoln.Length <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(TargetEolnSequence), "NULL or empty target EOLN sequence supplied");
-        }
     }
 }

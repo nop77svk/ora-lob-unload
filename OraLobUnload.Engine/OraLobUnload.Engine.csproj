@@ -5,7 +5,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\OraLobUnload.DataReaders\OraLobUnload.DataReaders.csproj" />
-		<ProjectReference Include="..\OraLobUnload.StreamColumnProcessors\OraLobUnload.StreamColumnProcessors.csproj" />
+		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="*" />
 	</ItemGroup>
 </Project>

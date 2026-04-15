@@ -10,7 +10,7 @@
     },
     "load from sql query": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"test inputs\\sql query.txt\" -u \"pierre@nop-full as sysoper\" -q -x .txt -o %TEMP%\\x"
+      "commandLineArgs": "-i \"_examples\\current schema PLSQL export.sql\" -u \"pierre@nop-full as sysoper\" -q -x .txt -o %TEMP%\\x"
     },
     "try APEX export via query via BLOBs": {
       "commandName": "Project",

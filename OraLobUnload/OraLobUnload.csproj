@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -13,11 +13,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\OraLobUnload.DataReaders\OraLobUnload.DataReaders.csproj" />
-		<ProjectReference Include="..\OraLobUnload.StreamColumnProcessors\OraLobUnload.StreamColumnProcessors.csproj" />
-		<ProjectReference Include="..\OraLobUnload.Utilities\OraLobUnload.Utilities.csproj" />
-		<ProjectReference Include="..\OraLobUnload.OracleStuff\OraLobUnload.OracleStuff.csproj" />
 		<ProjectReference Include="..\OraLobUnload.Engine\OraLobUnload.Engine.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="_examples\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 </Project>

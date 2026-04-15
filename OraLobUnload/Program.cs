@@ -2,26 +2,26 @@ namespace NoP77svk.OraLobUnload;
 
 using System;
 using System.IO;
-using System.Reflection.PortableExecutable;
 
 using CommandLine;
 
-using NoP77svk.OraLobUnload.DataReaders;
 using NoP77svk.OraLobUnload.Engine;
-using NoP77svk.OraLobUnload.OracleStuff;
-using NoP77svk.OraLobUnload.StreamColumnProcessors;
-using NoP77svk.OraLobUnload.Utilities;
+using NoP77svk.OraLobUnload.Engine.Database;
+using NoP77svk.OraLobUnload.Engine.DataReaders;
+using NoP77svk.OraLobUnload.Engine.Infrastructure;
+using NoP77svk.OraLobUnload.Engine.StreamColumnProcessors;
 
 using Oracle.ManagedDataAccess.Client;
 
 internal static class Program
 {
-    internal static int Main(string[] args)
+    internal static async Task<int> Main(string[] args)
     {
-        Parser
+        await Parser
             .Default
             .ParseArguments<CliOptions>(args)
             .WithParsedAsync(async opt => await MainWithOptions(opt));
+
         return 0;
     }
 
@@ -46,7 +46,7 @@ internal static class Program
             InitialLobFetchSize = options.GetLobInitFetchSizeB()
         };
 
-        using IDataMultiReader dataMultiReader = inputScriptFactory.CreateMultiReader(options.InputFileContentType, inputSqlScriptReader);
+        IDataMultiReader dataMultiReader = inputScriptFactory.CreateMultiReader(options.InputFileContentType, inputSqlScriptReader);
 
         if (!string.IsNullOrEmpty(options.OutputFolder))
         {
@@ -61,8 +61,6 @@ internal static class Program
 
         DataUnloader unloader = new DataUnloader()
         {
-            FileNameColumnIndex = options.FileNameColumnIndex,
-            LobColumnIndex = options.LobColumnIndex,
             OutputPath = options.OutputFolder,
             OutputFileExtension = options.OutputFileExtension,
             VisualFeedbackStartUnloading = (fName, lobLen) => { Console.Error.Write($"{fName} [{lobLen}] ..."); },

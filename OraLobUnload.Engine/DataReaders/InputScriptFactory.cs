@@ -1,4 +1,4 @@
-namespace NoP77svk.OraLobUnload.DataReaders;
+namespace NoP77svk.OraLobUnload.Engine.DataReaders;
 
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,6 @@ public class InputScriptFactory
     {
         string result = returnType switch
         {
-            InputContentType.Tables => "list of tables",
             InputContentType.OutRefCursor => "PL/SQL block with output ref cursor",
             InputContentType.ImplicitCursors => "PL/SQL block with implicit output cursors",
             InputContentType.Select => "SQL query",
@@ -37,7 +36,6 @@ public class InputScriptFactory
     {
         IDataMultiReader result = returnType switch
         {
-            InputContentType.Tables => new TableDataReader(_dbConnection, SplitInputSqlToLines(inputSql), InitialLobFetchSize),
             InputContentType.OutRefCursor => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), PlsqlBlockReturnType.OutRefCursor, InitialLobFetchSize),
             InputContentType.ImplicitCursors => new PlsqlBlockDataReader(_dbConnection, inputSql.ReadToEnd(), PlsqlBlockReturnType.ImplicitCursors, InitialLobFetchSize),
             InputContentType.Select => new SqlQueryDataReader(_dbConnection, inputSql.ReadToEnd(), InitialLobFetchSize),
@@ -45,18 +43,5 @@ public class InputScriptFactory
         };
 
         return result;
-    }
-
-    private static IEnumerable<string> SplitInputSqlToLines(TextReader inputSql)
-    {
-        string? tableName;
-        while ((tableName = inputSql.ReadLine()) != null)
-        {
-            string cleanedUpTableName = tableName.Trim().ToUpper();
-            if (!string.IsNullOrEmpty(cleanedUpTableName))
-            {
-                yield return cleanedUpTableName;
-            }
-        }
     }
 }

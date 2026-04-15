@@ -6,8 +6,8 @@ using System.Text;
 
 using CommandLine;
 
-using NoP77svk.OraLobUnload.DataReaders;
-using NoP77svk.OraLobUnload.OracleStuff;
+using NoP77svk.OraLobUnload.Engine.Database;
+using NoP77svk.OraLobUnload.Engine.DataReaders;
 
 internal class CliOptions
 {
@@ -30,7 +30,6 @@ internal class CliOptions
         {
             InputContentType.Select => "query",
             InputContentType.OutRefCursor => "out-ref-cursor",
-            InputContentType.Tables => "tables",
             InputContentType.ImplicitCursors => "implicit-cursors",
             _ => throw new ArgumentOutOfRangeException($"Don''t know how to interpret file content type {InputFileContentType}")
         };
@@ -41,7 +40,6 @@ internal class CliOptions
             {
                 "select" or "query" => InputContentType.Select,
                 "outrefcursor" or "outcursor" or "refcursor" or "cursor" => InputContentType.OutRefCursor,
-                "table" or "tables" => InputContentType.Tables,
                 "implicitcursors" or "implicitcursor" or "implicit" => InputContentType.ImplicitCursors,
                 _ => throw new ArgumentOutOfRangeException($"Don''t know how to interpret file content type {value}")
             };
@@ -60,13 +58,6 @@ internal class CliOptions
     {
         get => InputFileContentType == InputContentType.OutRefCursor;
         set => InputFileContentType = InputContentType.OutRefCursor;
-    }
-
-    [Option("input-content-tables", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=tables")]
-    public bool IsInputScriptTypeTables
-    {
-        get => InputFileContentType == InputContentType.Tables;
-        set => InputFileContentType = InputContentType.Tables;
     }
 
     [Option('m', "input-content-implicit-cursors", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=implicit-cursors")]
@@ -91,7 +82,7 @@ internal class CliOptions
     [Option("lob-column-ix", Required = false, Default = 2, HelpText = "\nLOB contents are in column #x of the data set(s) being read")]
     public int LobColumnIndex { get; set; }
 
-    [Option("lob-init-fetch-size", Required = false, Default = "0", HelpText = "\n(Internal) Initial LOB fetch size\nUse \"K\" or \"M\" suffixes to denote 1KB or 1MB sizes respectively")]
+    [Option("lob-init-fetch-size", Required = false, Default = "4K", HelpText = "\n(Internal) Initial LOB fetch size\nUse \"K\" or \"M\" suffixes to denote 1KB or 1MB sizes respectively")]
     internal string? LobInitFetchSize { get; set; }
 
     internal OracleConnectStringParsed DbLogon

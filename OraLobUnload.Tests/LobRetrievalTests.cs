@@ -2,17 +2,16 @@ namespace NoP77svk.OraLobUnload.Tests;
 
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
 
-using NoP77svk.OraLobUnload.DataReaders;
-using NoP77svk.OraLobUnload.StreamColumnProcessors;
+using NoP77svk.OraLobUnload.Engine.DataReaders;
+using NoP77svk.OraLobUnload.Engine.StreamColumnProcessors;
 
 using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
 
 using Xunit;
-using Xunit.Sdk;
 
 /// <summary>
 /// Tests for all four LOB retrieval scenarios using Oracle test container.
@@ -215,7 +214,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
     }
 
     [Fact]
-    public async Task PlsqlBlockDataReader_WithOutRefCursor_RetrievesLobData()
+    public async Task PlsqlBlockDataReader_WithOutRefCursor_RetrievesBlobData()
     {
         // Arrange
         await _fixture.SeedTestDataAsync();
@@ -230,20 +229,109 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
             END;
             """;
 
-        using IDataMultiReader reader = new PlsqlBlockDataReader(connection, plsqlScript, PlsqlBlockReturnType.OutRefCursor, 4096);
+        IDataMultiReader reader = new PlsqlBlockDataReader(connection, plsqlScript, PlsqlBlockReturnType.OutRefCursor, 4096);
 
         // Act
         int rowCount = 0;
-        await foreach (var row in reader.GetDataAsync(1, 2))
+        await foreach (var row in reader.GetDataAsync(0, 1))
         {
             rowCount++;
             Assert.NotEmpty(row.LobName);
+            Assert.IsType<OracleBlob>(row.LobContents);
         }
 
         // Assert
         Assert.Equal(3, rowCount);
 
-        reader.Dispose();
+        await _fixture.ClearTestDataAsync();
+    }
+
+    [Fact]
+    public async Task PlsqlBlockDataReader_WithOutRefCursor_RetrievesClobData()
+    {
+        // Arrange
+        await _fixture.SeedTestDataAsync();
+        var connection = _fixture.GetConnection();
+
+        string plsqlScript = """
+            DECLARE
+                v_cursor SYS_REFCURSOR;
+            BEGIN
+                OPEN v_cursor FOR SELECT file_name, clob_content FROM test_lob_data;
+                :result := v_cursor;
+            END;
+            """;
+
+        IDataMultiReader reader = new PlsqlBlockDataReader(connection, plsqlScript, PlsqlBlockReturnType.OutRefCursor, 4096);
+
+        // Act
+        int rowCount = 0;
+        await foreach (var row in reader.GetDataAsync(0, 1))
+        {
+            rowCount++;
+            Assert.NotEmpty(row.LobName);
+            Assert.IsType<OracleClob>(row.LobContents);
+        }
+
+        // Assert
+        Assert.Equal(3, rowCount);
+
+        await _fixture.ClearTestDataAsync();
+    }
+
+    [Fact]
+    public async Task SqlQueryDataReader_RetrievesBlobData()
+    {
+        // Arrange
+        await _fixture.SeedTestDataAsync();
+        var connection = _fixture.GetConnection();
+
+        string sqlScript = """
+            SELECT file_name, blob_content FROM test_lob_data;
+            """;
+
+        IDataMultiReader reader = new SqlQueryDataReader(connection, sqlScript, 4096);
+
+        // Act
+        int rowCount = 0;
+        await foreach (var row in reader.GetDataAsync(0, 1))
+        {
+            rowCount++;
+            Assert.NotEmpty(row.LobName);
+            Assert.IsType<OracleBlob>(row.LobContents);
+        }
+
+        // Assert
+        Assert.Equal(3, rowCount);
+
+        await _fixture.ClearTestDataAsync();
+    }
+
+    [Fact]
+    public async Task SqlQueryDataReader_RetrievesClobData()
+    {
+        // Arrange
+        await _fixture.SeedTestDataAsync();
+        var connection = _fixture.GetConnection();
+
+        string sqlScript = """
+            SELECT file_name, clob_content FROM test_lob_data;
+            """;
+
+        IDataMultiReader reader = new SqlQueryDataReader(connection, sqlScript, 4096);
+
+        // Act
+        int rowCount = 0;
+        await foreach (var row in reader.GetDataAsync(0, 1))
+        {
+            rowCount++;
+            Assert.NotEmpty(row.LobName);
+            Assert.IsType<OracleClob>(row.LobContents);
+        }
+
+        // Assert
+        Assert.Equal(3, rowCount);
+
         await _fixture.ClearTestDataAsync();
     }
 }
