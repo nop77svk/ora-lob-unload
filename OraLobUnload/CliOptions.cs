@@ -82,7 +82,7 @@ internal class CliOptions
     [Option("lob-column-ix", Required = false, Default = 2, HelpText = "\nLOB contents are in column #x of the data set(s) being read")]
     public int LobColumnIndex { get; set; }
 
-    [Option("lob-init-fetch-size", Required = false, Default = "0", HelpText = "\n(Internal) Initial LOB fetch size\nUse \"K\" or \"M\" suffixes to denote 1KB or 1MB sizes respectively")]
+    [Option("lob-init-fetch-size", Required = false, Default = "4K", HelpText = "\n(Internal) Initial LOB fetch size\nUse \"K\" or \"M\" suffixes to denote 1KB or 1MB sizes respectively")]
     internal string? LobInitFetchSize { get; set; }
 
     internal OracleConnectStringParsed DbLogon

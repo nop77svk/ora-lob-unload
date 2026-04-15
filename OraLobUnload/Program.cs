@@ -61,8 +61,6 @@ internal static class Program
 
         DataUnloader unloader = new DataUnloader()
         {
-            FileNameColumnIndex = options.FileNameColumnIndex,
-            LobColumnIndex = options.LobColumnIndex,
             OutputPath = options.OutputFolder,
             OutputFileExtension = options.OutputFileExtension,
             VisualFeedbackStartUnloading = (fName, lobLen) => { Console.Error.Write($"{fName} [{lobLen}] ..."); },
