@@ -25,6 +25,46 @@ public class PlsqlBlockDataReader : IDataMultiReader
         _initialLobFetchSize = initialLobFetchSize;
     }
 
+    public async IAsyncEnumerable<DataMultiReaderRow> GetDataAsync(int fieldNameIndex, int fieldValueIndex)
+    {
+        using OracleParameter outCursor = new OracleParameter("result", OracleDbType.RefCursor, ParameterDirection.Output);
+
+        using OracleCommand dbCommand = new OracleCommand(_plsqlScript, _dbConnection)
+        {
+            BindByName = false,
+            CommandType = CommandType.Text,
+            InitialLOBFetchSize = _initialLobFetchSize
+        };
+
+        if (_plsqlBlockReturnType.HasFlag(PlsqlBlockReturnType.OutRefCursor))
+        {
+            dbCommand.Parameters.Add(outCursor);
+        }
+
+        await dbCommand.ExecuteNonQueryAsync();
+
+        if (_plsqlBlockReturnType.HasFlag(PlsqlBlockReturnType.OutRefCursor))
+        {
+            using OracleDataReader reader = ((OracleRefCursor)outCursor.Value).GetDataReader();
+            await foreach (var kvp in IDataMultiReader.FetchDataFromReaderAsync(fieldNameIndex, fieldValueIndex, reader))
+            {
+                yield return kvp;
+            }
+        }
+
+        if (_plsqlBlockReturnType.HasFlag(PlsqlBlockReturnType.ImplicitCursors))
+        {
+            foreach (OracleRefCursor implicitCursor in dbCommand.ImplicitRefCursors)
+            {
+                using OracleDataReader reader = implicitCursor.GetDataReader();
+                await foreach (var kvp in IDataMultiReader.FetchDataFromReaderAsync(fieldNameIndex, fieldValueIndex, reader))
+                {
+                    yield return kvp;
+                }
+            }
+        }
+    }
+
     public IEnumerable<OracleDataReader> GetDataReaders()
     {
         OracleParameter outCursor = new OracleParameter("result", OracleDbType.RefCursor, ParameterDirection.Output);

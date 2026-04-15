@@ -8,15 +8,6 @@ using Oracle.ManagedDataAccess.Types;
 
 public class BlobProcessor : IStreamColumnProcessor
 {
-    private OracleBlob? _lobStream;
-    private bool _disposedValue;
-
-    public Stream OpenLob(OracleDataReader dataReader, int fieldIndex)
-    {
-        _lobStream = dataReader.GetOracleBlob(fieldIndex);
-        return _lobStream;
-    }
-
     public long GetTrueLobLength(long reportedLength)
     {
         return reportedLength;
@@ -27,33 +18,13 @@ public class BlobProcessor : IStreamColumnProcessor
         return $"BLOB:{GetTrueLobLength(reportedLength)} bytes";
     }
 
-    public void SaveLobToStream(Stream inLob, Stream outFile)
+    public async Task SaveLobToStreamAsync(Stream inLob, Stream outFile)
     {
-        if (inLob is not OracleBlob)
+        if (inLob is not OracleBlob inBlob)
         {
             throw new ArgumentException($"Must be OracleBlob, is {inLob.GetType().FullName}", nameof(inLob));
         }
 
-        inLob.CopyTo(outFile);
-    }
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposedValue)
-        {
-            if (disposing)
-            {
-                _lobStream?.Dispose();
-            }
-
-            _disposedValue = true;
-        }
+        await inBlob.CopyToAsync(outFile);
     }
 }

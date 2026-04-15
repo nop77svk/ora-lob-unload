@@ -15,7 +15,7 @@ public class ClobProcessorTests
     public void GetFormattedLobLength_ForClob_ReturnsCorrectFormat()
     {
         // Arrange
-        using var processor = new ClobProcessor(Encoding.UTF8);
+        var processor = new ClobProcessor(Encoding.UTF8);
         long clobLength = 2048; // In bytes (Oracle Unicode = 2 bytes per char)
 
         // Act
@@ -29,7 +29,7 @@ public class ClobProcessorTests
     public void GetTrueLobLength_ForClob_DividesLengthByTwo()
     {
         // Arrange
-        using var processor = new ClobProcessor(Encoding.UTF8);
+        var processor = new ClobProcessor(Encoding.UTF8);
         long reportedLength = 4096; // Reported in bytes
 
         // Act
@@ -48,7 +48,7 @@ public class ClobProcessorTests
         // Act & Assert
         foreach (var encoding in encodings)
         {
-            using var processor = new ClobProcessor(encoding);
+            var processor = new ClobProcessor(encoding);
             Assert.NotNull(processor);
         }
     }

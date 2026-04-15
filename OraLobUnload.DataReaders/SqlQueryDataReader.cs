@@ -3,7 +3,10 @@ namespace NoP77svk.OraLobUnload.DataReaders;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
+
 using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
 
 public class SqlQueryDataReader : IDataMultiReader
 {
@@ -27,6 +30,15 @@ public class SqlQueryDataReader : IDataMultiReader
 
         _dataReaders = new List<OracleDataReader>();
         _initialLobFetchSize = initialLobFetchSize;
+    }
+
+    public async IAsyncEnumerable<DataMultiReaderRow> GetDataAsync(int fieldNameIndex, int fieldValueIndex)
+    {
+        using OracleDataReader reader = await _dbCommand.ExecuteReaderAsync();
+        await foreach (var kvp in IDataMultiReader.FetchDataFromReaderAsync(fieldNameIndex, fieldValueIndex, reader))
+        {
+            yield return kvp;
+        }
     }
 
     public IEnumerable<OracleDataReader> GetDataReaders()
