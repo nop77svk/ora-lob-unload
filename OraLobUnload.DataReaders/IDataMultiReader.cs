@@ -10,32 +10,32 @@ public interface IDataMultiReader : IDisposable
 {
     IAsyncEnumerable<DataMultiReaderRow> GetDataAsync(int fieldNameIndex, int fieldValueIndex);
 
-    protected static async IAsyncEnumerable<DataMultiReaderRow> FetchDataFromReaderAsync(int lobNameColumnIndexBase1, int lobContentsColumnIndexBase1, OracleDataReader reader)
+    protected static async IAsyncEnumerable<DataMultiReaderRow> FetchDataFromReaderAsync(int lobNameColumnIndex, int lobContentsColumnIndex, OracleDataReader reader)
     {
-        int leastDatasetColumnCountNeeded = Math.Max(lobNameColumnIndexBase1, lobContentsColumnIndexBase1);
+        int leastDatasetColumnCountNeeded = Math.Max(lobNameColumnIndex, lobContentsColumnIndex) + 1;
         if (reader.FieldCount < leastDatasetColumnCountNeeded)
         {
             throw new InvalidDataException($"Dataset field count is {reader.FieldCount}, should be at least {leastDatasetColumnCountNeeded}");
         }
 
-        string fileNameColumnTypeName = reader.GetFieldType(lobNameColumnIndexBase1 - 1).Name;
+        string fileNameColumnTypeName = reader.GetFieldType(lobNameColumnIndex).Name;
         if (fileNameColumnTypeName != "String")
         {
-            throw new InvalidDataException($"Supposed file name column #{lobNameColumnIndexBase1} is of type \"{fileNameColumnTypeName}\", but \"string\" expected");
+            throw new InvalidDataException($"Supposed file name column #{lobNameColumnIndex} is of type \"{fileNameColumnTypeName}\", but \"string\" expected");
         }
 
-        Type providerSpecificLobColumnType = reader.GetProviderSpecificFieldType(lobContentsColumnIndexBase1 - 1);
+        Type providerSpecificLobColumnType = reader.GetProviderSpecificFieldType(lobContentsColumnIndex);
         Func<OracleDataReader, Stream?> getLobContentsFunc = providerSpecificLobColumnType switch
         {
-            Type t when t == typeof(OracleClob) => r => r.GetOracleClob(lobContentsColumnIndexBase1 - 1),
-            Type t when t == typeof(OracleBlob) => r => r.GetOracleBlob(lobContentsColumnIndexBase1 - 1),
-            Type t when t == typeof(OracleBFile) => r => r.GetOracleBFile(lobContentsColumnIndexBase1 - 1),
+            Type t when t == typeof(OracleClob) => r => r.GetOracleClob(lobContentsColumnIndex),
+            Type t when t == typeof(OracleBlob) => r => r.GetOracleBlob(lobContentsColumnIndex),
+            Type t when t == typeof(OracleBFile) => r => r.GetOracleBFile(lobContentsColumnIndex),
             _ => throw new InvalidDataException($"Unsupported LOB column type: {providerSpecificLobColumnType.FullName}")
         };
 
         while (await reader.ReadAsync())
         {
-            string lobName = reader.GetString(lobNameColumnIndexBase1 - 1);
+            string lobName = reader.GetString(lobNameColumnIndex);
             Stream? lobContentsStream = getLobContentsFunc(reader);
             yield return new DataMultiReaderRow(lobName, lobContentsStream);
         }
