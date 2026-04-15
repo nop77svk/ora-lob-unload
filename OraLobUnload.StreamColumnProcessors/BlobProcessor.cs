@@ -18,13 +18,13 @@ public class BlobProcessor : IStreamColumnProcessor
         return $"BLOB:{GetTrueLobLength(reportedLength)} bytes";
     }
 
-    public void SaveLobToStream(Stream inLob, Stream outFile)
+    public async Task SaveLobToStreamAsync(Stream inLob, Stream outFile)
     {
         if (inLob is not OracleBlob inBlob)
         {
             throw new ArgumentException($"Must be OracleBlob, is {inLob.GetType().FullName}", nameof(inLob));
         }
 
-        inBlob.CopyTo(outFile);
+        await inBlob.CopyToAsync(outFile);
     }
 }

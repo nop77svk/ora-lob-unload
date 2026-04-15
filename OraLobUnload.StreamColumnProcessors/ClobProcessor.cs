@@ -27,7 +27,7 @@ public class ClobProcessor : IStreamColumnProcessor
         return $"CLOB:{GetTrueLobLength(reportedLength)} characters";
     }
 
-    public void SaveLobToStream(Stream inLob, Stream outFile)
+    public async Task SaveLobToStreamAsync(Stream inLob, Stream outFile)
     {
         if (inLob is not OracleClob inClob)
         {
@@ -38,6 +38,6 @@ public class ClobProcessor : IStreamColumnProcessor
         using var unicodeEncodingTransform = new UnicodeToAnyEncodingTransform(utf16decoder, _outputEncoding);
         using var transcoder = new CryptoStream(outFile, unicodeEncodingTransform, CryptoStreamMode.Write, true);
 
-        inClob.CopyTo(transcoder);
+        await inClob.CopyToAsync(transcoder);
     }
 }

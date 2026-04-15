@@ -17,7 +17,7 @@ public class BFileProcessor : IStreamColumnProcessor
         return $"BFILE:{GetTrueLobLength(reportedLength)} bytes";
     }
 
-    public void SaveLobToStream(Stream inLob, Stream outFile)
+    public async Task SaveLobToStreamAsync(Stream inLob, Stream outFile)
     {
         if (inLob is not OracleBFile oracleBFile)
         {
@@ -31,7 +31,7 @@ public class BFileProcessor : IStreamColumnProcessor
 
         try
         {
-            oracleBFile.CopyTo(outFile);
+            await oracleBFile.CopyToAsync(outFile);
         }
         finally
         {

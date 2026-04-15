@@ -8,5 +8,5 @@ public interface IStreamColumnProcessor
 
     string GetFormattedLobLength(long reportedLength);
 
-    void SaveLobToStream(Stream inLob, Stream outFile);
+    Task SaveLobToStreamAsync(Stream inLob, Stream outFile);
 }

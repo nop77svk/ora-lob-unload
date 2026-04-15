@@ -40,7 +40,7 @@ public class BlobProcessorTests
     }
 
     [Fact]
-    public void SaveLobToStream_WithNonOracleBlobStream_ThrowsArgumentException()
+    public async Task SaveLobToStream_WithNonOracleBlobStream_ThrowsArgumentException()
     {
         // Arrange
         var processor = new BlobProcessor();
@@ -48,7 +48,6 @@ public class BlobProcessorTests
         using var outputStream = new MemoryStream();
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() =>
-            processor.SaveLobToStream(invalidStream, outputStream));
+        await Assert.ThrowsAsync<ArgumentException>(async () => await processor.SaveLobToStreamAsync(invalidStream, outputStream));
     }
 }

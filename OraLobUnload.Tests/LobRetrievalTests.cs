@@ -58,7 +58,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
 
         // Verify content can be read
         using var memoryStream = new MemoryStream();
-        processor.SaveLobToStream(blobStream, memoryStream);
+        await processor.SaveLobToStreamAsync(blobStream, memoryStream);
         Assert.NotEmpty(memoryStream.ToArray());
 
         await _fixture.ClearTestDataAsync();
@@ -96,7 +96,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
 
         // Verify content can be read
         using var memoryStream = new MemoryStream();
-        processor.SaveLobToStream(clobStream, memoryStream);
+        await processor.SaveLobToStreamAsync(clobStream, memoryStream);
         Assert.NotEmpty(memoryStream.ToArray());
 
         await _fixture.ClearTestDataAsync();
