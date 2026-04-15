@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 
-public interface IDataMultiReader : IDisposable
+public interface IDataMultiReader
 {
     IAsyncEnumerable<DataMultiReaderRow> GetDataAsync(int fieldNameIndex, int fieldValueIndex);
 

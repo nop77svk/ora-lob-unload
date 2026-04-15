@@ -46,7 +46,7 @@ internal static class Program
             InitialLobFetchSize = options.GetLobInitFetchSizeB()
         };
 
-        using IDataMultiReader dataMultiReader = inputScriptFactory.CreateMultiReader(options.InputFileContentType, inputSqlScriptReader);
+        IDataMultiReader dataMultiReader = inputScriptFactory.CreateMultiReader(options.InputFileContentType, inputSqlScriptReader);
 
         if (!string.IsNullOrEmpty(options.OutputFolder))
         {

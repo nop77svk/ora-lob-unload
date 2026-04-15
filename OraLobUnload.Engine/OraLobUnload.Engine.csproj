@@ -3,4 +3,8 @@
 		<OutputType>Library</OutputType>
 		<RootNamespace>NoP77svk.OraLobUnload.Engine</RootNamespace>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="*" />
+	</ItemGroup>
 </Project>
