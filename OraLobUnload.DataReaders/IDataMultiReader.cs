@@ -8,8 +8,6 @@ using Oracle.ManagedDataAccess.Types;
 
 public interface IDataMultiReader : IDisposable
 {
-    [Obsolete("Use GetData() instead!")]
-    IEnumerable<OracleDataReader> GetDataReaders();
     IAsyncEnumerable<DataMultiReaderRow> GetDataAsync(int fieldNameIndex, int fieldValueIndex);
 
     protected static async IAsyncEnumerable<DataMultiReaderRow> FetchDataFromReaderAsync(int lobNameColumnIndexBase1, int lobContentsColumnIndexBase1, OracleDataReader reader)

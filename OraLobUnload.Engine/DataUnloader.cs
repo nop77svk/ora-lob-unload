@@ -46,7 +46,7 @@ public class DataUnloader
 
                 VisualFeedbackStartUnloading?.Invoke(fileNameWithExt, processor.GetFormattedLobLength(lobContents.Length));
 
-                processor.SaveLobToStreamAsync(lobContents, outFile);
+                await processor.SaveLobToStreamAsync(lobContents, outFile);
                 VisualFeedbackFinish?.Invoke();
 
                 lobContents.Close();

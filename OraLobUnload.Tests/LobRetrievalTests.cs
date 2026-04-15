@@ -12,6 +12,7 @@ using NoP77svk.OraLobUnload.StreamColumnProcessors;
 using Oracle.ManagedDataAccess.Client;
 
 using Xunit;
+using Xunit.Sdk;
 
 /// <summary>
 /// Tests for all four LOB retrieval scenarios using Oracle test container.
@@ -46,6 +47,8 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         string fileName = reader.GetString(0);
         using var blobStream = reader.GetOracleBlob(1);
         var processor = new BlobProcessor();
+        using var memoryStream = new MemoryStream();
+        await processor.SaveLobToStreamAsync(blobStream, memoryStream);
 
         // Assert
         Assert.NotNull(blobStream);
@@ -57,8 +60,6 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         Assert.StartsWith("BLOB:", formattedLength);
 
         // Verify content can be read
-        using var memoryStream = new MemoryStream();
-        await processor.SaveLobToStreamAsync(blobStream, memoryStream);
         Assert.NotEmpty(memoryStream.ToArray());
 
         await _fixture.ClearTestDataAsync();
@@ -84,6 +85,8 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         string fileName = reader.GetString(0);
         using var clobStream = reader.GetOracleClob(1);
         var processor = new ClobProcessor(Encoding.UTF8);
+        using var memoryStream = new MemoryStream();
+        await processor.SaveLobToStreamAsync(clobStream, memoryStream);
 
         // Assert
         Assert.NotNull(clobStream);
@@ -95,8 +98,6 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         Assert.StartsWith("CLOB:", formattedLength);
 
         // Verify content can be read
-        using var memoryStream = new MemoryStream();
-        await processor.SaveLobToStreamAsync(clobStream, memoryStream);
         Assert.NotEmpty(memoryStream.ToArray());
 
         await _fixture.ClearTestDataAsync();
@@ -137,16 +138,9 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         // Arrange
         var connection = _fixture.GetConnection();
 
-        string createTableSql = "CREATE TABLE test_null_lobs (id NUMBER PRIMARY KEY, content BLOB, text_content CLOB)";
-        try
-        {
-            using var createCommand = new OracleCommand(createTableSql, connection);
-            await createCommand.ExecuteNonQueryAsync(TestContext.Current.CancellationToken);
-        }
-        catch (OracleException ex) when (ex.Number == 955)
-        {
-            // Ignore
-        }
+        string createTableSql = "CREATE TABLE IF NOT EXISTS test_null_lobs (id NUMBER PRIMARY KEY, content BLOB, text_content CLOB)";
+        using var createCommand = new OracleCommand(createTableSql, connection);
+        await createCommand.ExecuteNonQueryAsync(TestContext.Current.CancellationToken);
 
         string insertSql = "INSERT INTO test_null_lobs (id, content, text_content) VALUES (1, NULL, NULL)";
         using var insertCommand = new OracleCommand(insertSql, connection);
@@ -240,14 +234,10 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
 
         // Act
         int rowCount = 0;
-        foreach (var dataReader in reader.GetDataReaders())
+        await foreach (var row in reader.GetDataAsync(1, 2))
         {
-            while (await dataReader.ReadAsync(TestContext.Current.CancellationToken))
-            {
-                rowCount++;
-                string fileName = dataReader.GetString(0);
-                Assert.NotEmpty(fileName);
-            }
+            rowCount++;
+            Assert.NotEmpty(row.LobName);
         }
 
         // Assert
