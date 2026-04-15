@@ -6,8 +6,8 @@ using System.Text;
 
 using CommandLine;
 
-using NoP77svk.OraLobUnload.DataReaders;
-using NoP77svk.OraLobUnload.OracleStuff;
+using NoP77svk.OraLobUnload.Engine.Database;
+using NoP77svk.OraLobUnload.Engine.DataReaders;
 
 internal class CliOptions
 {

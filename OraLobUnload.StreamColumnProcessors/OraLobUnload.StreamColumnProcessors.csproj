@@ -4,8 +4,4 @@
 		<RootNamespace>NoP77svk.OraLobUnload.StreamColumnProcessors</RootNamespace>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\OraLobUnload.Utilities\OraLobUnload.Utilities.csproj" />
-	</ItemGroup>
-
 </Project>

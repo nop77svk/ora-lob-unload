@@ -2,15 +2,14 @@ namespace NoP77svk.OraLobUnload;
 
 using System;
 using System.IO;
-using System.Reflection.PortableExecutable;
 
 using CommandLine;
 
-using NoP77svk.OraLobUnload.DataReaders;
 using NoP77svk.OraLobUnload.Engine;
-using NoP77svk.OraLobUnload.OracleStuff;
-using NoP77svk.OraLobUnload.StreamColumnProcessors;
-using NoP77svk.OraLobUnload.Utilities;
+using NoP77svk.OraLobUnload.Engine.Database;
+using NoP77svk.OraLobUnload.Engine.DataReaders;
+using NoP77svk.OraLobUnload.Engine.Infrastructure;
+using NoP77svk.OraLobUnload.Engine.StreamColumnProcessors;
 
 using Oracle.ManagedDataAccess.Client;
 

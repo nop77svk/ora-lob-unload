@@ -1,4 +1,4 @@
-namespace NoP77svk.OraLobUnload.OracleStuff;
+namespace NoP77svk.OraLobUnload.Engine.Database;
 
 using System;
 

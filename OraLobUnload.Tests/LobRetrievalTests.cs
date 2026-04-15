@@ -2,17 +2,15 @@ namespace NoP77svk.OraLobUnload.Tests;
 
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
 
-using NoP77svk.OraLobUnload.DataReaders;
-using NoP77svk.OraLobUnload.StreamColumnProcessors;
+using NoP77svk.OraLobUnload.Engine.DataReaders;
+using NoP77svk.OraLobUnload.Engine.StreamColumnProcessors;
 
 using Oracle.ManagedDataAccess.Client;
 
 using Xunit;
-using Xunit.Sdk;
 
 /// <summary>
 /// Tests for all four LOB retrieval scenarios using Oracle test container.

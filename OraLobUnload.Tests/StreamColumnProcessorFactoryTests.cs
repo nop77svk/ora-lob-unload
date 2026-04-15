@@ -3,8 +3,11 @@ namespace NoP77svk.OraLobUnload.Tests;
 using System;
 using System.IO;
 using System.Text;
-using NoP77svk.OraLobUnload.StreamColumnProcessors;
+
+using NoP77svk.OraLobUnload.Engine.StreamColumnProcessors;
+
 using Oracle.ManagedDataAccess.Types;
+
 using Xunit;
 
 /// <summary>
@@ -15,12 +18,8 @@ public class StreamColumnProcessorFactoryTests
     [Fact]
     public void CreateStreamColumnProcessor_WithOracleClobType_ReturnsClobProcessor()
     {
-        // Arrange
-        Type clobType = typeof(OracleClob);
-        Encoding encoding = Encoding.UTF8;
-
         // Act
-        var processor = StreamColumnProcessorFactory.CreateStreamColumnProcessor(clobType, encoding);
+        var processor = StreamColumnProcessorFactory.CreateStreamColumnProcessor<OracleClob>(Encoding.UTF8);
 
         // Assert
         Assert.IsType<ClobProcessor>(processor);
@@ -29,11 +28,8 @@ public class StreamColumnProcessorFactoryTests
     [Fact]
     public void CreateStreamColumnProcessor_WithOracleBlobType_ReturnsBlobProcessor()
     {
-        // Arrange
-        Type blobType = typeof(OracleBlob);
-
         // Act
-        var processor = StreamColumnProcessorFactory.CreateStreamColumnProcessor(blobType, Encoding.UTF8);
+        var processor = StreamColumnProcessorFactory.CreateStreamColumnProcessor<OracleBlob>(Encoding.UTF8);
 
         // Assert
         Assert.IsType<BlobProcessor>(processor);
@@ -42,11 +38,8 @@ public class StreamColumnProcessorFactoryTests
     [Fact]
     public void CreateStreamColumnProcessor_WithOracleBFileType_ReturnsBFileProcessor()
     {
-        // Arrange
-        Type bfileType = typeof(OracleBFile);
-
         // Act
-        var processor = StreamColumnProcessorFactory.CreateStreamColumnProcessor(bfileType, Encoding.UTF8);
+        var processor = StreamColumnProcessorFactory.CreateStreamColumnProcessor<OracleBFile>(Encoding.UTF8);
 
         // Assert
         Assert.IsType<BFileProcessor>(processor);

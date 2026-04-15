@@ -2,8 +2,9 @@ namespace NoP77svk.OraLobUnload.Tests;
 
 using System;
 using System.IO;
-using NoP77svk.OraLobUnload.StreamColumnProcessors;
-using Oracle.ManagedDataAccess.Types;
+
+using NoP77svk.OraLobUnload.Engine.StreamColumnProcessors;
+
 using Xunit;
 
 /// <summary>

@@ -1,4 +1,4 @@
-namespace NoP77svk.OraLobUnload.DataReaders;
+namespace NoP77svk.OraLobUnload.Engine.DataReaders;
 
 using System;
 using System.Collections.Generic;

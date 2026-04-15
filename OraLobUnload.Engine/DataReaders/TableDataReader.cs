@@ -1,5 +1,5 @@
 #pragma warning disable CA2000 // Dispose objects before losing scope
-namespace NoP77svk.OraLobUnload.DataReaders;
+namespace NoP77svk.OraLobUnload.Engine.DataReaders;
 
 using System.Collections.Generic;
 using System.Data;

@@ -4,11 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-using NoP77svk.OraLobUnload.DataReaders;
-using NoP77svk.OraLobUnload.StreamColumnProcessors;
+using NoP77svk.OraLobUnload.Engine.StreamColumnProcessors;
 
 using Oracle.ManagedDataAccess.Client;
-using Oracle.ManagedDataAccess.Types;
 
 public class DataUnloader
 {
