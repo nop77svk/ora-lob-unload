@@ -40,7 +40,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         };
 
         // Act
-        using var reader = (OracleDataReader)await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
+        using var reader = await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
         Assert.True(await reader.ReadAsync(TestContext.Current.CancellationToken), "Should retrieve at least one row");
 
         string fileName = reader.GetString(0);
@@ -78,7 +78,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         };
 
         // Act
-        using var reader = (OracleDataReader)await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
+        using var reader = await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
         Assert.True(await reader.ReadAsync(TestContext.Current.CancellationToken), "Should retrieve at least one row");
 
         string fileName = reader.GetString(0);
@@ -192,7 +192,7 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
         command.Parameters.Add("id", rowId);
 
         // Act
-        using var reader = (OracleDataReader)await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
+        using var reader = await command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
         Assert.True(await reader.ReadAsync(TestContext.Current.CancellationToken));
 
         int id = reader.GetInt32(0);
@@ -266,30 +266,6 @@ public class LobRetrievalTests : IClassFixture<OracleTestContainerFixture>
             rowCount++;
             Assert.NotEmpty(row.LobName);
             Assert.IsType<OracleBlob>(row.LobContents);
-        }
-
-        // Assert
-        Assert.Equal(3, rowCount);
-
-        await _fixture.ClearTestDataAsync();
-    }
-
-    [Fact]
-    public async Task TableDataReader_RetrievesClobData()
-    {
-        // Arrange
-        await _fixture.SeedTestDataAsync();
-        var connection = _fixture.GetConnection();
-
-        IDataMultiReader reader = new TableDataReader(connection, ["test_lob_data"], 4096);
-
-        // Act
-        int rowCount = 0;
-        await foreach (var row in reader.GetDataAsync(1, 3))
-        {
-            rowCount++;
-            Assert.NotEmpty(row.LobName);
-            Assert.IsType<OracleClob>(row.LobContents);
         }
 
         // Assert

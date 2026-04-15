@@ -30,7 +30,6 @@ internal class CliOptions
         {
             InputContentType.Select => "query",
             InputContentType.OutRefCursor => "out-ref-cursor",
-            InputContentType.Tables => "tables",
             InputContentType.ImplicitCursors => "implicit-cursors",
             _ => throw new ArgumentOutOfRangeException($"Don''t know how to interpret file content type {InputFileContentType}")
         };
@@ -41,7 +40,6 @@ internal class CliOptions
             {
                 "select" or "query" => InputContentType.Select,
                 "outrefcursor" or "outcursor" or "refcursor" or "cursor" => InputContentType.OutRefCursor,
-                "table" or "tables" => InputContentType.Tables,
                 "implicitcursors" or "implicitcursor" or "implicit" => InputContentType.ImplicitCursors,
                 _ => throw new ArgumentOutOfRangeException($"Don''t know how to interpret file content type {value}")
             };
@@ -60,13 +58,6 @@ internal class CliOptions
     {
         get => InputFileContentType == InputContentType.OutRefCursor;
         set => InputFileContentType = InputContentType.OutRefCursor;
-    }
-
-    [Option("input-content-tables", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=tables")]
-    public bool IsInputScriptTypeTables
-    {
-        get => InputFileContentType == InputContentType.Tables;
-        set => InputFileContentType = InputContentType.Tables;
     }
 
     [Option('m', "input-content-implicit-cursors", Group = "Input Content", Required = false, HelpText = "\nShorthand for --input-content=implicit-cursors")]
